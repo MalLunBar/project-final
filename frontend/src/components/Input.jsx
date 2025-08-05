@@ -6,7 +6,8 @@ const Input = ({ type, title, name, label, value, onChange, required, showLabel 
     <>
 
       {showLabel && (
-        <label htmlFor={title} className="sr-only">
+        <label
+          htmlFor={title} className="sr-only">
           {label}
         </label>
       )}

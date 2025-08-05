@@ -9,7 +9,7 @@ const Button = ({ text, icon: Icon, type, onClick, ariaLabel }) => {
       aria-label={ariaLabel}
     >
       {text}
-      {Icon && <Icon color='#F88B53' />}
+      {Icon && <Icon color='#000000' />}
     </button>
 
   )

@@ -1,0 +1,13 @@
+@import 'tailwindcss'
+
+@theme {
+  /* light-green */
+  --background-color: #F7F9F5;
+  /* dark-green */
+  --nav-color: #2D472F;
+  /* Orange */
+  --accent-color: #FF8242;
+  /* light-pink */
+  --accent-color-light: #FFEAE0;
+
+}

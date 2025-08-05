@@ -1,23 +1,50 @@
-import Input from "../components/Input"
+import Input from '../components/Input'
+import Button from '../components/Button'
+//Type adress fixas senare med google maps?
 
 const AddLoppis = () => {
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('Formulär skickat!')
+  }
 
   return (
     <section>
       <h2>Lägg till en loppis</h2>
       {/*här ska man kunna upload images*/}
 
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <Input
           label='Rubrik'
-          type='text' />
-        <Input label='Adress' type='text' />
-        <Input label='Datum/Tider' type='text' />
-        <Input label='Beskrivning' type='text' />
-        <Input label='Telefonnummer' type='text' />
+          type='text'
+          showLabel={false}
+          required={true} />
+        <Input
+          label='Adress'
+          type='text'
+          showLabel={false}
+          required={true} />
+        <Input
+          label='Datum/Tider'
+          type='text'
+          showLabel={false}
+          required={true} />
+        <Input
+          label='Beskrivning'
+          type='text'
+          showLabel={false} />
+          
+        <select defaultValue='category'>
+          <option value='category'>Kategori</option>
+          <option value='someOption'>Some option</option>
+          <option value='otherOption'>Other option</option>
+        </select>
 
-        <Input label='E-post' type='email' />
-        <Input label='Länk till hemsida' type='url' />
+        <Button
+          text='Lägg till loppis'
+          type='submit'
+          ariaLabel='Skapa loppis' />
 
       </form>
     </section>

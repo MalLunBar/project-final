@@ -1,15 +1,16 @@
-//finns det ett bättre sätt att gömma label? 
 
 
-const Input = ({ type, title, label, value, onChange, required, ariaHidden }) => {
+
+const Input = ({ type, title, label, value, onChange, required, showLabel = true }) => {
   return (
     <>
-      <label
-        htmlFor={title}
-        aria-hidden={ariaHidden}
-      >
-        {label}
-      </label>
+
+      {showLabel && (
+        <label htmlFor={title} className="sr-only">
+          {label}
+        </label>
+      )}
+
       <input
         type={type}
         id={title}

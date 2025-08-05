@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import Input from '../components/Input'
 import Button from '../components/Button'
 //Type adress fixas senare med google maps?
@@ -34,7 +36,7 @@ const AddLoppis = () => {
           label='Beskrivning'
           type='text'
           showLabel={false} />
-          
+
         <select defaultValue='category'>
           <option value='category'>Kategori</option>
           <option value='someOption'>Some option</option>

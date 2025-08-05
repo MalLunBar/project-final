@@ -1,7 +1,7 @@
 
 
 
-const Input = ({ type, title, label, value, onChange, required, showLabel = true }) => {
+const Input = ({ type, title, name, label, value, onChange, required, showLabel = true }) => {
   return (
     <>
 
@@ -15,6 +15,7 @@ const Input = ({ type, title, label, value, onChange, required, showLabel = true
         type={type}
         id={title}
         title={title}
+        name={name}
         value={value}
         onChange={onChange}
         placeholder={label}

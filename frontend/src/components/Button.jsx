@@ -1,17 +1,18 @@
 
 
-const Button = ({ text, icon, type, onClick, ariaLabel }) => {
+const Button = ({ text, icon: Icon, type, onClick, ariaLabel }) => {
   return (
     <button
       type={type}
       onClick={onClick}
       aria-label={ariaLabel}
     >
-      {text && {text}}
-      {icon && <img src={icon} alt={text} />}
+      {text}
+      {Icon && <Icon color='#F88B53'/>}
     </button>
 
   )
 }
 
 export default Button
+

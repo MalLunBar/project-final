@@ -1,16 +1,15 @@
-// import { Icon } from 'lucide-react'
-// import { coconut } from '@lucide/lab';
-import { List } from 'lucide-react'
+import { MapPin } from 'lucide-react'
+import Button from '../components/Button'
+
 
 const Home = () => {
   return (
     <section>
       <h2>Välkommen!</h2>
-      
-      <List color='red' size={48}/>
+      <Button text='Hitta en loppis nära mig' icon={MapPin} />
+      <Button text='button' />
     </section>
   )
 }
 
 export default Home
-

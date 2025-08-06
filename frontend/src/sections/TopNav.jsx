@@ -49,7 +49,6 @@ const TopNav = () => {
                 {menuItems.map(item => (
                   <li
                     key={item.id}
-                    className=''
                   >
                     <MenuItem text={item.text} linkTo={item.linkTo} />
                   </li>

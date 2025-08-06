@@ -22,7 +22,7 @@ const loppisSchema = new mongoose.Schema({
   longitude: {
     type: Number,
   },
-  categoires: {
+  categories: {
     type: [String],
     required: true,
     lowercase: true,

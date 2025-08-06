@@ -44,13 +44,13 @@ router.get("/", async (req, res) => {
 // add a loppis ad
 // ------------- TODO: Add authentication later -----------------------
 router.post('/', async (req, res) => {
-  const { title, startTime, endTime, address, latitude, longitude, categoires, description } = req.body
+  const { title, startTime, endTime, address, latitude, longitude, categories, description } = req.body
 
   try {
 
     // -------------- TODO: validate input ---------------------
 
-    const newLoppis = await new Loppis({ title, startTime, endTime, address, latitude, longitude, categoires, description }).save()
+    const newLoppis = await new Loppis({ title, startTime, endTime, address, latitude, longitude, categories, description }).save()
 
     if (!newLoppis) {
       return res.status(400).json({

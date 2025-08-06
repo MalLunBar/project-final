@@ -1,9 +1,11 @@
 import { Tag } from "lucide-react"
 
 const LoppisCard = ({ loppis }) => {
+
+  console.log("Loppis data in LoppisCard:", loppis)
   return (
     <article>
-      <h3>{loppis.tile}</h3>
+      <h3>{loppis.title}</h3>
       <p>{loppis.address}</p>
 
       {/*if there are any categories, map them here*/}

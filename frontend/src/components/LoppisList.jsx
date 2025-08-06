@@ -8,6 +8,7 @@ const LoppisList = ({ loppisList }) => {
           key={index}
           loppis={loppis} />
       ))}
+      
     </section>
   )
 }

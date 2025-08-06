@@ -1,9 +1,9 @@
 import LoppisCard from "./LoppisCard"
 
-const LoppisList = ({ loppises }) => {
+const LoppisList = ({ loppisList }) => {
   return (
     <section>
-      {loppises.map((loppis, index) => (
+      {loppisList.map((loppis, index) => (
         <LoppisCard
           key={index}
           loppis={loppis} />

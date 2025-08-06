@@ -6,17 +6,20 @@ import LoppisList from "../components/LoppisList"
 const Search = () => {
 
   const [loppisList, setLoppisList] = useState([])
+  const fetchUrl = 'http://localhost:8080/loppis'
 
   useEffect(() => {
     // Simulate fetching loppis data
     const fetchLoppisData = async () => {
       try {
-        const response = await fetch('/api/loppis')
+        const response = await fetch(fetchUrl)
         if (!response.ok) {
           throw new Error('Failed to fetch loppis data')
         }
         const data = await response.json()
-        setLoppisList(data)
+        setLoppisList(data.response.data)
+        console.log(data.response.data)
+
       } catch (error) {
         console.error('Error fetching loppis data:', error)
       } finally {
@@ -45,11 +48,11 @@ const Search = () => {
       <div>
 
         {/* Antalet loppisar på den sökningen? */}
-        {loppisList.length > 0 ? (
+        {/* {loppisList.length > 0 ? (
           <LoppisList loppisList={loppisList} />
         ) : (
           <p>Inga loppisar hittades</p>
-        )}
+        )} */}
 
         <LoppisList loppisList={loppisList} />
 

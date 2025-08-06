@@ -15,3 +15,8 @@
   --color-light: #C2D3B7;
 
 }
+
+.active {
+  text-decoration: underline;
+  text-underline-offset: 0.5rem;
+}

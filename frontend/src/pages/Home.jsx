@@ -3,6 +3,7 @@ import { MapPin, CirclePlus } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import UserForm from '../components/UserForm'
+import Tag from '../components/Tag'
 
 const Home = () => {
   //Test för login knapp 
@@ -60,6 +61,8 @@ const Home = () => {
       <Button text='Lägg till loppis' icon={CirclePlus} />
 
       <h3>Populära Loppisar</h3>
+
+      <Tag text='Barn' />
 
       {/* Loppis Array */}
 

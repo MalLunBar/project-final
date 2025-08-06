@@ -1,10 +1,29 @@
+import { Tag } from "lucide-react"
 
 const LoppisCard = ({ loppis }) => {
   return (
     <article>
       <h3>{loppis.tile}</h3>
+      <p>{loppis.address}</p>
+
+      {/*if there are any categories, map them here*/}
+      <div>
+        {loppis.categories.map((category, index) => (
+          <Tag
+            key={index}
+            text={category} />
+        ))}
+      </div>
+
+
+
+      {/* Description of the loppis */}
+      <p>{loppis.description}</p>
+
+      {/*Array of images*/}
       <p>{loppis.startDate} - {loppis.endDate}</p>
-      <p>{loppis.location}</p>
+
+      <p>{loppis.address}</p>
       {/* Additional loppis details can be added here */}
     </article>
   )

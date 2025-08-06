@@ -41,8 +41,8 @@ const Search = () => {
 
 
       </div>
-      <div>
 
+      <div>
 
         {/* Antalet loppisar på den sökningen? */}
         {loppisList.length > 0 ? (
@@ -52,8 +52,6 @@ const Search = () => {
         )}
 
         <LoppisList loppisList={loppisList} />
-
-
 
       </div>
     </section>

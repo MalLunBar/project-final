@@ -1,0 +1,280 @@
+[
+  {
+    "id": 1,
+    "title": "Vintage Skattjakt",
+    "startTime": "2025-08-09T09:00:00",
+    "endTime": "2025-08-09T12:00:00",
+    "address": "Åsögatan 115, Stockholm",
+    "latitude": 59.3143,
+    "longitude": 18.0845,
+    "categories": [
+      "Böcker",
+      "Elektronik",
+      "Vintage"
+    ],
+    "description": "Unika fynd, allt måste bort!"
+  },
+  {
+    "id": 2,
+    "title": "Barnleksaker & Kläder",
+    "startTime": "2025-08-10T10:00:00",
+    "endTime": "2025-08-10T14:00:00",
+    "address": "Långholmsgatan 12, Stockholm",
+    "latitude": 59.3197,
+    "longitude": 18.0359,
+    "categories": [
+      "Barn",
+      "Kläder"
+    ],
+    "description": "Leksaker, böcker och mer till bra priser!"
+  },
+  {
+    "id": 3,
+    "title": "Trädgårds- och Verktygsrea",
+    "startTime": "2025-08-11T11:00:00",
+    "endTime": "2025-08-11T15:00:00",
+    "address": "Västmannagatan 61, Stockholm",
+    "latitude": 59.3439,
+    "longitude": 18.0535,
+    "categories": [
+      "Trädgård"
+    ],
+    "description": "Perfekt för växtälskare och hemmafixare."
+  },
+  {
+    "id": 4,
+    "title": "Designkläder till Budgetpris",
+    "startTime": "2025-08-12T09:00:00",
+    "endTime": "2025-08-12T14:00:00",
+    "address": "Odengatan 28, Stockholm",
+    "latitude": 59.3432,
+    "longitude": 18.0639,
+    "categories": [
+      "Kläder",
+      "Vintage"
+    ],
+    "description": "Designermode till en bråkdel av priset."
+  },
+  {
+    "id": 5,
+    "title": "Möbelutförsäljning",
+    "startTime": "2025-08-13T10:00:00",
+    "endTime": "2025-08-13T15:00:00",
+    "address": "Karlbergsvägen 75, Stockholm",
+    "latitude": 59.3449,
+    "longitude": 18.0323,
+    "categories": [
+      "Möbler"
+    ],
+    "description": "Vi flyttar – alla möbler måste bort!"
+  },
+  {
+    "id": 6,
+    "title": "Böcker & Konst",
+    "startTime": "2025-08-14T10:30:00",
+    "endTime": "2025-08-14T15:00:00",
+    "address": "Hornsgatan 29, Stockholm",
+    "latitude": 59.3184,
+    "longitude": 18.0613,
+    "categories": [
+      "Böcker",
+      "Blandat"
+    ],
+    "description": "Böcker i massor och lokala konstverk."
+  },
+  {
+    "id": 7,
+    "title": "Husdjurstillbehör & Mer",
+    "startTime": "2025-08-15T11:00:00",
+    "endTime": "2025-08-15T16:00:00",
+    "address": "Sankt Eriksgatan 46, Stockholm",
+    "latitude": 59.3382,
+    "longitude": 18.0321,
+    "categories": [
+      "Husdjur"
+    ],
+    "description": "Leksaker, tillbehör och prylar till husdjur!"
+  },
+  {
+    "id": 8,
+    "title": "Elektronik & Prylar",
+    "startTime": "2025-08-16T09:00:00",
+    "endTime": "2025-08-16T13:00:00",
+    "address": "Sveavägen 60, Stockholm",
+    "latitude": 59.3425,
+    "longitude": 18.0602,
+    "categories": [
+      "Elektronik",
+      "Blandat"
+    ],
+    "description": "Teknikprylar och tillbehör till bra priser!"
+  },
+  {
+    "id": 9,
+    "title": "Allt för Köket",
+    "startTime": "2025-08-17T09:30:00",
+    "endTime": "2025-08-17T13:30:00",
+    "address": "Nytorget 4, Stockholm",
+    "latitude": 59.3134,
+    "longitude": 18.0861,
+    "categories": [
+      "Kök"
+    ],
+    "description": "Tallrikar, köksmaskiner och mer!"
+  },
+  {
+    "id": 10,
+    "title": "Allt Måste Bort!",
+    "startTime": "2025-08-18T10:00:00",
+    "endTime": "2025-08-18T14:00:00",
+    "address": "Tjärhovsgatan 5, Stockholm",
+    "latitude": 59.3162,
+    "longitude": 18.0815,
+    "categories": [
+      "Blandat",
+      "Möbler",
+      "Kläder"
+    ],
+    "description": "Stort urval – passa på!"
+  },
+  {
+    "id": 11,
+    "title": "Bakgårdsfynd",
+    "startTime": "2025-08-19T10:00:00",
+    "endTime": "2025-08-19T14:00:00",
+    "address": "Bondegatan 10, Stockholm",
+    "latitude": 59.3145,
+    "longitude": 18.0867,
+    "categories": [
+      "Trädgård",
+      "Blandat"
+    ],
+    "description": "Kom tidigt – bästa fynden försvinner först!"
+  },
+  {
+    "id": 12,
+    "title": "Familjens Flyttrea",
+    "startTime": "2025-08-20T11:00:00",
+    "endTime": "2025-08-20T15:00:00",
+    "address": "Götgatan 91, Stockholm",
+    "latitude": 59.3148,
+    "longitude": 18.0754,
+    "categories": [
+      "Kläder",
+      "Möbler"
+    ],
+    "description": "Allt till salu till kanonpriser!"
+  },
+  {
+    "id": 13,
+    "title": "Retro-Runda",
+    "startTime": "2025-08-21T10:00:00",
+    "endTime": "2025-08-21T13:00:00",
+    "address": "Ringvägen 115, Stockholm",
+    "latitude": 59.3059,
+    "longitude": 18.0761,
+    "categories": [
+      "Vintage",
+      "Böcker"
+    ],
+    "description": "Retroprylar och samlarföremål."
+  },
+  {
+    "id": 14,
+    "title": "Helgrensning",
+    "startTime": "2025-08-22T09:00:00",
+    "endTime": "2025-08-22T12:30:00",
+    "address": "Birkagatan 20, Stockholm",
+    "latitude": 59.3442,
+    "longitude": 18.0387,
+    "categories": [
+      "Blandat"
+    ],
+    "description": "Storförsäljning med flera familjer!"
+  },
+  {
+    "id": 15,
+    "title": "Studentflytt – Allt Säljs",
+    "startTime": "2025-08-23T10:30:00",
+    "endTime": "2025-08-23T15:00:00",
+    "address": "Kungstensgatan 45, Stockholm",
+    "latitude": 59.3411,
+    "longitude": 18.0617,
+    "categories": [
+      "Elektronik",
+      "Kök"
+    ],
+    "description": "Nästan allt måste bort inför flytt!"
+  },
+  {
+    "id": 16,
+    "title": "Kreativa Hörnet",
+    "startTime": "2025-08-24T11:00:00",
+    "endTime": "2025-08-24T16:00:00",
+    "address": "Högbergsgatan 50, Stockholm",
+    "latitude": 59.3155,
+    "longitude": 18.0633,
+    "categories": [
+      "Böcker",
+      "Vintage"
+    ],
+    "description": "Heminredning och material för skapande."
+  },
+  {
+    "id": 17,
+    "title": "Minimalistens Utrensning",
+    "startTime": "2025-08-25T10:00:00",
+    "endTime": "2025-08-25T14:00:00",
+    "address": "Tomtebogatan 42, Stockholm",
+    "latitude": 59.3423,
+    "longitude": 18.0345,
+    "categories": [
+      "Möbler",
+      "Kök"
+    ],
+    "description": "Allt säljs – enklare liv väntar!"
+  },
+  {
+    "id": 18,
+    "title": "Vindens Hemligheter",
+    "startTime": "2025-08-26T09:00:00",
+    "endTime": "2025-08-26T13:30:00",
+    "address": "Katarina Bangata 75, Stockholm",
+    "latitude": 59.314,
+    "longitude": 18.079,
+    "categories": [
+      "Böcker",
+      "Vintage"
+    ],
+    "description": "Gamla skatter från vinden."
+  },
+  {
+    "id": 19,
+    "title": "Samlarhörnan",
+    "startTime": "2025-08-27T10:00:00",
+    "endTime": "2025-08-27T15:00:00",
+    "address": "Roslagsgatan 30, Stockholm",
+    "latitude": 59.3472,
+    "longitude": 18.0611,
+    "categories": [
+      "Vintage",
+      "Elektronik",
+      "Böcker"
+    ],
+    "description": "Serietidningar, mynt och samlarprylar."
+  },
+  {
+    "id": 20,
+    "title": "Garagerensning",
+    "startTime": "2025-08-28T10:00:00",
+    "endTime": "2025-08-28T14:00:00",
+    "address": "Regeringsgatan 85, Stockholm",
+    "latitude": 59.3359,
+    "longitude": 18.0688,
+    "categories": [
+      "Blandat",
+      "Trädgård"
+    ],
+    "description": "Vi rensar ut garaget – kom och fynda!"
+  }
+]

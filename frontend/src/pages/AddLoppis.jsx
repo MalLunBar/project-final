@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import Input from '../components/Input'
 import Button from '../components/Button'
-//Type adress fixas senare med google maps?
+//Type = adress fixas senare med google maps?
 
 const AddLoppis = () => {
 

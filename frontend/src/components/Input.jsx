@@ -1,22 +1,21 @@
 
 
 
-const Input = ({ type, title, name, label, value, onChange, required, showLabel = true }) => {
+const Input = ({ type, id, label, value, onChange, required, showLabel = true }) => {
   return (
     <>
 
       {showLabel && (
         <label
-          htmlFor={title} className="sr-only">
+          htmlFor={id} className="sr-only">
           {label}
         </label>
       )}
 
       <input
         type={type}
-        id={title}
-        title={title}
-        name={name}
+        id={id}
+        name={id}
         value={value}
         onChange={onChange}
         placeholder={label}

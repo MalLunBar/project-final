@@ -3,9 +3,14 @@ import { useState } from "react"
 import Input from "./Input"
 import Button from "./Button"
 
-const UserForm = ({ type, onSubmit }) => {
+const UserForm = ({ type, onSubmit, onSwitchForm }) => {
 
-  const title = type === 'login' ? 'Logga in' : `${type === 'register' ? 'Registrera' : ''}`
+  const titles = {
+    login: 'Logga in',
+    register: 'Registrera'
+  }
+
+  const title = titles[type] || 'Formulär'
 
   const [formData, setFormData] = useState({
     email: "",
@@ -25,14 +30,24 @@ const UserForm = ({ type, onSubmit }) => {
     })
   }
 
+  const isLogin = type === 'login'
+  const switchText = isLogin
+    ? 'Har du inget konto?'
+    : 'Har du redan ett konto?'
+
+  const switchButtonText = isLogin
+    ? 'Registrera dig här'
+    : 'Logga in här'
+
   return (
     <article>
       <div>
-        <h2>{title}</h2>
+        <h2 className="font-bold">{title}</h2>
       </div>
 
       <form
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-3 my-6 border">
         <Input
           id={`${type}-email`}
           type='email'
@@ -51,7 +66,6 @@ const UserForm = ({ type, onSubmit }) => {
           value={formData.password}
           showLabel={true}
           required={true}
-
         />
 
         <Button
@@ -59,6 +73,19 @@ const UserForm = ({ type, onSubmit }) => {
           type='submit'
           ariaLabel={title}
         />
+
+        <div>
+          <p>
+            {switchText}{' '}
+            <button
+              type="button"
+              onClick={onSwitchForm}
+            >
+              {switchButtonText}
+            </button>
+          </p>
+
+        </div>
       </form>
     </article>
   )

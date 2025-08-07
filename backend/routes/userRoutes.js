@@ -7,12 +7,12 @@ const router = express.Router()
 // register a new user
 router.post('/register', async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { firstName, email, password } = req.body
     // validate input
-    if (!email || !password) {
+    if (!firstName || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email and password are required",
+        message: "Name, email and password are required",
       })
     }
     // validate if email already exists
@@ -20,12 +20,12 @@ router.post('/register', async (req, res) => {
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: "Email already exists",
+        message: "User already exists",
       })
     }
     // create a new user
     const salt = bcrypt.genSaltSync()
-    const user = new User({ email: email.toLowerCase(), password: bcrypt.hashSync(password, salt) })
+    const user = new User({ firstName, email: email.toLowerCase(), password: bcrypt.hashSync(password, salt) })
     await user.save()
 
     res.status(200).json({

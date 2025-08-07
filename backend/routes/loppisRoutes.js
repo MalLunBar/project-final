@@ -41,6 +41,40 @@ router.get("/", async (req, res) => {
   }
 })
 
+// get one loppis by id
+router.get("/:id", async (req, res) => {
+  const { id } = req.params
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        sucess: false,
+        response: null,
+        message: "Invalid ID format."
+      })
+    }
+
+    const loppis = await Loppis.findById(id)
+    if (!loppis) {
+      return res.status(404).json({
+        success: false,
+        response: null,
+        message: "Loppis not found!"
+      })
+    }
+    res.status(200).json({
+      success: true,
+      response: loppis
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch loppis."
+    })
+  }
+})
+
 // add a loppis ad
 // ------------- TODO: Add authentication later -----------------------
 router.post('/', async (req, res) => {

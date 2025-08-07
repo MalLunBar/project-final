@@ -1,11 +1,14 @@
+import { Link } from 'react-router'
 import Tag from './Tag'
 
 const LoppisCard = ({ loppis }) => {
 
-  console.log("Loppis data in LoppisCard:", loppis)
+
   return (
     <article>
-      <h3>{loppis.title}</h3>
+      <Link to={`/loppis/${loppis._id}`}>
+        <h3>{loppis.title}</h3>
+      </Link>
       <p>{loppis.address}</p>
 
       {/*if there are any categories, map them here*/}

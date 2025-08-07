@@ -1,8 +1,10 @@
 import { X } from 'lucide-react'
 import UserForm from "../components/UserForm"
 import useAuthStore from '../stores/useAuthStore'
+import useModalStore from '../stores/useModalStore'
 
 const LoginModal = ({ onClose }) => {
+  const loginMessage = useModalStore(state => state.loginMessage)
   const login = useAuthStore(state => state.login)
   const url = "http://localhost:8080/users/login" // local api
 
@@ -55,6 +57,12 @@ const LoginModal = ({ onClose }) => {
         >
           <X />
         </button>
+        {/* Show optional message */}
+        {loginMessage && (
+          <div className="mb-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
+            {loginMessage}
+          </div>
+        )}
         {/* Login form */}
         <UserForm type='login' onSubmit={handleLogin}></UserForm>
       </div>

@@ -31,7 +31,14 @@ const Home = () => {
   //   setShowPopup(false)
   // }
 
-
+  const handleAdd = () => {
+    if (!user) {
+      openLoginModal('Du måste vara inloggad för att lägga till en loppis!')
+      return
+    }
+    // go to add page
+    console.log('En användare vill lägga till en loppis. Redirect till lägg till sidan...')
+  }
 
   return (
     <section>
@@ -50,7 +57,7 @@ const Home = () => {
           <h2>Välkommen!</h2>
           <Button
             text='Logga in'
-            onClick={openLoginModal}
+            onClick={() => openLoginModal()}
           />
         </>
       )}
@@ -78,7 +85,7 @@ const Home = () => {
       />
 
 
-      <Button text='Lägg till loppis' icon={CirclePlus} />
+      <Button text='Lägg till loppis' icon={CirclePlus} onClick={handleAdd} />
 
       <h3>Populära Loppisar</h3>
 

@@ -21,16 +21,16 @@ const LoginModal = ({ onClose }) => {
       />
       {/* Modal box */}
       <div className="relative bg-white rounded-xl shadow-xl p-6 w-full max-w-md z-10">
-
+        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-5 cursor-pointer text-gray-500 hover:text-black"
         >
           <X />
         </button>
+        {/* Login form */}
         <UserForm type='login' onSubmit={handleLogin}></UserForm>
       </div>
-
     </div>
   )
 }

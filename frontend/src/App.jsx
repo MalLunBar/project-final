@@ -7,8 +7,11 @@ import AddLoppis from './pages/AddLoppis'
 import NotFound from './pages/NotFound'
 import TopNav from './sections/TopNav'
 import BottomNav from './sections/BottomNav'
+import LoginModal from './modals/LoginModal'
+import useModalStore from './stores/useModalStore'
 
 export const App = () => {
+  const { loginModalOpen, closeLoginModal } = useModalStore()
 
   return (
     <BrowserRouter>
@@ -21,6 +24,7 @@ export const App = () => {
         <Route path='/add' element={<AddLoppis />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
+      {loginModalOpen && <LoginModal onClose={closeLoginModal} />}
       <BottomNav />
     </BrowserRouter>
   )

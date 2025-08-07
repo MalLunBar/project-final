@@ -3,62 +3,64 @@ import { MapPin, CirclePlus } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import UserForm from '../components/UserForm'
-import LoginModal from '../modals/LoginModal'
 import useAuthStore from '../stores/useAuthStore'
+import useModalStore from '../stores/useModalStore'
 
 
 const Home = () => {
   const { user, logout } = useAuthStore()
+  const { openLoginModal } = useModalStore()
 
   //Test för login knapp 
-  const [showPopup, setShowPopup] = useState(false)
-  const [formType, setFormType] = useState('login')
-  const [showLogin, setShowLogin] = useState(false)
+  // const [showPopup, setShowPopup] = useState(false)
+  // const [formType, setFormType] = useState('login')
+  // const [showLogin, setShowLogin] = useState(false)
 
-  const handleOpenLogin = () => {
-    console.log('Logga in knapp klickad!')
-    setFormType('login')
-    setShowPopup(true)
+  // const handleOpenLogin = () => {
+  //   console.log('Logga in knapp klickad!')
+  //   setFormType('login')
+  //   setShowPopup(true)
 
-  }
+  // }
 
-  //test av onSubmit. Kan tas bort senare
-  const onSubmit = (email, password) => {
-    console.log("Inskickade värden:")
-    console.log("Email:", email)
-    console.log("Password:", password)
-    setShowPopup(false)
-  }
+  // //test av onSubmit. Kan tas bort senare
+  // const onSubmit = (email, password) => {
+  //   console.log("Inskickade värden:")
+  //   console.log("Email:", email)
+  //   console.log("Password:", password)
+  //   setShowPopup(false)
+  // }
 
 
 
   return (
     <section>
 
+      {/* test av logga in funktion */}
       {user ? (
-        <div>
-          Hej, {user.name}!
+        <>
+          <h2>Välkommen {user.name}!</h2>
           <Button
             text='Logga ut'
             onClick={logout}
           />
-        </div>
+        </>
       ) : (
-        <Button
-          text='Logga in'
-          // onClick={handleOpenLogin}
-          onClick={() => setShowLogin(true)}
-        />
+        <>
+          <h2>Välkommen!</h2>
+          <Button
+            text='Logga in'
+            onClick={openLoginModal}
+          />
+        </>
       )}
 
 
-
-      <h2>Välkommen!</h2>
       <h3>Hitta en loppis nära dig</h3>
 
 
 
-      {showPopup && (
+      {/* {showPopup && (
         <UserForm
           type={formType}
           onSubmit={onSubmit}
@@ -66,8 +68,8 @@ const Home = () => {
             setFormType((prev) => (prev === 'login' ? 'register' : 'login'))
           }
         />
-      )}
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+      )} */}
+
 
 
       <Input

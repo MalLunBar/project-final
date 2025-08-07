@@ -61,8 +61,6 @@ const AddLoppis = () => {
   }, [selectedCategories])
 
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log('Formulär skickat!')
@@ -74,7 +72,7 @@ const AddLoppis = () => {
       {/*här ska man kunna upload images*/}
 
       <form
-        className='flex flex-col gap-4' 
+        className='flex flex-col gap-4'
         onSubmit={handleSubmit}>
         <Input
           label='Rubrik'
@@ -97,27 +95,37 @@ const AddLoppis = () => {
           showLabel={false} />
 
 
-        <div className="dropdown-container">
+        <div className="dropdown-container border border-border rounded-3xl shadow-[0_4px_4px_0_rgba(0,0,0,0.10)] py-2 px-4 w-2/3">
 
-          <div className="flex" onClick={toggleDropdown}>
+          <div className="flex justify-between items-center" onClick={toggleDropdown}>
             Välj kategori
-            {isDropdownOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            {isDropdownOpen ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
           </div>
 
 
           {isDropdownOpen && (
-            <div className="dropdown-list">
-              {categories.map(category => (
-                <label key={category} className="dropdown-item">
-                  <input
-                    type="checkbox"
-                    value={category}
-                    checked={selectedCategories.includes(category)}
-                    onChange={handleCategoryChange}
-                  />
-                  {category}
-                </label>
-              ))}
+            <div className="dropdown-list flex flex-col gap-2 mt-2">
+              {categories.map(category => {
+                const id = `category-${category}`;
+                return (
+                  <div key={category} className="relative">
+                    <input
+                      type="checkbox"
+                      id={id}
+                      value={category}
+                      checked={selectedCategories.includes(category)}
+                      onChange={handleCategoryChange}
+                      className="absolute opacity-0 peer"
+                    />
+                    <label
+                      htmlFor={id}
+                      className="block cursor-pointer px-4 py-2 rounded bg-accent-light peer-checked:bg-accent text-black peer-checked:text-white transition-colors"
+                    >
+                      {category}
+                    </label>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>

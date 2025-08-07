@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { MapPin, CirclePlus } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import UserForm from '../components/UserForm'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 
@@ -10,34 +10,14 @@ import useModalStore from '../stores/useModalStore'
 const Home = () => {
   const { user, logout } = useAuthStore()
   const { openLoginModal } = useModalStore()
-
-  //Test för login knapp 
-  // const [showPopup, setShowPopup] = useState(false)
-  // const [formType, setFormType] = useState('login')
-  // const [showLogin, setShowLogin] = useState(false)
-
-  // const handleOpenLogin = () => {
-  //   console.log('Logga in knapp klickad!')
-  //   setFormType('login')
-  //   setShowPopup(true)
-
-  // }
-
-  // //test av onSubmit. Kan tas bort senare
-  // const onSubmit = (email, password) => {
-  //   console.log("Inskickade värden:")
-  //   console.log("Email:", email)
-  //   console.log("Password:", password)
-  //   setShowPopup(false)
-  // }
+  const navigate = useNavigate()
 
   const handleAdd = () => {
     if (!user) {
       openLoginModal('Du måste vara inloggad för att lägga till en loppis!')
       return
     }
-    // go to add page
-    console.log('En användare vill lägga till en loppis. Redirect till lägg till sidan...')
+    navigate("/add")
   }
 
   return (
@@ -64,20 +44,6 @@ const Home = () => {
 
 
       <h3>Hitta en loppis nära dig</h3>
-
-
-
-      {/* {showPopup && (
-        <UserForm
-          type={formType}
-          onSubmit={onSubmit}
-          onSwitchForm={() =>
-            setFormType((prev) => (prev === 'login' ? 'register' : 'login'))
-          }
-        />
-      )} */}
-
-
 
       <Input
         label='Sök efter loppisar'

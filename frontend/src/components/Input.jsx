@@ -13,6 +13,7 @@ const Input = ({ type, id, label, value, onChange, required, showLabel = true })
       )}
 
       <input
+        className="border border-border rounded-3xl py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-accent"
         type={type}
         id={id}
         name={id}

@@ -69,11 +69,13 @@ const AddLoppis = () => {
   }
 
   return (
-    <section>
+    <section className='font-primary flex flex-col gap-8'>
       <h2>Lägg till en loppis</h2>
       {/*här ska man kunna upload images*/}
 
-      <form onSubmit={handleSubmit}>
+      <form
+        className='flex flex-col gap-4' 
+        onSubmit={handleSubmit}>
         <Input
           label='Rubrik'
           type='text'

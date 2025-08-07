@@ -42,6 +42,7 @@ app.get("/", (req, res) => {
 app.use("/users", userRoutes)
 app.use("/loppis", loppisRoutes)
 
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

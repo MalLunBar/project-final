@@ -1,6 +1,8 @@
 import LoppisCard from "./LoppisCard"
 
 const LoppisList = ({ loppisList }) => {
+
+  
   return (
     <section>
       {loppisList.map((loppis, index) => (

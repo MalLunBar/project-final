@@ -75,4 +75,32 @@ router.post('/', async (req, res) => {
   }
 })
 
+//get all the category from enums in Loppis model
+router.get("/categories", async (req, res) => {
+  try {
+    const categories = Loppis.schema.path("categories").caster.enumValues
+
+    if (!categories || categories.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No categories found."
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      response: categories,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Server error while fetching categories."
+    })
+  }
+})
+
+
+
 export default router

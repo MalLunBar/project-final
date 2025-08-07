@@ -3,12 +3,14 @@ import { MapPin, CirclePlus } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import UserForm from '../components/UserForm'
+import LoginModal from '../modals/LoginModal'
 
 
 const Home = () => {
   //Test för login knapp 
   const [showPopup, setShowPopup] = useState(false)
   const [formType, setFormType] = useState('login')
+  const [showLogin, setShowLogin] = useState(false)
 
   const handleOpenLogin = () => {
     console.log('Logga in knapp klickad!')
@@ -32,7 +34,8 @@ const Home = () => {
 
       <Button
         text='Logga in'
-        onClick={handleOpenLogin}
+        // onClick={handleOpenLogin}
+        onClick={() => setShowLogin(true)}
       />
 
 
@@ -50,6 +53,7 @@ const Home = () => {
           }
         />
       )}
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
 
 
       <Input
@@ -62,7 +66,7 @@ const Home = () => {
 
       <h3>Populära Loppisar</h3>
 
-      
+
 
       {/* Loppis Array */}
 

@@ -1,4 +1,4 @@
-import { Tag } from "lucide-react"
+import Tag from './Tag'
 
 const LoppisCard = ({ loppis }) => {
 
@@ -23,7 +23,7 @@ const LoppisCard = ({ loppis }) => {
       <p>{loppis.description}</p>
 
       {/*Array of images*/}
-      <p>{loppis.startDate} - {loppis.endDate}</p>
+      <p>{loppis.startTime} - {loppis.endTime}</p>
 
       <p>{loppis.address}</p>
       {/* Additional loppis details can be added here */}

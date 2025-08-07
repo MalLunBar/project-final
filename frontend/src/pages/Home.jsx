@@ -4,9 +4,12 @@ import Button from '../components/Button'
 import Input from '../components/Input'
 import UserForm from '../components/UserForm'
 import LoginModal from '../modals/LoginModal'
+import useAuthStore from '../stores/useAuthStore'
 
 
 const Home = () => {
+  const { user, logout } = useAuthStore()
+
   //Test för login knapp 
   const [showPopup, setShowPopup] = useState(false)
   const [formType, setFormType] = useState('login')
@@ -32,11 +35,22 @@ const Home = () => {
   return (
     <section>
 
-      <Button
-        text='Logga in'
-        // onClick={handleOpenLogin}
-        onClick={() => setShowLogin(true)}
-      />
+      {user ? (
+        <div>
+          Hej, {user.name}!
+          <Button
+            text='Logga ut'
+            onClick={logout}
+          />
+        </div>
+      ) : (
+        <Button
+          text='Logga in'
+          // onClick={handleOpenLogin}
+          onClick={() => setShowLogin(true)}
+        />
+      )}
+
 
 
       <h2>Välkommen!</h2>

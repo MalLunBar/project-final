@@ -20,11 +20,11 @@ const LoginModal = ({ onClose }) => {
       const data = await response.json()
       if (!response.ok) {
         console.error("Login failed. Please check you email and password and try again.")
-        // --------------TODO: Show error message in the UI
+        // --------------TODO: Show error message in the UI -----------
         return
       }
       const currentUser = data.response
-      console.log("inloggningen lyckades! Användare: ", currentUser)
+      console.log("inloggningen lyckades! Inloggad användare: ", currentUser.firstName)
       // save in Zustand
       login({ id: currentUser.id, name: currentUser.firstName }, currentUser.accessToken)
       localStorage.setItem('token', data.token); // optional

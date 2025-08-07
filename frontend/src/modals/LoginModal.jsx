@@ -1,11 +1,38 @@
 import { X } from 'lucide-react'
 import UserForm from "../components/UserForm"
+import useAuthStore from '../stores/useAuthStore'
 
 const LoginModal = ({ onClose }) => {
+  const login = useAuthStore(state => state.login)
+  const url = "http://localhost:8080/users/login" // local api
 
-  const handleLogin = () => {
+  const handleLogin = async (email, password) => {
     console.log("logging in")
-    onClose()
+    console.log('email and password from login modal:', email, password)
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        console.error("Login failed. Please check you email and password and try again.")
+        // --------------TODO: Show error message in the UI
+        return
+      }
+      const currentUser = data.response
+      console.log("inloggningen lyckades! Användare: ", currentUser)
+      // save in Zustand
+      login({ id: currentUser.id, name: currentUser.firstName }, currentUser.accessToken)
+      localStorage.setItem('token', data.token); // optional
+      // close modal
+      onClose()
+    } catch (error) {
+      console.error('Login error:', err)
+    }
   }
 
   return (

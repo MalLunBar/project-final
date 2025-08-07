@@ -7,7 +7,7 @@ const router = express.Router()
 // register a new user
 router.post('/register', async (req, res) => {
   try {
-    const { firstName, email, password } = req.body
+    const { firstName, lastName, email, password } = req.body
     // validate input
     if (!firstName || !email || !password) {
       return res.status(400).json({
@@ -25,7 +25,7 @@ router.post('/register', async (req, res) => {
     }
     // create a new user
     const salt = bcrypt.genSaltSync()
-    const user = new User({ firstName, email: email.toLowerCase(), password: bcrypt.hashSync(password, salt) })
+    const user = new User({ firstName, lastName, email: email.toLowerCase(), password: bcrypt.hashSync(password, salt) })
     await user.save()
 
     res.status(200).json({

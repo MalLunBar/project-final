@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Search from './pages/Search'
 import LoppisInfo from './pages/LoppisInfo'
 import Profile from './pages/Profile'
+import SignUp from './pages/SignUp'
 import AddLoppis from './pages/AddLoppis'
 import NotFound from './pages/NotFound'
 import TopNav from './sections/TopNav'
@@ -21,6 +22,7 @@ export const App = () => {
         <Route path='/loppis' element={<Search />} />
         <Route path='/loppis/:loppisId' element={<LoppisInfo />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path='/signup' element={<SignUp />} />
         <Route path='/add' element={<AddLoppis />} />
         <Route path='*' element={<NotFound />} />
       </Routes>

@@ -3,7 +3,7 @@
 const Button = ({ text, icon: Icon, type, onClick, ariaLabel }) => {
   return (
     <button
-      className='bg-accent rounded-3xl py-2 px-4 '
+      className='bg-accent font-semibold rounded-3xl py-2 px-4 '
       type={type}
       onClick={onClick}
       aria-label={ariaLabel}

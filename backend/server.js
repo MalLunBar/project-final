@@ -4,8 +4,9 @@ import mongoose from "mongoose"
 import listEndpoints from "express-list-endpoints"
 
 import loppisRoutes from "./routes/loppisRoutes.js"
-import { Loppis } from "./models/Loppis.js"
+import userRoutes from './routes/userRoutes.js'
 
+// import { Loppis } from "./models/Loppis.js"
 // import data from "./data.json"
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project"
@@ -38,7 +39,7 @@ app.get("/", (req, res) => {
 })
 
 // end point routes
-// app.use("/users", userRoutes)
+app.use("/users", userRoutes)
 app.use("/loppis", loppisRoutes)
 
 // Start the server

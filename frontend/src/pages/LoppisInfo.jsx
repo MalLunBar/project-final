@@ -55,7 +55,7 @@ const LoppisInfo = () => {
       </div>
 
       <div>
-        {loppis.categories.map((category, index) => {
+        {loppis.categories?.map((category, index) => {
           return <Tag
             key={index}
             text={category} />
@@ -72,14 +72,8 @@ const LoppisInfo = () => {
       {/*  liten karta som visar loppisens plats? */}
 
       <div className='flex'>
-        <Button
-          icon={Map}
-          text='Få vägbeskrivning'
-        />
-        <Button
-          icon={CalendarDays}
-          text='Lägg till i kalender'
-        />
+        <Button icon={Map} text='Få vägbeskrivning' />
+        <Button icon={CalendarDays} text='Lägg till i kalender' />
       </div>
     </section>
   )

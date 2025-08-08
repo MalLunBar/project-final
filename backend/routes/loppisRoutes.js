@@ -107,7 +107,6 @@ router.get("/:id", async (req, res) => {
 // add a loppis ad
 // ------------- TODO: Add authentication later -----------------------
 router.post('/', async (req, res) => {
-  console.log("POST /loppis body:", req.body); // <-- se vad som faktiskt skickas
 
   try {
     const startAt = DateTime.fromISO(`${req.body.date}T${req.body.startTime}`, { zone: 'Europe/Stockholm' }).toJSDate()
@@ -126,7 +125,8 @@ router.post('/', async (req, res) => {
     })
 
   } catch (error) {
-    console.error("Error in POST /loppis:", error) // <-- se exakt fel i terminalen
+    console.error("Error in POST /loppis:", error) 
+    
     res.status(500).json({
       success: false,
       response: error,

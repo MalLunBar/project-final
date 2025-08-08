@@ -2,7 +2,7 @@ import { useState } from "react"
 import Input from "../components/Input"
 import Button from "../components/Button"
 
-const SignUp = ({ onSubmit }) => {
+const SignUp = () => {
   const [formData, setFormData] = useState({
     name: "",
     lastName: "",
@@ -14,7 +14,7 @@ const SignUp = ({ onSubmit }) => {
     event.preventDefault()
 
     try {
-      const response = await fetch("http://localhost:8080/register", {
+      const response = await fetch("http://localhost:8080/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +60,9 @@ const SignUp = ({ onSubmit }) => {
       </div>
 
       {/* Ändra de som behöver vara rerquired senare */}
-      <form>
+      <form 
+        onSubmit={handleSubmit} 
+        className="">
         <Input
           id='signup-name'
           type='text'
@@ -99,7 +101,6 @@ const SignUp = ({ onSubmit }) => {
         />
         <Button
           type="submit"
-          onClick={handleSubmit}
           text="Registrera"
           ariaLabel="Registrera">
         </Button>

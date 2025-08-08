@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom'
 import { Clock, MapPin, Navigation, CalendarDays, Map } from 'lucide-react'
 import Tag from '../components/Tag'
 import Button from '../components/Button'
+import Details from '../components/Details'
+import LikeButton from '../components/LikeButton'
 
 const LoppisInfo = () => {
   const { loppisId } = useParams()
@@ -36,7 +38,8 @@ const LoppisInfo = () => {
     <section>
 
       {/* Tillbaka-knapp */}
-      {/* Gilla-knapp */}
+
+      <LikeButton />
 
       {/* BILD */}
 
@@ -59,16 +62,8 @@ const LoppisInfo = () => {
         })}
       </div>
 
-      <div>
-        <span>
-          <Clock />
-          <p>{loppis.startTime} - {loppis.endTime}</p>
-        </span>
-        <span>
-          <MapPin />
-          <p>{loppis.address}</p>
-        </span>
-      </div>
+      <Details icon={Clock} text={`${loppis.startTime} - ${loppis.endTime}`} />
+      <Details icon={MapPin} text={loppis.address} />
 
       {/* Array av fler bilder */}
 

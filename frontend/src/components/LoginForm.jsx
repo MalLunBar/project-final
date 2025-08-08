@@ -20,11 +20,12 @@ const LoginForm = ({ onSubmit }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 my-6">
+      className="flex flex-col gap-8">
       <Input
         id='login-email'
         type='email'
-        label='Email'
+        label='E-post'
+        placeholder='namn@email.se'
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         value={formData.email}
         showLabel={true}
@@ -35,6 +36,7 @@ const LoginForm = ({ onSubmit }) => {
         id='login-password'
         type='password'
         label='Lösenord'
+        placeholder='*****'
         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         value={formData.password}
         showLabel={true}

@@ -11,15 +11,26 @@ const AddLoppis = () => {
   const [categories, setCategories] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-
-  const [title, setTitle] = useState('')
-  const [address, setAddress] = useState('')
-  const [startTime, setStartTime] = useState('')
-  const [endTime, setEndTime] = useState('')
-  const [latitude, setLatitude] = useState('')
-  const [longitude, setLongitude] = useState('')
-  const [description, setDescription] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    title: "",
+    address: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    latitude: "",
+    longitude: "",
+    description: "",
+
+  })
+
+
+  // Generisk onChange-helper
+  const handleChange = (key) => (e) => {
+    setFormData(prev => ({ ...prev, [key]: e.target.value }))
+  }
+
+
 
 
   const handleCategoryChange = (e) => {
@@ -68,11 +79,11 @@ const AddLoppis = () => {
   }, [])
 
   // Funktion för att skicka loppisdata till servern
-  const addLoppis = async (loppisData) => {
+  const addLoppis = async (payload) => {
     const res = await fetch('http://localhost:8080/loppis', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(loppisData),
+      body: JSON.stringify(payload),
     })
 
     const data = await res.json()
@@ -94,27 +105,33 @@ const AddLoppis = () => {
       setSubmitting(true)
 
       const payload = {
-        title,
-        startTime,    // t.ex. "2025-08-08T10:00"
-        endTime,      // t.ex. "2025-08-08T14:00"
-        address,
-        latitude: latitude ? Number(latitude) : undefined,
-        longitude: longitude ? Number(longitude) : undefined,
+
+        title: formData.title,
+        address: formData.address,
+        date: formData.date,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        latitude: formData.latitude ? Number(formData.latitude) : undefined,
+        longitude: formData.longitude ? Number(formData.longitude) : undefined,
         categories: selectedCategories,
-        description
+        description: formData.description,
+
       }
 
       const created = await addLoppis(payload)
       console.log('Loppis added:', created)
 
       // reset 
-      setTitle('')
-      setAddress('')
-      setStartTime('')
-      setEndTime('')
-      setLatitude('')
-      setLongitude('')
-      setDescription('')
+      setFormData({
+        title: "",
+        address: "",
+        date: "",
+        startTime: "",
+        endTime: "",
+        latitude: "",
+        longitude: "",
+        description: "",
+      })
       setSelectedCategories([])
       setIsDropdownOpen(false)
 
@@ -137,33 +154,45 @@ const AddLoppis = () => {
         <Input
           label='Rubrik'
           type='text'
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={formData.title}
+          onChange={handleChange('title')}
           showLabel={false}
           required={true} />
         <Input
           label='Adress'
           type='text'
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          value={formData.address}
+          onChange={handleChange('address')}
+          showLabel={false}
+          required={true} />
+
+        <Input
+          label="Datum"
+          type="date"
+          value={formData.date}
+          onChange={handleChange('date')}
+          showLabel={false}
+          required={true}
+        />
+        <Input
+          label='Starttid'
+          type='time'
+          value={formData.startTime}
+          onChange={handleChange('startTime')}
           showLabel={false}
           required={true} />
         <Input
-          label='Datum/Tider'
-          type='text'
-          value={`${startTime} - ${endTime}`}
-          onChange={(e) => {
-            const [start, end] = e.target.value.split(' - ')
-            setStartTime(start)
-            setEndTime(end)
-          }}
+          label='Sluttid'
+          type='time'
+          value={formData.endTime}
+          onChange={handleChange('endTime')}
           showLabel={false}
-          required={false} />
+          required={true} />
         <Input
           label='Beskrivning'
           type='text'
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={formData.description}
+          onChange={handleChange('description')}
           showLabel={false} />
 
 

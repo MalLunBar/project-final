@@ -1,5 +1,6 @@
+import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
-import UserForm from "../components/UserForm"
+import LoginForm from "../components/LoginForm"
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 
@@ -50,6 +51,8 @@ const LoginModal = ({ onClose }) => {
       />
       {/* Modal box */}
       <div className="relative bg-white rounded-xl shadow-xl p-6 w-full max-w-md z-10">
+        {/* Modal title */}
+        <h2>Logga in</h2>
         {/* Close button */}
         <button
           onClick={onClose}
@@ -59,12 +62,24 @@ const LoginModal = ({ onClose }) => {
         </button>
         {/* Show optional message */}
         {loginMessage && (
-          <div className="mb-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
+          <div className="my-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
             {loginMessage}
           </div>
         )}
+
         {/* Login form */}
-        <UserForm type='login' onSubmit={handleLogin}></UserForm>
+        <LoginForm type='login' onSubmit={handleLogin} />
+        {/* Link to signup page */}
+        <span className='flex mt-4 gap-1 text-sm text-gray-600'>
+          <p>Har du inget konto? </p>
+          <Link
+            to='/signup'
+            className='text-accent hover:underline'
+            onClick={onClose}
+          >
+            Registrera dig
+          </Link>
+        </span>
       </div>
     </div>
   )

@@ -24,7 +24,7 @@ const LoginForm = ({ onSubmit }) => {
       <Input
         id='login-email'
         type='email'
-        label='E-post'
+        label='Email'
         placeholder='namn@email.se'
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         value={formData.email}

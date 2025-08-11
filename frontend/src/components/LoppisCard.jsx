@@ -1,19 +1,21 @@
 import { Link } from 'react-router'
-import { MapPin, Clock } from 'lucide-react'
+import { format } from 'date-fns'
+import { sv } from 'date-fns/locale'
+import { MapPinned, Clock } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
 
 const LoppisCard = ({ loppis }) => {
 
-  // Placeholder image
-  const image = "loppis-placeholder-image.png"
+  const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
+  const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
   return (
     <article className='flex p-2 gap-2 rounded-xl border'>
 
       <img
-        src={image}
+        src={loppis.imageUrl}
         alt={`${loppis._id}-image`}
         className='w-20 -ml-2 -my-2 rounded-l-xl object-cover'
       />
@@ -34,8 +36,8 @@ const LoppisCard = ({ loppis }) => {
             ))}
           </div>
 
-          <Details icon={MapPin} text={loppis.address} />
-          <Details icon={Clock} text={`${loppis.startTime} - ${loppis.endTime}`} />
+          <Details icon={MapPinned} text={address} />
+          <Details icon={Clock} text={dateString} />
 
         </div>
 

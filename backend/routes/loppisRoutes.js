@@ -1,5 +1,6 @@
 import express from "express"
 import mongoose from "mongoose"
+import { DateTime } from "luxon"
 import { Loppis } from "../models/Loppis.js"
 
 const router = express.Router()
@@ -41,6 +42,34 @@ router.get("/", async (req, res) => {
   }
 })
 
+//get all the category from enums in Loppis model
+router.get("/categories", async (req, res) => {
+
+  try {
+    const categories = Loppis.schema.path("categories").caster.enumValues
+
+
+    if (!categories || categories.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No categories found."
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      response: categories,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Server error while fetching categories."
+    })
+  }
+})
+
 // get one loppis by id
 router.get("/:id", async (req, res) => {
   const { id } = req.params
@@ -78,21 +107,16 @@ router.get("/:id", async (req, res) => {
 // add a loppis ad
 // ------------- TODO: Add authentication later -----------------------
 router.post('/', async (req, res) => {
-  const { title, startTime, endTime, address, latitude, longitude, categories, description } = req.body
 
   try {
+    const startAt = DateTime.fromISO(`${req.body.date}T${req.body.startTime}`, { zone: 'Europe/Stockholm' }).toJSDate()
+    const endAt = DateTime.fromISO(`${req.body.date}T${req.body.endTime}`, { zone: 'Europe/Stockholm' }).toJSDate()
 
-    // -------------- TODO: validate input ---------------------
-
-    const newLoppis = await new Loppis({ title, startTime, endTime, address, latitude, longitude, categories, description }).save()
-
-    if (!newLoppis) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Failed to create ad."
-      })
-    }
+    const newLoppis = await new Loppis({
+      ...req.body,
+      startTime: startAt,
+      endTime: endAt
+    }).save()
 
     res.status(201).json({
       success: true,
@@ -101,6 +125,8 @@ router.post('/', async (req, res) => {
     })
 
   } catch (error) {
+    console.error("Error in POST /loppis:", error) 
+    
     res.status(500).json({
       success: false,
       response: error,
@@ -109,31 +135,8 @@ router.post('/', async (req, res) => {
   }
 })
 
-//get all the category from enums in Loppis model
-router.get("/categories", async (req, res) => {
-  try {
-    const categories = Loppis.schema.path("categories").caster.enumValues
 
-    if (!categories || categories.length === 0) {
-      return res.status(404).json({
-        success: false,
-        response: [],
-        message: "No categories found."
-      })
-    }
 
-    res.status(200).json({
-      success: true,
-      response: categories,
-    })
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      response: error,
-      message: "Server error while fetching categories."
-    })
-  }
-})
 
 
 

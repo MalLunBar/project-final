@@ -7,11 +7,17 @@ const loppisSchema = new mongoose.Schema({
     minLength: 5,
     maxLength: 50
   },
+  date: {
+    type: Date,
+    required: true
+  },
   startTime: {
-    type: Date
+    type: String,
+    required: true
   },
   endTime: {
-    type: Date
+    type: String,
+    required: true
   },
   address: {
     type: String,

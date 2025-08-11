@@ -3,12 +3,35 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import Input from '../components/Input'
 import Button from '../components/Button'
 //Type = adress fixas senare med google maps?
+//Gör ett error state för att senare kunna göra validering t.ex. att man måste välja en kategori
+//lägg till en loading state för att visa att det laddar
 
 const AddLoppis = () => {
 
   const [categories, setCategories] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    title: "",
+    address: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    latitude: "",
+    longitude: "",
+    description: "",
+
+  })
+
+
+  // Generisk onChange-helper
+  const handleChange = (key) => (e) => {
+    setFormData(prev => ({ ...prev, [key]: e.target.value }))
+  }
+
+
+
 
   const handleCategoryChange = (e) => {
     const { value, checked } = e.target
@@ -55,15 +78,69 @@ const AddLoppis = () => {
     fetchCategories()
   }, [])
 
+  // Funktion för att skicka loppisdata till servern
+  const addLoppis = async (payload) => {
+    const res = await fetch('http://localhost:8080/loppis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+
+    const data = await res.json()
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || `Failed: ${res.status}`)
+    }
+    return data.response
+  }
+
   // Logga valda kategorier när de ändras
   useEffect(() => {
     console.log('Valda kategorier:', selectedCategories)
   }, [selectedCategories])
 
-
-  const handleSubmit = (e) => {
+  //async/await för att vänta på formulärets submit
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Formulär skickat!')
+    try {
+      setSubmitting(true)
+
+      const payload = {
+
+        title: formData.title,
+        address: formData.address,
+        date: formData.date,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        latitude: formData.latitude ? Number(formData.latitude) : undefined,
+        longitude: formData.longitude ? Number(formData.longitude) : undefined,
+        categories: selectedCategories,
+        description: formData.description,
+
+      }
+
+      const created = await addLoppis(payload)
+      console.log('Loppis added:', created)
+
+      // reset 
+      setFormData({
+        title: "",
+        address: "",
+        date: "",
+        startTime: "",
+        endTime: "",
+        latitude: "",
+        longitude: "",
+        description: "",
+      })
+      setSelectedCategories([])
+      setIsDropdownOpen(false)
+
+    } catch (err) {
+      console.error('Error adding loppis:', err)
+
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -77,21 +154,45 @@ const AddLoppis = () => {
         <Input
           label='Rubrik'
           type='text'
+          value={formData.title}
+          onChange={handleChange('title')}
           showLabel={false}
           required={true} />
         <Input
           label='Adress'
           type='text'
+          value={formData.address}
+          onChange={handleChange('address')}
+          showLabel={false}
+          required={true} />
+
+        <Input
+          label="Datum"
+          type="date"
+          value={formData.date}
+          onChange={handleChange('date')}
+          showLabel={false}
+          required={true}
+        />
+        <Input
+          label='Starttid'
+          type='time'
+          value={formData.startTime}
+          onChange={handleChange('startTime')}
           showLabel={false}
           required={true} />
         <Input
-          label='Datum/Tider'
-          type='text'
+          label='Sluttid'
+          type='time'
+          value={formData.endTime}
+          onChange={handleChange('endTime')}
           showLabel={false}
           required={true} />
         <Input
           label='Beskrivning'
           type='text'
+          value={formData.description}
+          onChange={handleChange('description')}
           showLabel={false} />
 
 
@@ -105,7 +206,7 @@ const AddLoppis = () => {
 
           {isDropdownOpen && (
             <div className="dropdown-list flex flex-col gap-2 mt-2">
-              {categories.map(category => {
+              {categories?.map(category => {
                 const id = `category-${category}`;
                 return (
                   <div key={category} className="relative">
@@ -134,9 +235,10 @@ const AddLoppis = () => {
 
 
         <Button
-          text='Lägg till loppis'
+          text={submitting ? 'Sparar…' : 'Lägg till loppis'}
           type='submit'
-          ariaLabel='Skapa loppis' />
+          ariaLabel='Skapa loppis'
+          disabled={submitting} />
 
       </form>
     </section>

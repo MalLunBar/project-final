@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import { Icon, marker } from 'leaflet'
+import MarkerClusterGroup from 'react-leaflet-cluster'
 import 'leaflet/dist/leaflet.css'
 
 const MapView = () => {
@@ -24,17 +24,20 @@ const MapView = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        {markers.map(marker => (
-          <Marker
-            key={marker.title}
-            position={marker.position}
-            title={marker.title}
-          >
-            <Popup>
-              <h3>{marker.title}</h3>
-            </Popup>
-          </Marker>
-        ))}
+
+        <MarkerClusterGroup>
+          {markers.map(marker => (
+            <Marker
+              key={marker.title}
+              position={marker.position}
+              title={marker.title}
+            >
+              <Popup>
+                <h3>{marker.title}</h3>
+              </Popup>
+            </Marker>
+          ))}
+        </MarkerClusterGroup>
       </MapContainer>
     </section>
   )

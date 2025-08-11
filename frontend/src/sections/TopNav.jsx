@@ -22,7 +22,7 @@ const TopNav = () => {
   ]
 
   return (
-    <header className="sticky top-0 w-full left-0 z-2">
+    <header className="sticky top-0 w-full left-0 z-1001">
       <nav
         className="flex items-center justify-between p-2"
         aria-label="Main"

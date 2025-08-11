@@ -56,9 +56,9 @@ const Search = () => {
         ) : (
           <p>Inga loppisar hittades</p>
         )} */}
-        {/*    
+
         <LoppisList loppisList={loppisList} />
-        */}
+
 
       </div>
     </section>

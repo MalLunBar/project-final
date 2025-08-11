@@ -7,31 +7,49 @@ const loppisSchema = new mongoose.Schema({
     minLength: 5,
     maxLength: 50
   },
-  date: {
-    type: Date,
-    required: true
+  location: {
+    address: {
+      street: String,
+      city: String,
+      postalCode: String,
+      country: {
+        type: String,
+        default: 'Sweden'
+      }
+    },
+    coordinates: {
+      // geoJSON Point format
+      // https://docs.mongodb.com/manual/reference/geojson/#point
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        required: true
+      },
+    },
   },
-  startTime: {
-    type: String,
-    required: true
-  },
-  endTime: {
-    type: String,
-    required: true
-  },
-  address: {
-    type: String,
-  },
-  latitude: {
-    type: Number,
-  },
-  longitude: {
-    type: Number,
-  },
+  dates: [
+    {
+      date: {
+        type: Date,
+        required: true
+      },
+      startTime: {
+        type: String, // HH:MM format
+        required: true
+      },
+      endTime: {
+        type: String, // HH:MM format
+        required: true
+      }
+    }
+  ],
   categories: {
     type: [String],
     required: true,
-    lowercase: true,
     enum: [
       "Vintage",
       "Barn",
@@ -50,11 +68,18 @@ const loppisSchema = new mongoose.Schema({
     type: String,
     maxLength: 500
   },
+  imageUrl: {
+    type: String,
+    default: 'loppis-placeholder-image.png'
+  },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
-
 })
 
 export const Loppis = mongoose.model('Loppis', loppisSchema)

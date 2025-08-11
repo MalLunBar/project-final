@@ -6,8 +6,8 @@ import listEndpoints from "express-list-endpoints"
 import loppisRoutes from "./routes/loppisRoutes.js"
 import userRoutes from './routes/userRoutes.js'
 
-// import { Loppis } from "./models/Loppis.js"
-// import data from "./data.json"
+import { Loppis } from "./models/Loppis.js"
+import loppisData from "./updated_loppis_data.json"
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project"
 mongoose.connect(mongoUrl)
@@ -19,7 +19,7 @@ const app = express()
 // if (process.env.RESET_DATABASE) {
 //   const seedDatabase = async () => {
 //     await Loppis.deleteMany({})
-//     data.forEach(loppis => {
+//     loppisData.forEach(loppis => {
 //       new Loppis(loppis).save()
 //     })
 //   }

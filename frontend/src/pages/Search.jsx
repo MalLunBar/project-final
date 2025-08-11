@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import Input from "../components/Input"
 import LoppisList from "../components/LoppisList"
+import MapView from "../sections/MapView"
 
 const Search = () => {
 
@@ -45,6 +46,8 @@ const Search = () => {
 
       </div>
 
+      <MapView />
+
       <div>
 
         {/* Antalet loppisar på den sökningen? */}
@@ -53,8 +56,9 @@ const Search = () => {
         ) : (
           <p>Inga loppisar hittades</p>
         )} */}
-
+        {/*    
         <LoppisList loppisList={loppisList} />
+        */}
 
       </div>
     </section>

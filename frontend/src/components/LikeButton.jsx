@@ -9,7 +9,7 @@ const LikeButton = ({ liked, onLike }) => {
     <button
       type='button'
       onClick={onLike}
-      className='cursor-pointer'
+      className='cursor-pointer absolute right-2 top-2'
     >
       <Heart color='#F88B53' strokeWidth={stroke} fill={fill} />
     </button>

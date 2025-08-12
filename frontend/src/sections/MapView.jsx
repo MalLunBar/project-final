@@ -2,10 +2,30 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { useEffect } from 'react'
 import LoppisCard from '../components/LoppisCard'
-import L, { marker } from "leaflet"
+import L from "leaflet"
 import { MapPin } from "lucide-react"
 import ReactDOMServer from "react-dom/server"
 import 'leaflet/dist/leaflet.css'
+
+const createCustomClusterIcon = (cluster) => {
+  const count = cluster.getChildCount()
+
+  return L.divIcon({
+    html: `
+      <span class="inline-flex items-center justify-center
+                   w-9 h-9 rounded-full bg-teal-950 text-white
+                   text-[11px] font-semibold ring-2 ring-white shadow">
+        ${count}
+      </span>
+    `,
+    // Ta bort default bakgrund/border från Leaflets divIcon
+    className: "bg-transparent border-0",
+    // Viktigt: detta styr den YTTRE ikonytan (klickyta/placering)
+    iconSize: [36, 36],
+    // Ankra i mitten så den “sitter” på markörens punkt
+    iconAnchor: [18, 18],
+  })
+}
 
 const FlyTo = ({ center, zoom = 11 }) => {
   const map = useMap()
@@ -41,7 +61,13 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
 
         {/* Imperatively move the map when `center` changes */}
         <FlyTo center={center} zoom={zoom} />
-        <MarkerClusterGroup>
+        <MarkerClusterGroup
+          chuckedLoading
+          iconCreateFunction={createCustomClusterIcon}
+        >
+
+
+          {/* Loop through loppisList and create markers */}
           {loppisList.map(loppis => (
             <Marker
               key={loppis._id}
@@ -49,7 +75,7 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
               icon={markerIcon}
               title={loppis.title}
             >
-              <Popup>
+              <Popup className="my-popup">
                 <LoppisCard loppis={loppis} />
               </Popup>
             </Marker>

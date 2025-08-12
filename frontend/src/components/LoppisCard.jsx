@@ -12,23 +12,23 @@ const LoppisCard = ({ loppis }) => {
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
   return (
-    <article className='flex p-2 gap-2 rounded-xl border'>
+    <article className='font-primary flex rounded-xl'>
 
       <img
         src={loppis.imageUrl}
         alt={`${loppis._id}-image`}
-        className='w-20 -ml-2 -my-2 rounded-l-xl object-cover'
+        className='w-20 rounded-l-xl object-cover'
       />
 
-      <div className='flex w-100 justify-between items-start'>
+      <div className='flex justify-between items-start p-4'>
 
-        <div className='flex flex-col'>
+        <div className='flex flex-col gap-2 p-2'>
           <Link to={`/loppis/${loppis._id}`}>
-            <h3>{loppis.title}</h3>
+            <h3 className='font-semibold text-base'>{loppis.title}</h3>
           </Link>
 
           {/*if there are any categories, map them here*/}
-          <div>
+          <div className='flex flex-wrap'>
             {loppis.categories.map((category, index) => (
               <Tag
                 key={index}
@@ -36,8 +36,12 @@ const LoppisCard = ({ loppis }) => {
             ))}
           </div>
 
-          <Details icon={MapPinned} text={address} />
-          <Details icon={Clock} text={dateString} />
+          <Details
+            icon={MapPinned}
+            text={address} />
+          <Details
+            icon={Clock}
+            text={dateString} />
 
         </div>
 

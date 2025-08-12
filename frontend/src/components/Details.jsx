@@ -1,11 +1,11 @@
 const Details = ({ icon: Icon, text }) => {
 
   return (
-    <div className='flex gap-2'>
+    <div className='flex gap-2 items-center'>
       <Icon />
-      <p className='whitespace-pre-line'>
+      <span className='font-md whitespace-pre-line'>
         {text}
-      </p>
+      </span>
     </div>
   )
 }

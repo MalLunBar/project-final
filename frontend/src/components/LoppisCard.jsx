@@ -23,10 +23,13 @@ const LoppisCard = ({ loppis }) => {
       <div className='flex justify-between items-start p-4'>
 
         <div className='flex flex-col gap-2 p-2'>
-          <Link to={`/loppis/${loppis._id}`}>
-            <h3 className='font-semibold text-base'>{loppis.title}</h3>
-          </Link>
+          <div className='flex items-start gap-2'>
+            <Link to={`/loppis/${loppis._id}`}>
+              <h3 className='font-semibold text-base'>{loppis.title}</h3>
+            </Link>
 
+            <LikeButton />
+          </div>
           {/*if there are any categories, map them here*/}
           <div className='flex flex-wrap'>
             {loppis.categories.map((category, index) => (
@@ -45,7 +48,7 @@ const LoppisCard = ({ loppis }) => {
 
         </div>
 
-        <LikeButton />
+
       </div>
 
     </article>

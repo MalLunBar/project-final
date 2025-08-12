@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { useEffect } from 'react'
 import LoppisCard from '../components/LoppisCard'
@@ -52,12 +52,17 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
       <MapContainer
         center={center}
         zoom={11}
-        className='h-[400px] w-full'
+        zoomControl={false}            // stänger av default (som ligger uppe vänster)
+        className='my-map h-[400px] w-full'
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
+
+        {/* Leaflets zoomkontroll – nere till vänster */}
+        <ZoomControl
+          position="bottomleft" />
 
         {/* Imperatively move the map when `center` changes */}
         <FlyTo center={center} zoom={zoom} />

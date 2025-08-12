@@ -22,11 +22,6 @@ const AddLoppis = () => {
     street: "",
     city: "",
     postalCode: "",
-    latitude: "",
-    longitude: "",
-    date: "",
-    startTime: "",
-    endTime: "",
     description: "",
     imageUrl: "",
     categories: [],
@@ -78,10 +73,11 @@ const AddLoppis = () => {
     fetchCategories()
   }, [])
 
+  // Fetch coordinates based on address input
   const fetchCoordinates = async () => {
     setCoordinates(null) // reset coordinates before fetching
-    if (!formData.street || !formData.city || !formData.postalCode) return
-    const address = `${formData.street}, ${formData.postalCode} ${formData.city}`
+    if (!formData.street || !formData.city) return
+    const address = `${formData.street}, ${formData.postalCode} ${formData.city}, Sweden`
     console.log('Fetching coordinates for address:', address)
     try {
       const response = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(address)}`)
@@ -104,7 +100,6 @@ const AddLoppis = () => {
     }
   }
 
-
   // Send loppis data to backend
   const addLoppis = async (payload) => {
     const res = await fetch('http://localhost:8080/loppis', {
@@ -112,7 +107,6 @@ const AddLoppis = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-
     const data = await res.json()
     if (!res.ok || !data.success) {
       throw new Error(data.message || `Failed: ${res.status}`)
@@ -120,46 +114,43 @@ const AddLoppis = () => {
     return data.response
   }
 
-  //async/await för att vänta på formulärets submit
+  // function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       setSubmitting(true)
-
       const payload = {
-
         title: formData.title,
-        address: formData.address,
-        date: formData.date,
-        startTime: formData.startTime,
-        endTime: formData.endTime,
-        latitude: formData.latitude ? Number(formData.latitude) : undefined,
-        longitude: formData.longitude ? Number(formData.longitude) : undefined,
-        categories: selectedCategories,
+        dates: dates,
+        location: {
+          address: {
+            street: formData.street,
+            city: formData.city,
+            postalCode: formData.postalCode,
+          }
+        },
+        categories: formData.categories,
         description: formData.description,
-
       }
-
       const created = await addLoppis(payload)
-      console.log('Loppis added:', created)
-
+      console.log('Loppis added successfully:', created)
       // reset 
       setFormData({
         title: "",
-        address: "",
-        date: "",
-        startTime: "",
-        endTime: "",
-        latitude: "",
-        longitude: "",
+        street: "",
+        city: "",
+        postalCode: "",
         description: "",
+        imageUrl: "",
+        categories: [],
       })
       setSelectedCategories([])
+      setDates([{ date: "", startTime: "", endTime: "" }])
+      setCoordinates(null)
       setIsDropdownOpen(false)
-
+      // Optionally redirect or show success message
     } catch (err) {
       console.error('Error adding loppis:', err)
-
     } finally {
       setSubmitting(false)
     }
@@ -279,7 +270,7 @@ const AddLoppis = () => {
         >
           <legend>Datum & Tider</legend>
           {dates.map((date, index) => (
-            <div key={index} className='flex gap-2 items-center justify-between'>
+            <div key={index} className='flex gap-1 items-center'>
               <Input
                 label="Datum"
                 type="date"
@@ -322,7 +313,7 @@ const AddLoppis = () => {
                     const newDates = dates.filter((_, i) => i !== index)
                     setDates(newDates)
                   }}
-                  className='text-red-500 hover:text-red-700'
+                  ariaLabel="Ta bort datum"
                 />
               )}
             </div>

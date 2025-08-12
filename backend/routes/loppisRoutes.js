@@ -109,14 +109,8 @@ router.get("/:id", async (req, res) => {
 router.post('/', async (req, res) => {
 
   try {
-    const startAt = DateTime.fromISO(`${req.body.date}T${req.body.startTime}`, { zone: 'Europe/Stockholm' }).toJSDate()
-    const endAt = DateTime.fromISO(`${req.body.date}T${req.body.endTime}`, { zone: 'Europe/Stockholm' }).toJSDate()
-
-    const newLoppis = await new Loppis({
-      ...req.body,
-      startTime: startAt,
-      endTime: endAt
-    }).save()
+    const newLoppis = new Loppis(req.body);
+    await newLoppis.save()
 
     res.status(201).json({
       success: true,
@@ -125,8 +119,8 @@ router.post('/', async (req, res) => {
     })
 
   } catch (error) {
-    console.error("Error in POST /loppis:", error) 
-    
+    console.error("Error in POST /loppis:", error)
+
     res.status(500).json({
       success: false,
       response: error,

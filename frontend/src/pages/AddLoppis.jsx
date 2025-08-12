@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronUp, Camera } from 'lucide-react'
+import { ChevronDown, ChevronUp, Camera, Trash2 } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
 import Input from '../components/Input'
 import Button from '../components/Button'
@@ -35,7 +35,6 @@ const AddLoppis = () => {
   // Generisk onChange-helper
   const handleChange = (key) => (e) => {
     setFormData(prev => ({ ...prev, [key]: e.target.value }))
-    console.log(formData)
   }
 
   const handleCategoryChange = (e) => {
@@ -171,7 +170,7 @@ const AddLoppis = () => {
       <h2>Lägg till en loppis</h2>
 
       <form
-        className='flex flex-col gap-6'
+        className='flex flex-col gap-8'
         onSubmit={handleSubmit}>
 
         {/* loppis details */}
@@ -181,7 +180,7 @@ const AddLoppis = () => {
           <legend>Om din loppis</legend>
 
           {/* image upload placeholder */}
-          <div className='flex py-10 w-full border-2 border-border border-dashed rounded-xl flex-col items-center justify-cednter gap-4'>
+          <div className='flex py-10 w-full border-2 border-border border-dashed rounded-xl flex-col items-center justify-center gap-4'>
             <Camera size={50} />
             <p className='text-center'>Bilduppladdning kommer snart!</p>
           </div>
@@ -280,7 +279,7 @@ const AddLoppis = () => {
         >
           <legend>Datum & Tider</legend>
           {dates.map((date, index) => (
-            <div key={index} className='flex gap-2'>
+            <div key={index} className='flex gap-2 items-center justify-between'>
               <Input
                 label="Datum"
                 type="date"
@@ -316,26 +315,23 @@ const AddLoppis = () => {
                 showLabel={false}
                 required={true} />
               {dates.length > 1 && (
-                <button
+                <Button
+                  icon={Trash2}
                   type="button"
                   onClick={() => {
                     const newDates = dates.filter((_, i) => i !== index)
                     setDates(newDates)
                   }}
                   className='text-red-500 hover:text-red-700'
-                >
-                  Ta bort
-                </button>
+                />
               )}
             </div>
           ))}
-          <button
+          <Button
+            text="+ Lägg till datum"
             type="button"
             onClick={() => setDates([...dates, { date: "", startTime: "", endTime: "" }])}
-            className='text-blue-500 hover:text-blue-700'
-          >
-            + Lägg till datum
-          </button>
+          />
         </fieldset>
 
         {/* Submit button */}

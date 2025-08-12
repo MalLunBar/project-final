@@ -1,6 +1,10 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { useEffect } from 'react'
+import LoppisCard from '../components/LoppisCard'
+import L, { marker } from "leaflet"
+import { MapPin } from "lucide-react"
+import ReactDOMServer from "react-dom/server"
 import 'leaflet/dist/leaflet.css'
 
 const FlyTo = ({ center, zoom = 11 }) => {
@@ -13,19 +17,18 @@ const FlyTo = ({ center, zoom = 11 }) => {
   return null
 }
 
-const MapView = ({ center = [59.3293, 18.0686], zoom = 11 }) => {
+const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
 
-
-  // You can replace this with dynamic data if needed
-  const markers = [
-    { position: [59.3293, 18.0686], title: 'Loppis 1' },
-    { position: [59.3326, 18.0649], title: 'Loppis 2' },
-    { position: [59.3269, 18.0710], title: 'Loppis 3' },
-  ]
+  // Create a Leaflet divIcon with Lucide SVG
+  const markerIcon = L.divIcon({
+    html: ReactDOMServer.renderToString(<MapPin size={32} fill='#FF8242' />),
+    className: "", // Remove default Leaflet styles
+    iconSize: [32, 32],
+    iconAnchor: [16, 16], // Adjust so the "point" is at the right place
+  })
 
   return (
     <section>
-      <h2>Map View</h2>
       <MapContainer
         center={center}
         zoom={11}
@@ -38,16 +41,16 @@ const MapView = ({ center = [59.3293, 18.0686], zoom = 11 }) => {
 
         {/* Imperatively move the map when `center` changes */}
         <FlyTo center={center} zoom={zoom} />
-
         <MarkerClusterGroup>
-          {markers.map(marker => (
+          {loppisList.map(loppis => (
             <Marker
-              key={marker.title}
-              position={marker.position}
-              title={marker.title}
+              key={loppis._id}
+              position={[loppis.location.coordinates.coordinates[1], loppis.location.coordinates.coordinates[0]]}
+              icon={markerIcon}
+              title={loppis.title}
             >
               <Popup>
-                <h3>{marker.title}</h3>
+                <LoppisCard loppis={loppis} />
               </Popup>
             </Marker>
           ))}

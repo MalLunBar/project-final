@@ -83,7 +83,7 @@ const Search = () => {
         {error && <p className="text-red-600">{error}</p>}
       </div>
 
-      <MapView center={mapCenter} />
+      <MapView loppisList={loppisList} center={mapCenter} />
 
       <div>
 

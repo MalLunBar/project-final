@@ -55,14 +55,13 @@ const LoppisInfo = () => {
 
 
       {/* Titel och plats */}
-
       <div>
-        <div className='flex justify-between'>
+        <div className='flex justify-between gap'>
           <h2>{loppis.title}</h2>
-          <span>
-            <Navigation />
+          <div className='flex items-center gap-1'>
+            <Navigation fill='#FF8242' stroke='#FF8242' />
             <p>2 km bort</p>
-          </span>
+          </div>
         </div>
         <p>{loppis.location.address.city}</p>
       </div>
@@ -78,7 +77,6 @@ const LoppisInfo = () => {
       </div>
 
       {/* Detaljer */}
-
       <div>
         <Details
           icon={Clock}
@@ -98,15 +96,16 @@ const LoppisInfo = () => {
         />
       </div>
 
-
       {/* Array av fler bilder */}
 
+      {/* Beskrivning */}
       <p>{loppis.description}</p>
 
       {/*  liten karta som visar loppisens plats? */}
 
-      <div className='flex'>
-        <Button icon={Map} text='Få vägbeskrivning' />
+      {/* Knappar */}
+      <div className='flex flex-wrap gap-2'>
+        <Button icon={Map} text='Vägbeskrivning' />
         <Button icon={CalendarDays} text='Lägg till i kalender' />
       </div>
     </section>

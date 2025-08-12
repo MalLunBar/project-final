@@ -157,18 +157,18 @@ const AddLoppis = () => {
   }
 
   return (
-    <section className='font-primary flex flex-col gap-8 px-4 py-8 mx-auto max-w-xl  mb-20 md:my-8 rounded-lg bg-white shadow-lg'>
-      <h2>Lägg till en loppis</h2>
+    <section className='font-primary flex flex-col gap-8 px-4 py-8 mx-auto max-w-2xl  mb-20 md:my-8 rounded-lg bg-white shadow-lg'>
+      <h2 className='text-2xl font-semibold py-2'>Lägg till en loppis</h2>
 
       <form
-        className='flex flex-col gap-8'
+        className='flex flex-col gap-6 divide-y divide-border'
         onSubmit={handleSubmit}>
 
         {/* loppis details */}
         <fieldset
-          className='flex p-2 flex-col gap-4'
+          className='flex p-2 flex-col gap-4 pb-8'
         >
-          <legend>Om din loppis</legend>
+          <legend className='font-semibold text-lg pb-2'>Beskrivning</legend>
 
           {/* image upload placeholder */}
           <div className='flex py-10 w-full border-2 border-border border-dashed rounded-xl flex-col items-center justify-center gap-4'>
@@ -192,7 +192,7 @@ const AddLoppis = () => {
 
           {/* categories dropdown */}
           {/* Bryt ut kod till komponent istället??? */}
-          <div className="dropdown-container border border-border rounded-3xl shadow-[0_4px_4px_0_rgba(0,0,0,0.10)] py-2 px-4 w-full">
+          <div className="dropdown-container border border-border rounded-3xl py-2 px-4 w-full">
             <div className="flex justify-between items-center" onClick={toggleDropdown}>
               Välj kategori(er)
               {isDropdownOpen ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
@@ -227,9 +227,9 @@ const AddLoppis = () => {
 
         {/* loppis location */}
         <fieldset
-          className='flex p-2 flex-col gap-4'
+          className='flex p-2 flex-col gap-4 pb-8'
         >
-          <legend>Plats</legend>
+          <legend className='font-semibold text-lg pb-2'>Plats</legend>
           <Input
             label='Gatuadress*'
             type='text'
@@ -266,11 +266,11 @@ const AddLoppis = () => {
 
         {/* loppis dates */}
         <fieldset
-          className='flex p-2 flex-col gap-4'
+          className='flex p-2 flex-col gap-4 pb-8'
         >
-          <legend>Datum & Tider</legend>
+          <legend className='font-semibold text-lg pb-2' >Datum & Tider</legend>
           {dates.map((date, index) => (
-            <div key={index} className='flex gap-1 items-center'>
+            <div key={index} className='flex gap-2 flex-col md:flex-row md:items-center'>
               <Input
                 label="Datum"
                 type="date"
@@ -316,10 +316,11 @@ const AddLoppis = () => {
                   ariaLabel="Ta bort datum"
                 />
               )}
+
             </div>
           ))}
           <Button
-            text="+ Lägg till datum"
+            text="+ Nytt datum"
             type="button"
             onClick={() => setDates([...dates, { date: "", startTime: "", endTime: "" }])}
           />

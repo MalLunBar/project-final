@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
 import { Map, List } from "lucide-react"
+import SearchFilters from "../sections/SearchFilters"
 import ListView from "../sections/ListView"
 import MapView from "../sections/MapView"
 import Input from "../components/Input"
@@ -72,10 +73,8 @@ const Search = () => {
   return (
     <main className='h-screen'>
 
+      {/* Search input */}
       {/* Search Filters */}
-
-
-
 
       {isMobile ? (
         // Mobile: toggle between map and list view
@@ -117,27 +116,24 @@ const Search = () => {
       ) : (
         // Desktop: show both views side-by-side
         <div className='grid h-full grid-cols-[2fr_6fr_4fr]'>
-          <div>
-            <h3>Search filters</h3>
-            <form onSubmit={onSubmit}>
-              <Input
-                label='Sök stad/ort'
-                type='text'
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Ex. Stockholm, Uppsala, Lund…"
-              />
-            </form>
-            {isSearching && <p>Söker…</p>}
-            {error && <p className="text-red-600">{error}</p>}
-          </div>
+          <SearchFilters />
           <MapView loppisList={loppisList} center={mapCenter} />
           <ListView loppisList={loppisList} />
         </div>
       )}
 
 
-
+      {/* <form onSubmit={onSubmit}>
+        <Input
+          label='Sök stad/ort'
+          type='text'
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Ex. Stockholm, Uppsala, Lund…"
+        />
+      </form>
+      {isSearching && <p>Söker…</p>}
+      {error && <p className="text-red-600">{error}</p>} */}
 
 
 
@@ -147,12 +143,6 @@ const Search = () => {
         ) : (
           <p>Inga loppisar hittades</p>
         )} */}
-
-
-
-
-
-
 
 
     </main>

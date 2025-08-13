@@ -11,7 +11,13 @@ import SmallMap from '../components/SmallMap'
 
 const AddLoppis = () => {
 
-  const { user } = useAuthStore.getState()
+
+  //OM vi bara tar user från state KAN den bli null vid första hämtningen
+  // const { user } = useAuthStore.getState()
+  // const userId = user?._id ?? user?.id
+
+  //Ta user från store istället
+  const user = useAuthStore((s) => s.user)
   const userId = user?._id ?? user?.id
 
   const [categories, setCategories] = useState([])
@@ -121,6 +127,12 @@ const AddLoppis = () => {
   // function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    if (!userId) {
+      console.error("Ingen användare - kan inte skapa loppis.")
+      // valfritt: visa ett UI-meddelande här
+      return
+    }
     try {
       setSubmitting(true)
       const payload = {

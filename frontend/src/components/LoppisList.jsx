@@ -5,7 +5,7 @@ const LoppisList = ({ loppisList }) => {
 
   return (
     <section className='flex p-2 flex-col gap-2'>
-      {loppisList.map((loppis, index) => (
+      {loppisList?.map((loppis, index) => (
         <LoppisCard
           key={index}
           loppis={loppis} />

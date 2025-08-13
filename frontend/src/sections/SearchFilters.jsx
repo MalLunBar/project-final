@@ -66,7 +66,7 @@ const SearchFilters = ({ onSubmit }) => {
           value={query.address}
           onChange={handleChange('address')}
           showLabel={true}
-          required={true}
+          required={false}
           placeholder='Skriv stad eller adress'
         />
 

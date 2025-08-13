@@ -1,41 +1,58 @@
-import { use } from "react"
+
 import { useState, useEffect } from "react"
+import useAuthStore from "../stores/useAuthStore"
+import LoppisList from "../components/LoppisList"
 
 const Profile = ({ name }) => {
+
+  const user = useAuthStore((s) => s.user)           // läs direkt från store
+  const userId = user?._id ?? user?.id               // funkar oavsett id/_id
 
   const [loppisData, setLoppisData] = useState([])
   const [error, setError] = useState(null)
   const [emptyMsg, setEmptyMsg] = useState("")
 
-  // Hämta userId – antingen via prop eller (tillfälligt) localStorage
-  const userId = userIdProp || localStorage.getItem("userId")
+
+
 
   useEffect(() => {
-    if (!userId) {
-      setError("Ingen användare inloggad (userID saknas).")
-      return
-    }
+    if (!userId) return
 
-    const controller = new AbortController()
-    const fetchUrl = 'http://localhost:8080/loppis/user'
-    fetchUrl.searchParams.set('userId', userId)
+
+    const fetchUrl = new URL("http://localhost:8080/loppis/user")
+    fetchUrl.searchParams.set("userId", String(userId))
+
 
 
     const fetchLoppisData = async () => {
       try {
+        setError(null)
+        setEmptyMsg("")
+
         const response = await fetch(fetchUrl)
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
+
+
+        if (response.status === 404) {
+          setLoppisData([])
+          setEmptyMsg("Inga loppisar hittades för denna användare.")
+          return
         }
-        const data = await response.json();
-        return data.response; // Assuming the response structure
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null)
+          throw new Error(errorData?.message || "Något gick fel vid hämtning av loppisdata.")
+        }
+
+        const data = await response.json()
+        setLoppisData(Array.isArray(data.response) ? data.response : [])
+
       } catch (error) {
-        console.error('Failed to fetch loppis data:', error);
-        return [];
+        setError(error.message || "Ett okänt fel inträffade.")
       }
     }
+    fetchLoppisData()
+  }, [userId])
 
-  })
 
 
 
@@ -44,13 +61,23 @@ const Profile = ({ name }) => {
   return (
     <section>
       <h2>Hello, {name}</h2>
+
       <h3>Mina Loppisar</h3>
-      {/*Array av LoppisCard sen*/}
+      {error && <p className="text-red-500">{error}</p>}
+      {!error && loppisData.length > 0 && (
+        <LoppisList
+          loppisData={loppisData}
+          showEdit={false} // Om du vill visa redigeringsknapp, sätt till true
+        //onEdit={(loppis) => ... öppna modal/route för edit här} 
+        />
+      )}
+      {!error && loppisData.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
 
       <h3>Mina Favoriter</h3>
       {/*Array av LoppisCard*/}
     </section>
   )
 }
+
 
 export default Profile

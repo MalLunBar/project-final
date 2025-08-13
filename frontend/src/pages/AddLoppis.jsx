@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import useAuthStore from "../stores/useAuthStore";
 import { ChevronDown, ChevronUp, Camera, Trash2 } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
 import Input from '../components/Input'
@@ -9,6 +10,9 @@ import SmallMap from '../components/SmallMap'
 //lägg till en loading state för att visa att det laddar
 
 const AddLoppis = () => {
+
+  const { user } = useAuthStore.getState()
+  const userId = user?._id ?? user?.id
 
   const [categories, setCategories] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
@@ -131,6 +135,7 @@ const AddLoppis = () => {
         },
         categories: formData.categories,
         description: formData.description,
+        createdBy: userId,
       }
       const created = await addLoppis(payload)
       console.log('Loppis added successfully:', created)

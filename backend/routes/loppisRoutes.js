@@ -1,6 +1,5 @@
 import express from "express"
 import mongoose from "mongoose"
-import { DateTime } from "luxon"
 import { Loppis } from "../models/Loppis.js"
 
 const router = express.Router()

@@ -30,6 +30,7 @@ const LoginModal = ({ onClose }) => {
       console.log("inloggningen lyckades! Inloggad användare: ", currentUser.firstName)
       // save in Zustand
       login({ id: currentUser.id, name: currentUser.firstName }, currentUser.accessToken)
+
       localStorage.setItem('token', data.token); // optional
       // close modal
       onClose()

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import Input from "../components/Input"
 import LoppisList from "../components/LoppisList"
 import MapView from "../sections/MapView"
+import AutocompleteInput from "../components/AutocompleteInput"
 
 const Search = () => {
   const [loppisList, setLoppisList] = useState([])
@@ -70,12 +71,17 @@ const Search = () => {
 
 
         <form onSubmit={onSubmit}>
-          <Input
-            label='Sök stad/ort'
-            type='text'
+          <AutocompleteInput
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={setQuery}
+            onSelect={(opt) => {
+              setQuery(opt.label)
+              setMapCenter(opt.center) // → MapView flyger
+            }}
             placeholder="Ex. Stockholm, Uppsala, Lund…"
+            minChars={2}
+            debounceMs={200}
+            maxVisible={8}
           />
         </form>
 

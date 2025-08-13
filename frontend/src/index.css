@@ -9,7 +9,7 @@
   /* använd vanliga CSS för “w-[300px]” */
   width: 300px;
   height: auto;
-  z-index: 800 !important;
+
 
   /* och @apply för vanliga utilities (utan hakparenteser) */
   @apply bg-white rounded-lg shadow-lg p-0 m-0;

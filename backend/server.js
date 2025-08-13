@@ -45,39 +45,59 @@ app.use("/loppis", loppisRoutes)
 
 // --- Geocoding route (Nominatim proxy) ---
 app.get("/api/geocode", async (req, res) => {
-  const q = req.query.q
+  const q = req.query.q?.toString().trim()
   if (!q) return res.status(400).json({ error: "Missing q" })
 
-  // Build Nominatim URL
+  const limit = Number(req.query.limit ?? 200)
+  const language = (req.query.language ?? "sv").toString()
+
   const url = new URL("https://nominatim.openstreetmap.org/search")
-  url.searchParams.set("q", String(q))
-  url.searchParams.set("format", "json")
-  url.searchParams.set("limit", "1")
-  url.searchParams.set("addressdetails", "1")
+  url.searchParams.set("q", q)
+  url.searchParams.set("format", "jsonv2") // kompakt standard
+  url.searchParams.set("limit", limit)      // hämta lite fler, filtrera sen
   url.searchParams.set("countrycodes", "se")
 
   try {
-    const r = await fetch(url, {
+    const r = await fetch(url.toString(), {
       headers: {
-        // Required by Nominatim policy: identify your app + contact
         "User-Agent": `LoppisApp/1.0 (${process.env.GEOCODER_CONTACT ?? "malinelundgren1991@gmail.com"})`,
         "Accept": "application/json",
+        "Accept-Language": language,
       },
     })
-    if (!r.ok) {
-      return res.status(r.status).json({ error: "Geocoding failed" })
-    }
+    if (!r.ok) return res.status(r.status).json({ error: "Geocoding failed" })
+
     const data = await r.json()
-    res.json(data)
+
+    const allowed = new Set(["city", "town", "village", "hamlet", "locality"])
+    const getClass = (d) => d.class ?? d.category // robust för olika format
+
+    const filtered = (Array.isArray(data) ? data : [])
+      .filter(d => getClass(d) === "place" && allowed.has(d.type))
+      .sort((a, b) => (a.display_name || "").localeCompare(b.display_name || "", "sv"))
+      .slice(0, limit)
+
+
+    const result = filtered.map(d => ({
+      name: d.display_name,
+      lat: Number(d.lat),
+      lon: Number(d.lon),
+      type: d.type
+    }))
+
+    console.log("Efter filtrering:", result);
+    res.json(result)
+
   } catch (e) {
     console.error("Geocode proxy error:", e)
     res.status(500).json({ error: "Upstream error" })
   }
 })
+
 // --- End geocoding route ---
 
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`)
 })

@@ -38,8 +38,15 @@
   /* light-gray */
   --color-border: #E2E2E2;
 
+  /* lighter green */
+  --color-hover: #E9F0E4;
+
   /* green */
   --color-light: #C2D3B7;
+
+  /* darker green */
+  --color-text: #799466;
+
 
 }
 

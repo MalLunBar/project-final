@@ -42,7 +42,7 @@ const LoginModal = ({ onClose }) => {
     <div
       role='dialog'
       aria-labelledby='login'
-      className='fixed inset-0 z-50 flex items-center justify-center'
+      className='fixed inset-0 z-1200 flex items-center justify-center'
     >
       {/* Backdrop overlay (page behind is dimmed) */}
       <div
@@ -50,7 +50,7 @@ const LoginModal = ({ onClose }) => {
         onClick={onClose}
       />
       {/* Modal box */}
-      <div className="relative flex flex-col gap-10 bg-background rounded-xl shadow-xl py-14 px-10  w-full max-w-md z-10">
+      <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl py-14 px-10  w-full max-w-md z-10">
         {/* Modal title */}
         <h2>Logga in</h2>
         {/* Close button */}

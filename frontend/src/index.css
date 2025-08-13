@@ -4,6 +4,9 @@
 
 /*Leaflet "components"*/
 
+* {
+  font-family: var(--font-primary)
+}
 
 .my-popup .leaflet-popup-content-wrapper {
   /* använd vanliga CSS för “w-[300px]” */

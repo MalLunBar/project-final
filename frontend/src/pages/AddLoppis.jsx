@@ -157,7 +157,7 @@ const AddLoppis = () => {
   }
 
   return (
-    <section className='font-primary flex flex-col gap-8 px-4 py-8 mx-auto max-w-2xl  mb-20 md:my-8 rounded-lg bg-white shadow-lg'>
+    <section className='flex flex-col gap-8 px-4 py-8 mx-auto max-w-2xl  mb-20 md:my-8 rounded-lg bg-white shadow-lg'>
       <h2 className='text-2xl font-semibold py-2'>Lägg till en loppis</h2>
 
       <form

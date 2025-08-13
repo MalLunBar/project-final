@@ -64,7 +64,7 @@ const Search = () => {
   }
 
   return (
-    <section className="font-primary">
+    <section className="">
       <div>
         <h2>Hitta en loppis</h2>
 

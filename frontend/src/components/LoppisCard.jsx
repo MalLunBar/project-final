@@ -12,7 +12,7 @@ const LoppisCard = ({ loppis }) => {
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
   return (
-    <article className='font-primary flex rounded-xl'>
+    <article className='flex rounded-xl'>
 
       <img
         src={loppis.imageUrl}

@@ -24,7 +24,7 @@ const TopNav = () => {
   ]
 
   return (
-    <header className="sticky top-0 w-full left-0 z-1100 font-primary bg-white border-b border-border shadow-sm">
+    <header className="sticky top-0 w-full left-0 z-1100 bg-white border-b border-border shadow-sm">
       <nav
         className="flex items-center justify-between p-3 lg:p-4"
         aria-label="Main"

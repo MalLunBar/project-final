@@ -3,8 +3,9 @@ import { NavLink } from 'react-router-dom'
 const MenuItem = ({ text, linkTo }) => {
   return (
     <NavLink
-      className='p-2'
-      to={linkTo}>
+      className='font-medium text-gray-700 p-2 hover:bg-hover rounded'
+      to={linkTo}
+    >
       {text}
     </NavLink>
   )

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Squash as Hamburger } from 'hamburger-react'
-import { CircleUserRound, House, Moon } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { CircleUserRound, Moon } from 'lucide-react'
 import Menu from '../components/Menu'
 import MenuItem from '../components/MenuItem'
 import NavItem from '../components/NavItem'
+import MenuLogo from '../components/MenuLogo'
 
 const TopNav = () => {
 
@@ -16,31 +16,33 @@ const TopNav = () => {
   }
 
   const menuItems = [
-    { id: 1, text: 'Hem', linkTo: '/' },
-    { id: 2, text: 'Hitta en loppis', linkTo: '/loppis' },
-    { id: 3, text: 'Lägg till loppis', linkTo: '/add' },
+    { id: 1, text: 'HEM', linkTo: '/' },
+    { id: 2, text: 'SÖK LOPPIS', linkTo: '/loppis' },
+    { id: 3, text: 'LÄGG TILL LOPPIS', linkTo: '/add' },
+    { id: 4, text: 'OM OSS', linkTo: '/about' },
+    { id: 5, text: 'KONTAKT', linkTo: '/contact' },
   ]
 
   return (
     <header className="sticky top-0 w-full left-0 z-1100 font-primary bg-white border-b border-border shadow-sm">
       <nav
-        className="flex items-center justify-between p-3 md:p-5"
+        className="flex items-center justify-between p-3 lg:p-4"
         aria-label="Main"
       >
 
         {/* Mobile Navigation */}
-        <div className='md:hidden'>
-          <Hamburger toggled={isOpen} size={24} toggle={setIsOpen} label='Show menu' rounded className='text-text' />
-
+        <div className='lg:hidden'>
           {isOpen &&
             <div
-              className='fixed left-0 top-12 w-[60%] h-full bg-background p-2'
+              className='fixed left-0 top-0 w-[70%] h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
               onClick={handleMenu}
             >
+              {/* show menulogo here? */}
               <Menu type='mobile'>
                 {menuItems.map(item => (
                   <li
                     key={item.id}
+                    className='pb-4'
                   >
                     <MenuItem text={item.text} linkTo={item.linkTo} />
                   </li>
@@ -48,21 +50,14 @@ const TopNav = () => {
               </Menu>
             </div>
           }
+          <Hamburger toggled={isOpen} size={24} toggle={setIsOpen} label='Show menu' rounded />
         </div>
 
-        {/* Logo */}
-        <Link
-          className='hover:text-text'
-          to='/'
-        >
-          <div className='flex gap-1 md:gap-2'>
-            <House strokeWidth={3} className='w-[22px] md:w-[24px] text-text' />
-            <h1 className='font-semibold text-lg md:text-xl'>Runt Hörnet</h1>
-          </div>
-        </Link>
+        {/* Logo - only show when hamburger menu is closed? */}
+        <MenuLogo />
 
         {/* Desktop Navigation */}
-        <div className='hidden md:flex items-center justify-between px-5'>
+        <div className='hidden lg:flex items-center justify-between px-5'>
           <Menu type='desktop'>
             {menuItems.map(item => (
               <li

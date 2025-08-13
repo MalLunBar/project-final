@@ -51,6 +51,6 @@
 }
 
 .active {
-  text-decoration: underline;
-  text-underline-offset: 0.5rem;
+  color: #799466;
+  font-weight: 600;
 }

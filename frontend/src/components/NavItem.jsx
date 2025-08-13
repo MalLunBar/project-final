@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom'
 
-const NavItem = ({ icon: Icon, text, linkTo }) => {
+const NavItem = ({ icon: Icon, ariaLabel, linkTo }) => {
   return (
-    <Link to={linkTo}>
-      <div
-        className='flex rounded-full p-2 flex-col items-center hover:bg-hover '
-      >
-        <Icon />
-        {text}
-      </div>
+    <Link
+      to={linkTo}
+      className='rounded-full p-1 hover:bg-hover '
+      aria-label={ariaLabel}
+      title={ariaLabel}
+    >
+      <Icon className='w-[22px] md:w-[24px]' />
     </Link>
   )
 }

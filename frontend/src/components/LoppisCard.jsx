@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { MapPinned, Clock } from 'lucide-react'
+import { MapPinned, Clock, PencilLine } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
@@ -10,6 +10,10 @@ const LoppisCard = ({ loppis }) => {
 
   const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
+
+  /*TILLFÄLLIGT HÄMTA ALLA LOPPISAR*/
+ 
+
 
   return (
     <article className='flex rounded-xl'>
@@ -47,7 +51,12 @@ const LoppisCard = ({ loppis }) => {
             text={dateString} />
 
         </div>
+      </div>
 
+
+      {/*FIXA SEN! Det här ska bara visas om man är på sin profil lsida för SINA loppisar*/}
+      <div>
+        <PencilLine className='text-gray-500 hover:text-gray-700 cursor-pointer' />
 
       </div>
 

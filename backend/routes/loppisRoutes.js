@@ -70,6 +70,42 @@ router.get("/categories", async (req, res) => {
   }
 })
 
+// get all thoughts by a specific user
+router.get("/user", async (req, res) => {
+  const userId = req.query.userId
+
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      response: null,
+      message: "User ID is required."
+    })
+  }
+
+  try {
+    const loppises = await Loppis.find({ createdBy: userId })
+
+    if (loppises.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No loppis ads found for this user."
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      response: loppises
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch loppis ads for user."
+    })
+  }
+})
+
 // get one loppis by id
 router.get("/:id", async (req, res) => {
   const { id } = req.params

@@ -87,6 +87,9 @@ const Search = () => {
         // Mobile: toggle between map and list view
         <>
           {/* conditional rendering */}
+          <div>
+            <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
+          </div>
           {view === 'map' &&
             <>
               {/* toggle button */}
@@ -121,7 +124,7 @@ const Search = () => {
 
         </>
       ) : (
-        // Desktop: show both views side-by-side
+        // Desktop: views side-by-side
         <div className='grid h-full grid-cols-[2fr_6fr_4fr]'>
           <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
           <MapView loppisList={loppisList} center={mapCenter} />
@@ -130,17 +133,6 @@ const Search = () => {
       )}
 
 
-      {/* <form onSubmit={onSubmit}>
-        <Input
-          label='Sök stad/ort'
-          type='text'
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ex. Stockholm, Uppsala, Lund…"
-        />
-      </form>
-      {isSearching && <p>Söker…</p>}
-      {error && <p className="text-red-600">{error}</p>} */}
 
 
 

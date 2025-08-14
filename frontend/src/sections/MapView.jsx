@@ -51,7 +51,7 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
     <section className='h-full'>
       <MapContainer
         center={center}
-        zoom={11}
+        zoom={zoom}
         zoomControl={false} // stänger av default (som ligger uppe vänster)
         className='my-map h-full w-full'
       >

@@ -11,9 +11,58 @@ router.get("/", async (req, res) => {
   const limit = req.query.limit || 20
   const sortBy = req.query.sort_by || "-createdAt" // sort on most recently added by default
 
-  const query = {}
-
   try {
+    const { city, date, category } = req.query
+    const query = {}
+    if (city) {
+      query['location.address.city'] = city
+    }
+    if (category) {
+      query.categories = category
+    }
+    if (date) {
+      const now = new Date()
+      if (date === 'today') {
+        query['dates.date'] = {
+          $gte: new Date(now.setHours(0, 0, 0, 0)),
+          $lt: new Date(now.setHours(23, 59, 59, 999))
+        }
+      } else if (date === 'tomorrow') {
+        const tomorrow = new Date()
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        query['dates.date'] = {
+          $gte: tomorrow.setHours(0, 0, 0, 0),
+          $lt: tomorrow.setHours(23, 59, 59, 999)
+        }
+      } else if (date === 'weekend') {
+        const saturday = new Date()
+        saturday.setDate(saturday.getDate() + (6 - saturday.getDay()))
+        saturday.setHours(0, 0, 0, 0)
+
+        const sunday = new Date(saturday)
+        sunday.setDate(saturday.getDate() + 1)
+        sunday.setHours(23, 59, 59, 999)
+
+        query['dates.date'] = {
+          $gte: saturday,
+          $lt: sunday
+        }
+      } else if (date === 'next_week') {
+        const nextMonday = new Date()
+        nextMonday.setDate(nextMonday.getDate() + (9 - nextMonday.getDay()))
+        nextMonday.setHours(0, 0, 0, 0)
+
+        const nextSunday = new Date(nextMonday)
+        nextSunday.setDate(nextMonday.getDate() + 5)
+        nextSunday.setHours(23, 59, 59, 999)
+
+        query['dates.date'] = {
+          $gte: nextMonday,
+          $lt: nextSunday
+        }
+      }
+    }
+
     const totalCount = await Loppis.find(query).countDocuments()
     const loppises = await Loppis.find(query).sort(sortBy).skip((page - 1) * limit).limit(limit)
 
@@ -27,10 +76,10 @@ router.get("/", async (req, res) => {
     res.status(200).json({
       success: true,
       response: {
-        data: loppises,
         totalCount: totalCount,
         currentPage: page,
         limit: limit,
+        data: loppises,
       }
     })
   } catch (error) {

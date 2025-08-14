@@ -42,14 +42,14 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
   }
 
   return (
-    <aside
-      className='h-full p-4 bg-white border-r border-border shadow-sm'
+    <div
+      className='h-full w-full space-y-2 md:space-y-4'
       aria-label='Search Filters'
     >
-      <h3 className='text-lg font-semibold py-2'>Sökfilter</h3>
+      <h3 className='text-lg font-semibold'>Sökfilter</h3>
 
       <form
-        className='flex flex-col gap-6 py-4'
+        className='flex flex-col gap-4 md:gap-6'
         onSubmit={onSearch}
       >
 
@@ -62,11 +62,11 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
           onChange={handleChange('address')}
           showLabel={true}
           required={false}
-          placeholder='Skriv stad eller adress'
+          placeholder='Sök stad eller adress'
         />
 
         {/* Opening hours */}
-        <fieldset className='space-y-3'>
+        <fieldset className='space-y-2 md:space-y-3'>
           <legend className='font-medium'>Öppettider</legend>
           <div className='flex flex-wrap gap-1'>
             {dateOptions.map((option) => {
@@ -87,7 +87,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
         </fieldset>
 
         {/* Categories */}
-        <fieldset className='space-y-3'>
+        <fieldset className='space-y-2 md:space-y-3'>
           <legend className='font-medium'>Kategorier</legend>
           <div className='flex flex-wrap gap-1'>
             {categoryOptions.map((option) => {
@@ -116,7 +116,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
         />
 
       </form>
-    </aside>
+    </div>
   )
 }
 

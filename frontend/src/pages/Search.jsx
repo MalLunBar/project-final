@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
-import { Map, List } from "lucide-react"
+import { Map, List, Funnel, X } from "lucide-react"
 import SearchFilters from "../sections/SearchFilters"
 import ListView from "../sections/ListView"
 import MapView from "../sections/MapView"
@@ -8,10 +8,9 @@ import Input from "../components/Input"
 import Button from "../components/Button"
 
 const Search = () => {
-  const [view, setView] = useState("map") // "map" or "list" for mobile
-
+  const [view, setView] = useState("map") //"map" or "list" for mobile
+  const [showFilters, setShowFilters] = useState(false)  //mobile: hide search filters by default
   const [loppisList, setLoppisList] = useState([])
-  // const [query, setQuery] = useState("")           // the input value
   const [query, setQuery] = useState({
     address: "",
     dates: "all",
@@ -22,7 +21,9 @@ const Search = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState(null)
 
+  const isSmallMobile = useMediaQuery({ query: '(max-width: 480px)' })
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
+  const isLaptop = useMediaQuery({ query: '(max-width: 1279px)' })
 
   const fetchUrl = 'http://localhost:8080/loppis'
 
@@ -48,7 +49,19 @@ const Search = () => {
     fetchLoppisData()
   }, [])
 
+  // toggle view 
+  const toggleView = () => {
+    if (view === 'map') {
+      setView('list')
+    } else {
+      setView('map')
+    }
+  }
 
+  // toogle show filters 
+  const toggleFilters = () => {
+    setShowFilters(prev => !prev)
+  }
 
   // Now calls your backend, not Nominatim directly
   const geocodeCity = async (text) => {
@@ -62,6 +75,7 @@ const Search = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault()
+    setShowFilters(false)
     if (!query.address.trim()) return
 
     setIsSearching(true)
@@ -73,52 +87,69 @@ const Search = () => {
       setError(err.message || "Kunde inte hitta platsen")
     } finally {
       setIsSearching(false)
+
     }
   }
 
 
   return (
     <main className='h-screen'>
-
-      {/* Search input */}
-      {/* Search Filters */}
+      {/* TODO: Ändra till "remaining height" */}
 
       {isMobile ? (
         // Mobile: toggle between map and list view
         <>
-          {/* conditional rendering */}
-          <div>
-            <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
-          </div>
-          {view === 'map' &&
-            <>
-              {/* toggle button */}
+          {/* TODO: In mapview - show on top of map*/}
+          <div className='flex flex-col'>
+            <div className='flex w-full p-2 justify-between'>
               <Button
                 type='button'
-                text='Lista'
-                icon={List}
-                active={view === "map" ? true : false}
-                ariaLabel='Visa loppisar i lista'
-                onClick={() => setView("list")}
+                text={isSmallMobile ? '' : 'Sökfilter'}
+                icon={Funnel}
+                active={true}
+                ariaLabel='Visa sökfilter'
+                onClick={toggleFilters}
               />
-              {/* Show map view */}
-              <MapView loppisList={loppisList} center={mapCenter} />
-            </>
-          }
-          {view === 'list' && <>
-            {/* toggle button */}
-            <Button
-              type='button'
-              text='Karta'
-              icon={Map}
-              active={view === "list" ? true : false}
-              ariaLabel='Visa loppisar på karta'
-              onClick={() => setView("map")}
-            />
-            {/* Show list view */}
-            <ListView loppisList={loppisList} />
-          </>
-          }
+              {/* show search field if filters not open */}
+              {!showFilters &&
+                <form onSubmit={handleSearch}>
+                  <Input
+                    label='Område'
+                    type='text'
+                    value={query.address}
+                    onChange={(e) => setQuery(prev => ({ ...prev, address: e.target.value }))}
+                    showLabel={false}
+                    required={false}
+                    placeholder='Sök område...'
+                  />
+                </form>
+              }
+              <Button
+                type='button'
+                text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
+                icon={view === 'map' ? List : Map}
+                active={true}
+                ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
+                onClick={toggleView}
+              />
+            </div>
+
+            <div>
+              Show selected filters here
+            </div>
+
+            {showFilters &&
+              <aside className={`fixed inset-0 z-1050 w-full max-w-sm h-full px-4 py-22 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
+                <X strokeWidth={3} onClick={toggleFilters} className='absolute right-5 hover:text-accent' />
+                <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
+              </aside>
+            }
+
+          </div>
+
+          {/* conditionally render map or list view */}
+          {view === 'map' && <MapView loppisList={loppisList} center={mapCenter} />}
+          {view === 'list' && <ListView loppisList={loppisList} />}
 
           {/* optional - toggle updates URL: /search?view=map */}
 
@@ -126,7 +157,9 @@ const Search = () => {
       ) : (
         // Desktop: views side-by-side
         <div className='grid h-full grid-cols-[2fr_6fr_4fr]'>
-          <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
+          <aside className='h-full p-4 bg-white border-r border-border shadow-sm'>
+            <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
+          </aside>
           <MapView loppisList={loppisList} center={mapCenter} />
           <ListView loppisList={loppisList} />
         </div>

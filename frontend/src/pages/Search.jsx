@@ -102,7 +102,7 @@ const Search = () => {
       {isMobile ? (
         // Mobile: toggle between map and list view
         <>
-          <div className={`${view === 'map' ? 'absolute z-1100' : 'relative z-auto'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
+          <div className={`${view === 'map' ? 'absolute z-1050' : 'relative z-auto'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
             <div div className='flex flex-col gap-2'>
               <div className='flex justify-between gap-2'>
                 <Button
@@ -157,7 +157,7 @@ const Search = () => {
             </div>
 
             {showFilters &&
-              <aside className={`fixed inset-0 z-1050 w-full max-w-sm h-full px-4 py-22 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
+              <aside className={`fixed top-0 left-0 z-1050 w-full max-w-sm h-full px-4 py-22 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
                 <X strokeWidth={3} onClick={toggleShowFilters} className='absolute right-5 hover:text-accent' />
                 <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
               </aside>

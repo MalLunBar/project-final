@@ -6,7 +6,7 @@ import LoppisList from "../components/LoppisList"
 const Profile = ({ name }) => {
 
   const user = useAuthStore((s) => s.user)           // läs direkt från store
-  
+
 
   const userId = user?._id ?? user?.id               // funkar oavsett id/_id
 
@@ -64,9 +64,9 @@ const Profile = ({ name }) => {
       {!error && loppisList.length > 0 && (
         <LoppisList
           loppisList={loppisList}
-          showEdit={false}
-        // Om du vill visa redigeringsknapp, sätt till true
-        //onEdit={(loppis) => ... öppna modal/route för edit här} 
+          variant="profile"
+          onEditCard={(l) => console.log('Edit', l._id)}
+          onDeleteCard={(l) => console.log('Delete', l._id)}
         />
       )}
       {!error && loppisList.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}

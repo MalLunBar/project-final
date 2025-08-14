@@ -37,6 +37,18 @@ const FlyTo = ({ center, zoom = 11 }) => {
   return null
 }
 
+// Liten wrapper som kan stänga aktuell popup
+const PopupCard = ({ loppis }) => {
+  const map = useMap()
+  return (
+    <LoppisCard
+      loppis={loppis}
+      variant='map'
+      onClose={() => map.closePopup()}   // stäng den öppna popupen
+    />
+  )
+}
+
 const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
 
   // Create a Leaflet divIcon with Lucide SVG
@@ -80,8 +92,10 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
               icon={markerIcon}
               title={loppis.title}
             >
-              <Popup className="my-popup">
-                <LoppisCard loppis={loppis} />
+              <Popup
+                className="my-popup" 
+                closeButton={false}>
+                <PopupCard loppis={loppis} />
               </Popup>
             </Marker>
           ))}

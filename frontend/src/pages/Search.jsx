@@ -94,7 +94,10 @@ const Search = () => {
           <p>Inga loppisar hittades</p>
         )} */}
 
-        <LoppisList loppisList={loppisList} />
+        <LoppisList
+          loppisList={loppisList}
+          variant="search"
+        />
 
 
       </div>

@@ -9,7 +9,7 @@ import Details from './Details'
 const LoppisCard = ({
   loppis,
   variant = 'search', // 'search' | 'map' | 'profile'
-  onclose,            // map: stäng popup
+  onClose,            // map: stäng popup
   showItemActions = 'false', // profile: om redigeringsläge är på
   onEdit,                     // profile: klick på penna på kortet
 }) => {
@@ -21,7 +21,7 @@ const LoppisCard = ({
 
 
   return (
-    <article className='flex rounded-xl'>
+    <article className='bg-accent-light flex rounded-xl'>
 
       <img
         src={loppis.imageUrl}
@@ -69,9 +69,9 @@ const LoppisCard = ({
               e.stopPropagation()
               onClose?.()
             }}
-            className='p-1.5 rounded-md border hover:bg-gray-50'
+            className='p-1.5 rounded-md hover:bg-gray-50'
           >
-            <CircleX className='w-4 h-4' />
+            <CircleX size={20} />
           </button>
         )}
 
@@ -86,7 +86,7 @@ const LoppisCard = ({
             }}
             className='p-1.5 rounded-md border hover:bg-gray-50'
           >
-            <PencilLine className='w-4 h-4' />
+            <PencilLine size={20} />
           </button>
         )}
       </div>

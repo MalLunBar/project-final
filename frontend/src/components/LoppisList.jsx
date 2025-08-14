@@ -19,6 +19,7 @@ const LoppisList = ({
 
       {variant === 'profile' && hasCards && (
         <div className='flex justify-end mb-1'>
+
           <button
             onClick={() => setIsEditing(v => !v)}
             className='inline-flex items-center gap-2 px-3 py-2 border rounded-lg bg-white hover:bg-gray-50'
@@ -47,14 +48,27 @@ const LoppisList = ({
 
             {/* PROFILE: papperskorg till höger om varje kort när redigeringsläge är på */}
             {variant === 'profile' && isEditing && (
-              <button
-                onClick={() => onDeleteCard?.(loppis)}
-                className='self-start p-2 border rounded-md bg-white hover:bg-gray-50'
-                aria-label='Ta bort'
-                title='Ta bort'
-              >
-                <Trash2 className='w-4 h-4' />
-              </button>
+              <div className="flex flex-col justify-center items-center gap-4 self-stretch">
+                {/* NY penna ovanför soptunnan (utan border) */}
+                <button
+                  onClick={() => onEditCard?.(loppis)}
+                  className="p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  aria-label="Redigera"
+                  title="Redigera"
+                >
+                  <PencilLine size={20} />
+                </button>
+
+                {/* Soptunna (utan border, större ikon) */}
+                <button
+                  onClick={() => onDeleteCard?.(loppis)}
+                  className="p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  aria-label="Ta bort"
+                  title="Ta bort"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
             )}
           </li>
         ))}

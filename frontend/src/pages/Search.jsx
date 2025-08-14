@@ -102,7 +102,7 @@ const Search = () => {
         // Mobile: toggle between map and list view
         <>
           <div className='absolute w-full z-1200'>
-            <div className='flex w-full p-2 justify-between'>
+            <div className='flex w-full py-2 px-0.5 min-[340px]:px-2 sm:p-4 justify-between '>
               <Button
                 type='button'
                 text={isSmallMobile ? '' : 'Sökfilter'}

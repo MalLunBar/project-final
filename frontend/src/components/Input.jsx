@@ -1,6 +1,6 @@
 const Input = ({ type, id, label, placeholder, value, onChange, required, showLabel }) => {
   return (
-    <span className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <label
         htmlFor={id} className={`font-medium ${!showLabel ? 'sr-only' : ''}`}>
         {label}
@@ -16,7 +16,7 @@ const Input = ({ type, id, label, placeholder, value, onChange, required, showLa
         placeholder={`${placeholder ? placeholder : label}`}
         required={required}
       />
-    </span>
+    </div>
   )
 }
 

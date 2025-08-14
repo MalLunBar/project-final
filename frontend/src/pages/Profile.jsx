@@ -6,15 +6,13 @@ import LoppisList from "../components/LoppisList"
 const Profile = ({ name }) => {
 
   const user = useAuthStore((s) => s.user)           // läs direkt från store
-  console.log('user from store:', user);
+  
 
   const userId = user?._id ?? user?.id               // funkar oavsett id/_id
 
   const [loppisList, setLoppisList] = useState([])
   const [error, setError] = useState(null)
   const [emptyMsg, setEmptyMsg] = useState("")
-
-
 
 
   useEffect(() => {
@@ -57,9 +55,6 @@ const Profile = ({ name }) => {
 
 
 
-
-
-
   return (
     <section>
       <h2>Hello, {name}</h2>
@@ -69,8 +64,8 @@ const Profile = ({ name }) => {
       {!error && loppisList.length > 0 && (
         <LoppisList
           loppisList={loppisList}
-          showEdit={false} 
-          // Om du vill visa redigeringsknapp, sätt till true
+          showEdit={false}
+        // Om du vill visa redigeringsknapp, sätt till true
         //onEdit={(loppis) => ... öppna modal/route för edit här} 
         />
       )}

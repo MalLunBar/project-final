@@ -1,18 +1,23 @@
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { MapPinned, Clock, PencilLine } from 'lucide-react'
+import { MapPinned, Clock, PencilLine, CircleX } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
 
-const LoppisCard = ({ loppis }) => {
+const LoppisCard = ({
+  loppis,
+  variant = 'search', // 'search' | 'map' | 'profile'
+  onclose,            // map: stäng popup
+  showItemActions = 'false', // profile: om redigeringsläge är på
+  onEdit,                     // profile: klick på penna på kortet
+}) => {
 
   const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
   /*TILLFÄLLIGT HÄMTA ALLA LOPPISAR*/
- 
 
 
   return (
@@ -54,12 +59,37 @@ const LoppisCard = ({ loppis }) => {
       </div>
 
 
-      {/*FIXA SEN! Det här ska bara visas om man är på sin profil lsida för SINA loppisar*/}
-      <div>
-        <PencilLine className='text-gray-500 hover:text-gray-700 cursor-pointer' />
+      <div className='absolute top-2 right-2 flex items-center gap-2'>
+        {/* MAP: visa kryss som stänger popup */}
+        {variant === 'map' && (
+          <button
+            aria-label='Stäng'
+            title='Stäng'
+            onClick={(e) => {
+              e.stopPropagation()
+              onClose?.()
+            }}
+            className='p-1.5 rounded-md border hover:bg-gray-50'
+          >
+            <CircleX className='w-4 h-4' />
+          </button>
+        )}
 
+        {/* PROFILE (redigeringsläge): visa penna på varje kort */}
+        {variant === 'profile' && showItemActions && (
+          <button
+            aria-label='Redigera'
+            title='Redigera'
+            onClick={(e) => {
+              e.stopPropagation()
+              onEdit?.(loppis)
+            }}
+            className='p-1.5 rounded-md border hover:bg-gray-50'
+          >
+            <PencilLine className='w-4 h-4' />
+          </button>
+        )}
       </div>
-
     </article>
   )
 }

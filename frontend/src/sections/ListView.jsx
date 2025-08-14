@@ -2,16 +2,22 @@ import LoppisList from "../components/LoppisList";
 
 const ListView = ({ loppisList }) => {
   return (
-    <section className='h-full p-2 bg-white border-r border-border shadow-sm overflow-y-auto'>
+    <section className='h-full px-2 py-6 bg-white border-r border-border shadow-sm overflow-y-auto'>
+      <div className='flex flex-col gap-2 divide-y divide-border'>
+        <div className='flex pb-2 justify-between gap-2 text-sm'>
+          <p>Antal Loppisar: {loppisList.length} st</p>
 
-      {/* Sortera på: dropdown med alternativ */}
+          {/* Sortera på: dropdown med alternativ */}
+          <p>Sortera på: [dropdown v]</p>
 
-      {/* Antal träffar: X st */}
+        </div>
 
-      <LoppisList loppisList={loppisList} />
+        <LoppisList loppisList={loppisList} />
 
-      {/* Page selector */}
+        {/* Page selector */}
+        <p>Page: 1 </p>
 
+      </div>
     </section>
   )
 

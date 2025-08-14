@@ -12,7 +12,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
     { id: 'today', label: 'Idag' },
     { id: 'tomorrow', label: 'Imorgon' },
     { id: 'weekend', label: 'I helgen' },
-    { id: 'week', label: 'Denna veckan' },
+    { id: 'next_week', label: 'Nästa vecka' },
   ]
 
   // change to fetch categories from api later

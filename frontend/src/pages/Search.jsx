@@ -13,7 +13,7 @@ const Search = () => {
   const [showFilters, setShowFilters] = useState(false)  //mobile: hide search filters by default
   const [loppisList, setLoppisList] = useState([])
   const [query, setQuery] = useState({
-    address: "",
+    city: "Stockholm",
     dates: { id: "all", label: "Visa alla" },
     categories: [],
   })
@@ -31,8 +31,16 @@ const Search = () => {
   // fetch loppis data 
   useEffect(() => {
     const fetchLoppisData = async () => {
+      // query params
+      const params = new URLSearchParams({
+        city: query.city,
+        date: query.dates.id === 'all' ? '' : query.dates.id,
+        category: query.categories
+      })
+      console.log(params.toString())
+
       try {
-        const response = await fetch(fetchUrl)
+        const response = await fetch(`${fetchUrl}?${params.toString()}`)
         if (!response.ok) {
           throw new Error('Failed to fetch loppis data')
         }
@@ -48,7 +56,7 @@ const Search = () => {
       }
     }
     fetchLoppisData()
-  }, [])
+  }, [query])
 
   // toggle view 
   const toggleView = () => {
@@ -77,13 +85,14 @@ const Search = () => {
   const handleSearch = async (e) => {
     e.preventDefault()
     setShowFilters(false)
-    if (!query.address.trim()) return
+    // if (!query.city.trim()) return
 
     setIsSearching(true)
     setError(null)
     try {
-      const center = await geocodeCity(query.address.trim())
+      const center = await geocodeCity(query.city.trim())
       setMapCenter(center)        // triggers MapView.flyTo via props
+      // fetchLoppisData()
     } catch (err) {
       setError(err.message || "Kunde inte hitta platsen")
     } finally {

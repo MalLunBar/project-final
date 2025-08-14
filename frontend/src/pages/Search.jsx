@@ -96,11 +96,12 @@ const Search = () => {
     <main className='h-screen'>
       {/* TODO: Ändra till "remaining height" */}
 
+      {/* TODO: add "Nära mig" or "min position" button to search nearby*/}
+
       {isMobile ? (
         // Mobile: toggle between map and list view
         <>
-          {/* TODO: In mapview - show on top of map*/}
-          <div className='flex flex-col'>
+          <div className='absolute w-full z-1200'>
             <div className='flex w-full p-2 justify-between'>
               <Button
                 type='button'
@@ -111,6 +112,7 @@ const Search = () => {
                 onClick={toggleFilters}
               />
               {/* show search field if filters not open */}
+              {/* TODO: Add a magnifying icon in search field*/}
               {!showFilters &&
                 <form onSubmit={handleSearch}>
                   <Input

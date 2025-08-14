@@ -276,8 +276,7 @@ router.patch('/:id', async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const { id } = req.params
 
-  try {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         response: null,
@@ -285,6 +284,7 @@ router.delete("/:id", async (req, res) => {
       })
     }
 
+  try {
     const deletedLoppis = await Loppis.findByIdAndDelete(id)
 
     if (!deletedLoppis) {

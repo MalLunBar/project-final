@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import useAuthStore from "../stores/useAuthStore"
 import LoppisList from "../components/LoppisList"
 import EditModal from "../modals/EditModal"
+import ConfirmDialog from '../components/ConfirmDialog'
 
 const Profile = ({ name }) => {
 
@@ -14,6 +15,8 @@ const Profile = ({ name }) => {
   const [emptyMsg, setEmptyMsg] = useState("")
   const [editingLoppis, setEditingLoppis] = useState(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
+  const [confirmLoppis, setConfirmLoppis] = useState(null)
 
 
   useEffect(() => {
@@ -51,6 +54,7 @@ const Profile = ({ name }) => {
     fetchloppisList()
   }, [userId])
 
+  //Öppna, stäng editmodal och spara loppis
   const openEdit = (loppis) => {
     setEditingLoppis(loppis)
     setIsEditOpen(true)
@@ -65,6 +69,25 @@ const Profile = ({ name }) => {
     closeEdit()
   }
 
+  //Ta bort Loppis
+  const handleDelete = async (l) => {
+    if (deletingId) return                         // blockera parallella deletes
+    setDeletingId(l._id)
+    try {
+      const res = await fetch(`http://localhost:8080/loppis/${l._id}`, { method: 'DELETE' })
+      const text = await res.text()                // undvik JSON-parse på ev. HTML
+      if (!res.ok) throw new Error(text || res.statusText)
+
+      setLoppisList(prev => prev.filter(item => item._id !== l._id))
+    } catch (e) {
+      alert('Kunde inte ta bort. Försök igen.')
+      console.error(e)
+    } finally {
+      setDeletingId(null)
+      setConfirmLoppis(null)
+    }
+  }
+
   return (
     <section>
       <h2>Hello, {name}</h2>
@@ -76,9 +99,28 @@ const Profile = ({ name }) => {
           loppisList={loppisList}
           variant="profile"
           onEditCard={openEdit}
-          onDeleteCard={(l) => console.log('Delete', l._id)}
+          onDeleteCard={(l) => setConfirmLoppis(l)}
+          deletingId={deletingId}
         />
+
       )}
+
+      <ConfirmDialog
+        open={Boolean(confirmLoppis)}
+        title="Ta bort loppis"
+        message={
+          confirmLoppis
+            ? `Är du säker på att du vill ta bort "${confirmLoppis.title}"?`
+            : 'Är du säker på att du vill ta bort den här loppisen?'
+        }
+        confirmText="Ja"
+        cancelText="Nej"
+        loading={deletingId === confirmLoppis?._id}
+        onCancel={() => setConfirmLoppis(null)}
+        onConfirm={() => handleDelete(confirmLoppis)}
+      />
+
+
       {!error && loppisList.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
 
       {/* Edit-popup */}

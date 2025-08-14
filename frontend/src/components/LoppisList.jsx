@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PencilLine, Trash2 } from 'lucide-react'
+import { PencilLine, Trash2, Loader2 } from 'lucide-react'
 import LoppisCard from "./LoppisCard"
 
 const LoppisList = ({
@@ -8,7 +8,7 @@ const LoppisList = ({
   onEditCard,                    // profile
   onDeleteCard,                  // profile
   onMapCardClose,                // map: stäng popup
-
+  deletingId = null,
 }) => {
 
   const [isEditing, setIsEditing] = useState(false)
@@ -71,11 +71,16 @@ const LoppisList = ({
                 {/* Soptunna under */}
                 <button
                   onClick={() => onDeleteCard?.(loppis)}
+                  disabled={Boolean(deletingId)}             // disable ALLA när en är igång
+                  aria-busy={deletingId === loppis._id}      // markera aktiv rad
                   className="p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Ta bort"
                   title="Ta bort"
                 >
-                  <Trash2 size={20} />
+
+                  {deletingId === loppis._id
+                    ? <Loader2 className="animate-spin" size={18} />
+                    : <Trash2 size={20} />}
                 </button>
               </div>
             </div>

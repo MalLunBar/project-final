@@ -2,27 +2,25 @@
 import { useState, useEffect } from "react"
 import useAuthStore from "../stores/useAuthStore"
 import LoppisList from "../components/LoppisList"
+import EditModal from "../modals/EditModal"
 
 const Profile = ({ name }) => {
 
   const user = useAuthStore((s) => s.user)           // läs direkt från store
-
-
   const userId = user?._id ?? user?.id               // funkar oavsett id/_id
 
   const [loppisList, setLoppisList] = useState([])
   const [error, setError] = useState(null)
   const [emptyMsg, setEmptyMsg] = useState("")
+  const [editingLoppis, setEditingLoppis] = useState(null)
+  const [isEditOpen, setIsEditOpen] = useState(false)
 
 
   useEffect(() => {
     if (!userId) return
 
-
     const fetchUrl = new URL("http://localhost:8080/loppis/user")
     fetchUrl.searchParams.set("userId", String(userId))
-
-
 
     const fetchloppisList = async () => {
       try {
@@ -53,7 +51,19 @@ const Profile = ({ name }) => {
     fetchloppisList()
   }, [userId])
 
+  const openEdit = (loppis) => {
+    setEditingLoppis(loppis)
+    setIsEditOpen(true)
+  }
+  const closeEdit = () => {
+    setIsEditOpen(false)
+    setEditingLoppis(null)
+  }
 
+  const applySaved = (updated) => {
+    setLoppisList(prev => prev.map(item => item._id === updated._id ? updated : item))
+    closeEdit()
+  }
 
   return (
     <section>
@@ -65,11 +75,19 @@ const Profile = ({ name }) => {
         <LoppisList
           loppisList={loppisList}
           variant="profile"
-          onEditCard={(l) => console.log('Edit', l._id)}
+          onEditCard={openEdit}
           onDeleteCard={(l) => console.log('Delete', l._id)}
         />
       )}
       {!error && loppisList.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
+
+      {/* Edit-popup */}
+      <EditModal
+        open={isEditOpen}
+        loppis={editingLoppis}
+        onClose={closeEdit}
+        onSaved={applySaved}
+      />
 
       <h3>Mina Favoriter</h3>
       {/*Array av LoppisCard*/}

@@ -185,41 +185,88 @@ router.post("/:id/like", async (req, res) => {
 
 
 //Edit loppis ad
+// liten hjälpare för geokodning via din egen backend-proxy
+async function geocodeAddress({ street, postalCode, city }) {
+  const q = `${street}, ${postalCode} ${city}, Sweden`
+  const res = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(q)}`)
+  if (!res.ok) throw new Error(`Geocode failed: ${res.status}`)
+  const arr = await res.json()
+  if (!Array.isArray(arr) || arr.length === 0) return null
+  const { lat, lon } = arr[0]
+  return { lat: parseFloat(lat), lon: parseFloat(lon) }
+}
 //add authentication later
-router.patch("/:id/edit", async (req, res) => {
+router.patch('/:id', async (req, res) => {
   const { id } = req.params
-  const updateFields = req.body
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, response: null, message: 'Invalid ID format.' })
+  }
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Invalid ID format."
-      })
+    const existing = await Loppis.findById(id)
+    if (!existing) {
+      return res.status(404).json({ success: false, response: null, message: 'Loppis not found!' })
     }
 
-    const updatedLoppis = await Loppis.findByIdAndUpdate(id, updateFields, { new: true })
+    // Plocka ut ev. inkommande fält
+    const body = req.body || {}
+    const addrIn = body.location?.address || {}
 
-    if (!updatedLoppis) {
-      return res.status(404).json({
-        success: false,
-        response: null,
-        message: "Loppis not found!"
+    // Jämför adress (trim för att undvika falska skillnader)
+    const oldAddr = existing.location?.address || {}
+    const streetChanged = addrIn.street?.trim() !== undefined && addrIn.street.trim() !== (oldAddr.street || '')
+    const cityChanged = addrIn.city?.trim() !== undefined && addrIn.city.trim() !== (oldAddr.city || '')
+    const postalCodeChanged = addrIn.postalCode?.trim() !== undefined && addrIn.postalCode.trim() !== (oldAddr.postalCode || '')
+    const addressChanged = streetChanged || cityChanged || postalCodeChanged
+
+    // Bygg $set med dot-paths för säkra updates (rör inte coordinates i onödan)
+    const $set = {}
+    if (body.title !== undefined) $set.title = body.title
+    if (body.description !== undefined) $set.description = body.description
+    if (body.categories !== undefined) $set.categories = body.categories
+    if (body.dates !== undefined) $set.dates = body.dates
+
+    if (addrIn.street !== undefined) $set['location.address.street'] = addrIn.street
+    if (addrIn.city !== undefined) $set['location.address.city'] = addrIn.city
+    if (addrIn.postalCode !== undefined) $set['location.address.postalCode'] = addrIn.postalCode
+
+    // Om adressändring → geokoda och uppdatera coordinates
+    if (addressChanged) {
+      const geo = await geocodeAddress({
+        street: $set['location.address.street'] ?? oldAddr.street,
+        city: $set['location.address.city'] ?? oldAddr.city,
+        postalCode: $set['location.address.postalCode'] ?? oldAddr.postalCode,
       })
+      if (!geo) {
+        return res.status(422).json({
+          success: false,
+          response: null,
+          message: 'Kunde inte geokoda den nya adressen. Kontrollera stavning/postnummer.'
+        })
+      }
+      $set['location.coordinates'] = {
+        type: 'Point',
+        coordinates: [geo.lon, geo.lat], // OBS: [lng, lat]
+      }
     }
 
-    res.status(200).json({
-      success: true,
-      response: updatedLoppis,
-      message: "Loppis ad updated successfully!"
+    const updated = await Loppis.findByIdAndUpdate(id, { $set }, {
+      new: true,
+      runValidators: true,
+      validateModifiedOnly: true,
     })
-  } catch (error) {
-    console.error("Error in PATCH /loppis/:id:", error)
-    res.status(500).json({
+
+    return res.status(200).json({
+      success: true,
+      response: updated,
+      message: 'Loppis updated successfully!'
+    })
+  } catch (err) {
+    console.error('Error in PATCH /loppis/:id:', err)
+    return res.status(500).json({
       success: false,
-      response: error,
-      message: "Failed to update loppis ad."
+      response: null,
+      message: 'Failed to update loppis ad.'
     })
   }
 })

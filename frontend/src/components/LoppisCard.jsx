@@ -75,20 +75,6 @@ const LoppisCard = ({
           </button>
         )}
 
-        {/* PROFILE (redigeringsläge): visa penna på varje kort */}
-        {variant === 'profile' && showItemActions && (
-          <button
-            aria-label='Redigera'
-            title='Redigera'
-            onClick={(e) => {
-              e.stopPropagation()
-              onEdit?.(loppis)
-            }}
-            className='p-1.5 rounded-md border hover:bg-gray-50'
-          >
-            <PencilLine size={20} />
-          </button>
-        )}
       </div>
     </article>
   )

@@ -35,21 +35,30 @@ const LoppisList = ({
 
       <ul className='flex flex-col gap-2'>
         {loppisList.map((loppis, index) => (
-          <li
-            key={index}
-            className='flex items-stretch gap-2'>
-            <LoppisCard
-              loppis={loppis}
-              variant={variant}
-              showItemActions={variant === 'profile' && isEditing}
-              onEdit={onEditCard}
-              onClose={onMapCardClose}
-            />
+          <li key={index} className="flex items-stretch gap-2 relative">
+            {/* KORTET: glid lite vänster när editeringsläge är på */}
+            <div className={`transition-transform duration-300 ease-out ${variant === 'profile' && isEditing ? '-translate-x-2' : ''}`}>
+              <LoppisCard
+                loppis={loppis}
+                variant={variant}
+                showItemActions={variant === 'profile' && isEditing}
+                onEdit={onEditCard}
+                onClose={onMapCardClose}
+              />
+            </div>
 
-            {/* PROFILE: papperskorg till höger om varje kort när redigeringsläge är på */}
-            {variant === 'profile' && isEditing && (
-              <div className="flex flex-col justify-center items-center gap-4 self-stretch">
-                {/* NY penna ovanför soptunnan (utan border) */}
+            {/* ACTIONS-KOLUMN: alltid monterad -> kan animeras in/ut */}
+            <div
+              aria-hidden={!(variant === 'profile' && isEditing)}
+              className={`self-stretch transition-all duration-300 ease-out
+              ${variant === 'profile'
+                  ? (isEditing
+                    ? 'w-12 opacity-100 translate-x-0'
+                    : 'w-0 opacity-0 -translate-x-2 pointer-events-none')
+                  : 'hidden'}`}
+            >
+              <div className="flex flex-col justify-center items-center gap-2 h-full">
+                {/* Penna ovanför */}
                 <button
                   onClick={() => onEditCard?.(loppis)}
                   className="p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -59,7 +68,7 @@ const LoppisList = ({
                   <PencilLine size={20} />
                 </button>
 
-                {/* Soptunna (utan border, större ikon) */}
+                {/* Soptunna under */}
                 <button
                   onClick={() => onDeleteCard?.(loppis)}
                   className="p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
@@ -69,8 +78,9 @@ const LoppisList = ({
                   <Trash2 size={20} />
                 </button>
               </div>
-            )}
+            </div>
           </li>
+
         ))}
       </ul>
 

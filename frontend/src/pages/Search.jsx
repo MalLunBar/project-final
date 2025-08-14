@@ -11,7 +11,13 @@ const Search = () => {
   const [view, setView] = useState("map") // "map" or "list" for mobile
 
   const [loppisList, setLoppisList] = useState([])
-  const [query, setQuery] = useState("")           // the input value
+  // const [query, setQuery] = useState("")           // the input value
+  const [query, setQuery] = useState({
+    address: "",
+    dates: "all",
+    categories: [],
+  })
+
   const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]) // default Stockholm
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState(null)
@@ -20,8 +26,8 @@ const Search = () => {
 
   const fetchUrl = 'http://localhost:8080/loppis'
 
+  // fetch loppis data 
   useEffect(() => {
-    // Simulate fetching loppis data
     const fetchLoppisData = async () => {
       try {
         const response = await fetch(fetchUrl)
@@ -54,14 +60,14 @@ const Search = () => {
     return [parseFloat(lat), parseFloat(lon)]
   }
 
-  const onSubmit = async (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault()
-    if (!query.trim()) return
+    if (!query.address.trim()) return
 
     setIsSearching(true)
     setError(null)
     try {
-      const center = await geocodeCity(query.trim())
+      const center = await geocodeCity(query.address.trim())
       setMapCenter(center)        // triggers MapView.flyTo via props
     } catch (err) {
       setError(err.message || "Kunde inte hitta platsen")
@@ -69,6 +75,7 @@ const Search = () => {
       setIsSearching(false)
     }
   }
+
 
   return (
     <main className='h-screen'>
@@ -116,7 +123,7 @@ const Search = () => {
       ) : (
         // Desktop: show both views side-by-side
         <div className='grid h-full grid-cols-[2fr_6fr_4fr]'>
-          <SearchFilters />
+          <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
           <MapView loppisList={loppisList} center={mapCenter} />
           <ListView loppisList={loppisList} />
         </div>

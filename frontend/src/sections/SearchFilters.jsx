@@ -3,12 +3,7 @@ import Input from "../components/Input"
 import Button from "../components/Button"
 import FilterOption from "../components/FilterOption"
 
-const SearchFilters = ({ onSubmit }) => {
-  const [query, setQuery] = useState({
-    address: "",
-    dates: "all",
-    categories: [],
-  })
+const SearchFilters = ({ query, setQuery, onSearch }) => {
 
   const dateOptions = [
     { id: 'all', label: 'Visa alla' },
@@ -55,7 +50,7 @@ const SearchFilters = ({ onSubmit }) => {
 
       <form
         className='flex flex-col gap-6 py-4'
-        onSubmit={onSubmit}
+        onSubmit={onSearch}
       >
 
         {/* Search address */}
@@ -117,6 +112,7 @@ const SearchFilters = ({ onSubmit }) => {
           text='Hitta loppis'
           type='submit'
           ariaLabel='Sök efter loppis'
+          onClick={onSearch}
         />
 
       </form>

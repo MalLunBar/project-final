@@ -5,6 +5,8 @@ import FilterOption from "../components/FilterOption"
 
 const SearchFilters = ({ query, setQuery, onSearch }) => {
 
+  const [dates, setDates] = useState('')
+
   const dateOptions = [
     { id: 'all', label: 'Visa alla' },
     { id: 'today', label: 'Idag' },
@@ -30,6 +32,14 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
   // generic onChange helper
   const handleChange = (key) => (e) => {
     setQuery(prev => ({ ...prev, [key]: e.target.value }))
+  }
+
+  // dates onChange helper
+  const changeDates = (e) => {
+    setQuery((prev) => ({
+      ...prev,
+      dates: dateOptions.find((f) => f.id === e.target.value)
+    }))
   }
 
   // toggle category
@@ -70,7 +80,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
           <legend className='font-medium'>Öppettider</legend>
           <div className='flex flex-wrap gap-1'>
             {dateOptions.map((option) => {
-              const selected = query.dates === option.id
+              const selected = query.dates.id === option.id
               return (
                 <FilterOption
                   key={option.id}
@@ -79,7 +89,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
                   value={option.id}
                   label={option.label}
                   selected={selected}
-                  onChange={handleChange('dates')}
+                  onChange={changeDates}
                 />
               )
             })}

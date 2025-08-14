@@ -6,6 +6,7 @@ import ListView from "../sections/ListView"
 import MapView from "../sections/MapView"
 import Input from "../components/Input"
 import Button from "../components/Button"
+import FilterTag from '../components/FilterTag'
 
 const Search = () => {
   const [view, setView] = useState("map") //"map" or "list" for mobile
@@ -13,7 +14,7 @@ const Search = () => {
   const [loppisList, setLoppisList] = useState([])
   const [query, setQuery] = useState({
     address: "",
-    dates: "all",
+    dates: { id: "all", label: "Visa alla" },
     categories: [],
   })
 
@@ -59,7 +60,7 @@ const Search = () => {
   }
 
   // toogle show filters 
-  const toggleFilters = () => {
+  const toggleShowFilters = () => {
     setShowFilters(prev => !prev)
   }
 
@@ -101,48 +102,63 @@ const Search = () => {
       {isMobile ? (
         // Mobile: toggle between map and list view
         <>
-          <div className='absolute w-full z-1200'>
-            <div className='flex w-full py-2 px-0.5 min-[340px]:px-2 sm:p-4 justify-between '>
-              <Button
-                type='button'
-                text={isSmallMobile ? '' : 'Sökfilter'}
-                icon={Funnel}
-                active={true}
-                ariaLabel='Visa sökfilter'
-                onClick={toggleFilters}
-              />
-              {/* show search field if filters not open */}
-              {/* TODO: Add a magnifying icon in search field*/}
-              {!showFilters &&
-                <form onSubmit={handleSearch}>
-                  <Input
-                    label='Område'
-                    type='text'
-                    value={query.address}
-                    onChange={(e) => setQuery(prev => ({ ...prev, address: e.target.value }))}
-                    showLabel={false}
-                    required={false}
-                    placeholder='Sök område...'
-                  />
-                </form>
-              }
-              <Button
-                type='button'
-                text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
-                icon={view === 'map' ? List : Map}
-                active={true}
-                ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
-                onClick={toggleView}
-              />
-            </div>
+          <div className='absolute w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 z-1200'>
+            <div div className='flex flex-col gap-2'>
+              <div className='flex justify-between gap-2'>
+                <Button
+                  type='button'
+                  text={isSmallMobile ? '' : 'Sökfilter'}
+                  icon={Funnel}
+                  active={true}
+                  ariaLabel='Visa sökfilter'
+                  onClick={toggleShowFilters}
+                />
+                {/* show search field if filters not open */}
+                {/* TODO: Add a magnifying icon in search field*/}
+                {!showFilters &&
+                  <form onSubmit={handleSearch}>
+                    <Input
+                      label='Område'
+                      type='text'
+                      value={query.address}
+                      onChange={(e) => setQuery(prev => ({ ...prev, address: e.target.value }))}
+                      showLabel={false}
+                      required={false}
+                      placeholder='Sök område...'
+                    />
+                  </form>
+                }
+                <Button
+                  type='button'
+                  text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
+                  icon={view === 'map' ? List : Map}
+                  active={true}
+                  ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
+                  onClick={toggleView}
+                />
+              </div>
 
-            <div>
-              Show selected filters here
+              {/* Display selected filters */}
+              <div className='flex gap-2 flex-wrap'>
+                {query.dates.id !== "all"
+                  ? <FilterTag
+                    text={query.dates.label}
+                    onClose={() => setQuery(prev => ({ ...prev, dates: { id: "all", label: "Visa alla" } }))} />
+                  : <></>
+                }
+                {query.categories?.map((category) => {
+                  return (
+                    <FilterTag
+                      key={`filter-${category}`}
+                      text={category}
+                      onClose={() => setQuery((prev => ({ ...prev, categories: prev.categories.filter((cat) => cat !== category) })))} />)
+                })}
+              </div>
             </div>
 
             {showFilters &&
               <aside className={`fixed inset-0 z-1050 w-full max-w-sm h-full px-4 py-22 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
-                <X strokeWidth={3} onClick={toggleFilters} className='absolute right-5 hover:text-accent' />
+                <X strokeWidth={3} onClick={toggleShowFilters} className='absolute right-5 hover:text-accent' />
                 <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
               </aside>
             }

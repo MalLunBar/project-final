@@ -102,7 +102,7 @@ const Search = () => {
       {isMobile ? (
         // Mobile: toggle between map and list view
         <>
-          <div className='absolute w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 z-1200'>
+          <div className={`${view === 'map' ? 'absolute z-1100' : 'relative z-auto'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
             <div div className='flex flex-col gap-2'>
               <div className='flex justify-between gap-2'>
                 <Button

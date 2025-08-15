@@ -120,25 +120,20 @@ router.get("/categories", async (req, res) => {
   }
 })
 
-// get all loppis ads by a specific user
-router.get("/user", async (req, res) => {
-  const userId = req.query.userId;
-
-  if (!userId) {
-    return res.status(400).json({
-      success: false,
-      response: null,
-      message: "User ID is required."
-    });
-  }
+// get all loppis ads by a specific (authenticated) user
+router.get("/user", authenticateUser, async (req, res) => {
+  const userId = req.user._id.toString()
 
   try {
     // (Valfritt) strikt validering av id:
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, response: null, message: "Invalid userId" })
+      return res.status(400).json({
+        success: false,
+        response: null,
+        message: "Invalid userId"
+      })
     }
 
-    // Mongoose castar normalt sträng -> ObjectId utifrån ditt schema
     const loppises = await Loppis.find({ createdBy: userId })
 
     // ⬇️ Viktig ändring: returnera 200 även om listan är tom

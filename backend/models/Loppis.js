@@ -66,10 +66,9 @@ const loppisSchema = new mongoose.Schema({
     type: String,
     maxLength: 500
   },
-  imageUrl: {
-    type: String,
-    default: 'loppis-placeholder-image.png'
-  },
+  imageUrl: [String], // alla bilder (URLs)
+  coverImage: String,     // images[0]
+  
   createdAt: {
     type: Date,
     default: Date.now

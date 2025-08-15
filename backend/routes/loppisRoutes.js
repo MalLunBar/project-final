@@ -361,26 +361,45 @@ router.delete("/:id", async (req, res) => {
 
 // add a loppis ad
 // ------------- TODO: Add authentication later -----------------------
-router.post('/', async (req, res) => {
+router.post('/', upload.array('images', 6), async (req, res) => {
 
   try {
-    const newLoppis = new Loppis(req.body);
-    await newLoppis.save()
+    // Debug: se vad som faktiskt kommer in
+    console.log('FILES:', req.files?.map(f => f.originalname))
+    console.log('BODY keys:', Object.keys(req.body || {}))
+    console.log('RAW data:', req.body?.data)
 
-    res.status(201).json({
-      success: true,
-      response: newLoppis,
-      message: "Ad successfully posted!"
-    })
+    if (!req.body?.data) {
+      return res.status(400).json({ success: false, message: 'Missing "data" field in form-data' })
+    }
 
-  } catch (error) {
-    console.error("Error in POST /loppis:", error)
+    let payload
+    try {
+      payload = JSON.parse(req.body.data)
+    } catch (e) {
+      return res.status(400).json({ success: false, message: 'Invalid JSON in "data"' })
+    }
 
-    res.status(500).json({
-      success: false,
-      response: error,
-      message: "Failed to post ad."
-    })
+    if (!payload.title) {
+      return res.status(422).json({ success: false, message: 'Title is required' })
+    }
+
+    // Gör dina imageUrls etc:
+    const imageUrls = (req.files || []).map(
+      f => `${req.protocol}://${req.get('host')}/uploads/${f.filename}`
+    )
+
+    // Exempel: sätt coverImage = första bilden
+    payload.images = imageUrls
+    payload.coverImage = imageUrls[0] ?? null
+
+    // Spara i DB, t.ex.:
+    // const doc = await Loppis.create(payload)
+
+    return res.status(201).json({ success: true, response: { /* id: doc._id, */ images: imageUrls } })
+  } catch (err) {
+    console.error('Error in POST /loppis:', err)
+    return res.status(500).json({ success: false, message: err.message || 'Server error' })
   }
 })
 

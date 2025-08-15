@@ -13,10 +13,11 @@ const Search = () => {
   const [showFilters, setShowFilters] = useState(false)  //mobile: hide search filters by default
   const [loppisList, setLoppisList] = useState([])
   const [query, setQuery] = useState({
-    city: "Stockholm",
+    city: "",
     dates: { id: "all", label: "Visa alla" },
     categories: [],
   })
+  const [searchParams, setSearchParams] = useState()
 
   const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]) // default Stockholm
   const [isSearching, setIsSearching] = useState(false)
@@ -26,37 +27,77 @@ const Search = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
   const isLaptop = useMediaQuery({ query: '(max-width: 1279px)' })
 
-  const fetchUrl = 'http://localhost:8080/loppis'
+  const baseUrl = 'http://localhost:8080/loppis'
+  const [fetchUrl, setFetchUrl] = useState(baseUrl)
 
-  // fetch loppis data 
+  // update fetch URL when searchParams changes
   useEffect(() => {
-    const fetchLoppisData = async () => {
-      // query params
-      const params = new URLSearchParams({
-        city: query.city,
-        date: query.dates.id === 'all' ? '' : query.dates.id,
-        category: query.categories
-      })
-      console.log(params.toString())
-
-      try {
-        const response = await fetch(`${fetchUrl}?${params.toString()}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch loppis data')
-        }
-        const data = await response.json()
-        setLoppisList(data.response.data)
-        console.log(data.response.data)
-
-      } catch (error) {
-        console.error('Error fetching loppis data:', error)
-      } finally {
-        console.log('Loppis data fetched successfully')
-        //här kan vi ha loading set to false 
-      }
+    if (searchParams) {
+      setFetchUrl(`${baseUrl}?${searchParams}`)
+    } else {
+      setFetchUrl(baseUrl)
     }
+  }, [searchParams])
+
+  // fetch loppis data when fetch url changes
+  useEffect(() => {
     fetchLoppisData()
-  }, [query])
+  }, [fetchUrl])
+
+  const fetchLoppisData = async () => {
+    try {
+      console.log('Fetching from:', fetchUrl)
+      const response = await fetch(fetchUrl)
+      if (!response.ok) {
+        throw new Error('Failed to fetch loppis data')
+      }
+      const data = await response.json()
+      setLoppisList(data.response.data)
+      console.log('Loppis list: ', data.response.data)
+    } catch (error) {
+      console.error('Error fetching loppis data:', error)
+    } finally {
+      //här kan vi ha loading set to false 
+    }
+  }
+
+  // geocoding - Now calls your backend, not Nominatim directly
+  const geocodeCity = async (text) => {
+    const res = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(text)}`)
+    if (!res.ok) throw new Error("Geocoding failed")
+    const results = await res.json()
+    if (!results || results.length === 0) throw new Error("Inga träffar")
+    const { lat, lon } = results[0]
+    return [parseFloat(lat), parseFloat(lon)]
+  }
+
+  // search 
+  const handleSearch = async (e) => {
+    e.preventDefault()
+    setShowFilters(false)
+    setIsSearching(true)
+    setError(null)
+    // update searchParams from query
+    const params = new URLSearchParams()
+    if (query.city) {
+      params.append('city', query.city)
+    }
+    if (query.dates.id !== 'all') {
+      params.append('date', query.dates.id)
+    }
+    query.categories.forEach(cat => params.append('category', cat))
+    setSearchParams(params.toString())
+    try {
+      // if city is entered - fly to that location on map
+      if (!query.city.trim()) return
+      const center = await geocodeCity(query.city.trim())
+      setMapCenter(center)        // triggers MapView.flyTo via props
+    } catch (err) {
+      setError(err.message || "Kunde inte hitta platsen")
+    } finally {
+      setIsSearching(false)
+    }
+  }
 
   // toggle view 
   const toggleView = () => {
@@ -70,35 +111,6 @@ const Search = () => {
   // toogle show filters 
   const toggleShowFilters = () => {
     setShowFilters(prev => !prev)
-  }
-
-  // Now calls your backend, not Nominatim directly
-  const geocodeCity = async (text) => {
-    const res = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(text)}`)
-    if (!res.ok) throw new Error("Geocoding failed")
-    const results = await res.json()
-    if (!results || results.length === 0) throw new Error("Inga träffar")
-    const { lat, lon } = results[0]
-    return [parseFloat(lat), parseFloat(lon)]
-  }
-
-  const handleSearch = async (e) => {
-    e.preventDefault()
-    setShowFilters(false)
-    // if (!query.city.trim()) return
-
-    setIsSearching(true)
-    setError(null)
-    try {
-      const center = await geocodeCity(query.city.trim())
-      setMapCenter(center)        // triggers MapView.flyTo via props
-      // fetchLoppisData()
-    } catch (err) {
-      setError(err.message || "Kunde inte hitta platsen")
-    } finally {
-      setIsSearching(false)
-
-    }
   }
 
 
@@ -129,8 +141,8 @@ const Search = () => {
                     <Input
                       label='Område'
                       type='text'
-                      value={query.address}
-                      onChange={(e) => setQuery(prev => ({ ...prev, address: e.target.value }))}
+                      value={query.city}
+                      onChange={(e) => setQuery(prev => ({ ...prev, city: e.target.value }))}
                       showLabel={false}
                       required={false}
                       placeholder='Sök område...'

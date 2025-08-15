@@ -63,16 +63,16 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
         onSubmit={onSearch}
       >
 
-        {/* Search address */}
+        {/* Search on city */}
         {/* Add a search icon? */}
         <Input
           label='Område'
           type='text'
-          value={query.address}
-          onChange={handleChange('address')}
+          value={query.city}
+          onChange={handleChange('city')}
           showLabel={true}
           required={false}
-          placeholder='Sök stad eller adress'
+          placeholder='Sök stad eller område'
         />
 
         {/* Opening hours */}

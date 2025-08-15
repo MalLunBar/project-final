@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
     const { city, date, category } = req.query
     const query = {}
     if (city) {
-      query['location.address.city'] = city
+      query['location.address.city'] = new RegExp(city, "i")
     }
     if (category) {
       query.categories = category
@@ -326,12 +326,12 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        response: null,
-        message: "Invalid ID format."
-      })
-    }
+    return res.status(400).json({
+      success: false,
+      response: null,
+      message: "Invalid ID format."
+    })
+  }
 
   try {
     const deletedLoppis = await Loppis.findByIdAndDelete(id)

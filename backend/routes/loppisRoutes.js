@@ -1,6 +1,8 @@
 import express from "express"
 import mongoose from "mongoose"
 import { Loppis } from "../models/Loppis.js"
+import { Like } from '../models/Like.js'
+import { authenticateUser } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
@@ -191,10 +193,10 @@ router.get("/:id", async (req, res) => {
   }
 })
 
-//Like a loppis ad 
-//add authentication later
-router.post("/:id/like", async (req, res) => {
+// Like a loppis - only autheticated users
+router.patch("/:id/like", authenticateUser, async (req, res) => {
   const { id } = req.params
+  let action = ''
 
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -214,21 +216,33 @@ router.post("/:id/like", async (req, res) => {
       })
     }
 
-    // Toggle like status
-    loppis.isLiked = !loppis.isLiked
-    await loppis.save()
+    // check if user has already liked this loppis or not
+    const existingLike = await Like.findOne({ user: req.user._id, loppis: id })
+    if (!existingLike) {
+      action = 'liked'
+      // create a like entry
+      await new Like({ user: req.user._id, loppis: id }).save()
+      // increse loppis likes by one
+      await Loppis.findByIdAndUpdate(id, { $inc: { likes: 1 } }, { new: true, runValidators: true })
+    } else {
+      action = 'unliked'
+      // remove like entry
+      await Like.findByIdAndDelete(existingLike.id)
+      // decrese loppis likes by one
+      await Loppis.findByIdAndUpdate(id, { $inc: { likes: -1 } }, { new: true, runValidators: true })
+    }
 
     res.status(200).json({
       success: true,
       response: loppis,
-      message: `Loppis ad ${loppis.isLiked ? 'liked' : 'unliked'} successfully!`
+      message: `Loppis ${action} successfully!`
     })
+
   } catch (error) {
-    console.error("Error in POST /loppis/:id/like:", error)
     res.status(500).json({
       success: false,
       response: error,
-      message: "Failed to like/unlike loppis ad."
+      message: "Failed to like or unlike loppis."
     })
   }
 })

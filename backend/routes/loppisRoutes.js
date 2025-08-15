@@ -156,8 +156,59 @@ router.get("/user", async (req, res) => {
 })
 
 // get all loppis liked by a specific user
+router.get("/user/liked", authenticateUser, async (req, res) => {
+  const user = req.user
+  const page = req.query.page || 1
+  const limit = req.query.limit || 10
 
+  try {
+    if (!mongoose.Types.ObjectId.isValid(user._id)) {
+      return res.status(400).json({
+        success: false,
+        response: null,
+        message: "Invalid user ID format."
+      })
+    }
 
+    const userLikes = await Like.find({ user: user })
+    if (!userLikes || userLikes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No likes found for this user."
+      })
+    }
+
+    const likedLoppis = await Loppis.find({ _id: { $in: userLikes.map(like => like.loppis) } })
+      .sort("-createdAt").skip((page - 1) * limit).limit(limit)
+
+    if (likedLoppis.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No liked loppis found for this user."
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      response: {
+        totalCount: likedLoppis.length,
+        currentPage: page,
+        limit: limit,
+        data: likedLoppis,
+      },
+      message: "Successfully fetched liked loppis ads."
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch liked loppis ads."
+    })
+  }
+})
 
 // get one loppis by id
 router.get("/:id", async (req, res) => {
@@ -246,8 +297,6 @@ router.patch("/:id/like", authenticateUser, async (req, res) => {
     })
   }
 })
-
-
 
 //Edit loppis ad
 // liten hjälpare för geokodning via din egen backend-proxy

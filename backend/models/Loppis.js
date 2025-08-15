@@ -70,6 +70,11 @@ const loppisSchema = new mongoose.Schema({
     type: String,
     default: 'loppis-placeholder-image.png'
   },
+  likes: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

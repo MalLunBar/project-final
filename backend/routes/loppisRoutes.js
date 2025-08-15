@@ -118,7 +118,6 @@ router.get("/categories", async (req, res) => {
   }
 })
 
-// get all thoughts by a specific user
 // get all loppis ads by a specific user
 router.get("/user", async (req, res) => {
   const userId = req.query.userId;
@@ -153,6 +152,9 @@ router.get("/user", async (req, res) => {
     })
   }
 })
+
+// get all loppis liked by a specific user
+
 
 
 // get one loppis by id

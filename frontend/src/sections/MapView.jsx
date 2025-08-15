@@ -60,12 +60,12 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
   })
 
   return (
-    <section>
+    <section className='h-full'>
       <MapContainer
         center={center}
-        zoom={11}
-        zoomControl={false}            // stänger av default (som ligger uppe vänster)
-        className='my-map h-[400px] w-full'
+        zoom={zoom}
+        zoomControl={false} // stänger av default (som ligger uppe vänster)
+        className='my-map h-full w-full'
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

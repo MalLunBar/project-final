@@ -12,7 +12,7 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="fixed md:hidden bottom-0 left-0 z-10 w-full py-1 bg-white border-t border-border shadow-sm"
+      className="fixed md:hidden bottom-0 left-0 z-1100 w-full py-1 bg-white border-t border-border shadow-sm"
       aria-label="Bottom"
     >
       <ul className="flex items-center justify-around">

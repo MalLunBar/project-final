@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Camera, Trash2 } from 'lucide-react'
 import Input from './Input'
 import Button from './Button'
 import SmallMap from './SmallMap'
+import PhotoDropzone from './PhotoDropzone'
 
 const normalizeDateInput = (val) => {
   if (!val) return ''
@@ -66,6 +67,7 @@ const LoppisForm = ({
   const [selectedCategories, setSelectedCategories] = useState(init.selectedCategories)
   const [dates, setDates] = useState(init.dates)
   const [coordinates, setCoordinates] = useState(init.coordinates)
+  const [photos, setPhotos] = useState([])
 
   // re-init om initialValues ändras
   useEffect(() => {
@@ -131,6 +133,7 @@ const LoppisForm = ({
     e.preventDefault()
     try {
       setSubmitting(true)
+
       const payload = {
         title: formData.title,
         dates,
@@ -145,7 +148,16 @@ const LoppisForm = ({
         description: formData.description,
         // imageUrl: formData.imageUrl, // lägg till när uppladdning är klar
       }
-      await onSubmit?.(payload)
+
+      // Bygg multipart form data
+      const fd = new FormData()
+      fd.append('data', JSON.stringify(payload))
+      // Viktigt: bevara ordningen så att första bilden = omslag
+      photos.forEach((file, i) => {
+        fd.append('images', file) // backend: upload.array('images')
+      })
+
+      await onSubmit?.(fd)
     } finally {
       setSubmitting(false)
     }
@@ -162,8 +174,12 @@ const LoppisForm = ({
 
           {/* image upload placeholder */}
           <div className='flex py-8 w-full border-2 border-border border-dashed rounded-xl flex-col items-center justify-center gap-4'>
-            <Camera size={50} />
-            <p className='text-center'>Bilduppladdning kommer snart!</p>
+            <PhotoDropzone
+              initialFiles={initialValues?.images || []}           // i edit-läge: skicka med redan sparade URL:er här
+              maxFiles={6}
+              maxSizeMB={5}
+              onFilesChange={setPhotos}
+            />
           </div>
 
           <Input

@@ -1,4 +1,4 @@
-import { cldUrl } from '../utils/cloudinaryUrl'
+
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
@@ -6,6 +6,7 @@ import { MapPinned, Clock, CircleX } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
+import { IMG } from '../utils/imageVariants'
 
 const LoppisCard = ({
   loppis,
@@ -16,15 +17,8 @@ const LoppisCard = ({
 }) => {
 
   // Hämta publicId för omslagsbild:
-  const publicId =
-    loppis?.coverImage
-    || loppis?.images?.[0]?.publicId
-    || null
+  const id = loppis.coverImage ?? loppis.images?.[0] ?? null
 
-  // Bygg Cloudinary-URL för en liten thumbnail till kortet
-  const imgSrc = publicId
-    ? cldUrl(publicId, { w: 320, h: 240, crop: 'fill' }) // kvick thumbnail
-    : (loppis?.imageUrl || '') // fallback om du har äldre data med direkt-URL
 
   const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
@@ -33,20 +27,18 @@ const LoppisCard = ({
 
 
   return (
-    <article className='bg-accent-light flex rounded-xl'>
-
-      {imgSrc ? (
+    <article className='bg-accent-light flex flex-col gap-2 rounded-xl'>
+      <div>
         <img
-          src={imgSrc}
+          src={IMG.card(id)}
+          srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
           alt={loppis.title}
-          className='w-28 h-40 md:w-32 md:h-24 rounded-l-xl object-cover'
-          loading='lazy'
+          className="w-40 h-36 md:w-32 md:h-24 object-cover rounded-l-xl"
+          loading="lazy"
         />
-      ) : (
-        <div className='w-30 h-30 md:w-32 md:h-24 rounded-l-xl bg-gray-200' />
-      )}
+      </div>
 
-      <div className='flex justify-between items-start p-4'>
+      <div className='flex justify-between items-start px-4'>
 
         <div className='flex flex-col gap-2 p-2'>
           <div className='flex items-start gap-2'>

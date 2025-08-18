@@ -66,13 +66,8 @@ const loppisSchema = new mongoose.Schema({
     type: String,
     maxLength: 500
   },
-  images: [{
-    publicId: { type: String, required: true },
-    width: Number,
-    height: Number,
-    format: String,
-  }],
-  coverImage: String,
+  images: [{ type: String }],      // bara public_id
+  coverImage: { type: String },    // public_id
 
   createdAt: {
     type: Date,

@@ -30,6 +30,7 @@ const app = express()
 //   seedDatabase()
 // }
 
+
 app.use(cors())
 app.use(express.json())
 

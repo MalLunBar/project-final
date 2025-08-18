@@ -144,7 +144,7 @@ router.get("/user", async (req, res) => {
       success: false,
       response: null,
       message: "User ID is required."
-    });
+    })
   }
 
   try {
@@ -396,26 +396,20 @@ router.post('/', upload.array('images', 6), async (req, res) => {
         (err, result) => {
           if (err) return reject(err)
           // Spara *public_id* så vi kan generera alla varianter vid delivery
-          resolve({
-            publicId: result.public_id,
-            width: result.width,
-            height: result.height,
-            format: result.format,
-          })
+          resolve(result.public_id)
         }
       )
       stream.end(file.buffer)
     }))
 
-    const uploaded = await Promise.all(uploads)
-    payload.images = uploaded            // [{publicId, width, height, format}, ...]
-    payload.coverImage = uploaded[0]?.publicId || null
+    const publicIds = await Promise.all(uploads)         // [ "loppis/abc123", ... ]
+    payload.images = publicIds
+    payload.coverImage = publicIds[0] || null
 
     // spara i DB med mongoose
     const doc = await Loppis.create(payload)
-
-    // const doc = await Loppis.create(payload)
-    res.status(201).json({ success: true, response: { images: uploaded } })
+    return res.status(201).json({ success: true, response: doc })
+    
   } catch (err) {
     console.error('POST /loppis error:', err)
     res.status(500).json({ success: false, message: err.message || 'Server error' })

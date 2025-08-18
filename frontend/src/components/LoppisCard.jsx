@@ -29,7 +29,6 @@ const LoppisCard = ({
   // toggle like state and send like request to backend 
   const likeLoppis = async (e) => {
     e.stopPropagation() // förhindra att kortet klickas på
-    console.log('Gillar loppis: ', loppis._id)
     if (!user || !token) {
       console.error("Användare är inte inloggad eller saknar token.")
       return
@@ -43,7 +42,7 @@ const LoppisCard = ({
         throw new Error('Något gick fel vid gillande av loppis.')
       }
       const data = await response.json()
-      console.log('Backend svar: ', data)
+      console.log(`Loppis ${loppis._id} ${data.response.action}!`)
 
       setLiked(!liked) // växla liked state
     } catch (error) {

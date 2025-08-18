@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 import { Loppis } from "../models/Loppis.js"
 import { Like } from '../models/Like.js'
 import { authenticateUser } from "../middleware/authMiddleware.js"
+import { useActionState } from "react"
 
 const router = express.Router()
 
@@ -280,7 +281,10 @@ router.patch("/:id/like", authenticateUser, async (req, res) => {
 
     res.status(200).json({
       success: true,
-      response: loppis,
+      response: {
+        data: loppis,
+        action: action
+      },
       message: `Loppis ${action} successfully!`
     })
 

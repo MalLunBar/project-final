@@ -66,9 +66,14 @@ const loppisSchema = new mongoose.Schema({
     type: String,
     maxLength: 500
   },
-  imageUrl: [String], // alla bilder (URLs)
-  coverImage: String,     // images[0]
-  
+  images: [{
+    publicId: { type: String, required: true },
+    width: Number,
+    height: Number,
+    format: String,
+  }],
+  coverImage: String,
+
   createdAt: {
     type: Date,
     default: Date.now

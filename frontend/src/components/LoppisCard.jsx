@@ -1,7 +1,8 @@
+import { cldUrl } from '../utils/cloudinaryUrl'
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { MapPinned, Clock, PencilLine, CircleX } from 'lucide-react'
+import { MapPinned, Clock, CircleX } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
@@ -14,6 +15,17 @@ const LoppisCard = ({
   onEdit,                     // profile: klick på penna på kortet
 }) => {
 
+  // Hämta publicId för omslagsbild:
+  const publicId =
+    loppis?.coverImage
+    || loppis?.images?.[0]?.publicId
+    || null
+
+  // Bygg Cloudinary-URL för en liten thumbnail till kortet
+  const imgSrc = publicId
+    ? cldUrl(publicId, { w: 320, h: 240, crop: 'fill' }) // kvick thumbnail
+    : (loppis?.imageUrl || '') // fallback om du har äldre data med direkt-URL
+
   const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
@@ -23,11 +35,16 @@ const LoppisCard = ({
   return (
     <article className='bg-accent-light flex rounded-xl'>
 
-      <img
-        src={loppis.imageUrl}
-        alt={`${loppis._id}-image`}
-        className='w-20 rounded-l-xl object-cover'
-      />
+      {imgSrc ? (
+        <img
+          src={imgSrc}
+          alt={loppis.title}
+          className='w-28 h-40 md:w-32 md:h-24 rounded-l-xl object-cover'
+          loading='lazy'
+        />
+      ) : (
+        <div className='w-30 h-30 md:w-32 md:h-24 rounded-l-xl bg-gray-200' />
+      )}
 
       <div className='flex justify-between items-start p-4'>
 

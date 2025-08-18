@@ -1,8 +1,24 @@
+import 'dotenv/config' // safety net om filen laddas separat i andra skript
 import express from "express"
 import mongoose from "mongoose"
+import multer from 'multer'
+
+import { v2 as cloudinary } from 'cloudinary'
 import { Loppis } from "../models/Loppis.js"
 
 const router = express.Router()
+
+// Multer: lagra i minnet (inte disk)
+const upload = multer({ storage: multer.memoryStorage() })
+
+// Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
+
 
 // get all loppis ads
 router.get("/", async (req, res) => {
@@ -364,42 +380,45 @@ router.delete("/:id", async (req, res) => {
 router.post('/', upload.array('images', 6), async (req, res) => {
 
   try {
-    // Debug: se vad som faktiskt kommer in
-    console.log('FILES:', req.files?.map(f => f.originalname))
-    console.log('BODY keys:', Object.keys(req.body || {}))
-    console.log('RAW data:', req.body?.data)
 
     if (!req.body?.data) {
       return res.status(400).json({ success: false, message: 'Missing "data" field in form-data' })
     }
 
-    let payload
-    try {
-      payload = JSON.parse(req.body.data)
-    } catch (e) {
-      return res.status(400).json({ success: false, message: 'Invalid JSON in "data"' })
-    }
+    const payload = JSON.parse(req.body.data)
 
-    if (!payload.title) {
-      return res.status(422).json({ success: false, message: 'Title is required' })
-    }
+    const uploads = (req.files || []).map(file => new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'loppis',        // spara original i en mapp
+          resource_type: 'image',
+        },
+        (err, result) => {
+          if (err) return reject(err)
+          // Spara *public_id* så vi kan generera alla varianter vid delivery
+          resolve({
+            publicId: result.public_id,
+            width: result.width,
+            height: result.height,
+            format: result.format,
+          })
+        }
+      )
+      stream.end(file.buffer)
+    }))
 
-    // Gör dina imageUrls etc:
-    const imageUrls = (req.files || []).map(
-      f => `${req.protocol}://${req.get('host')}/uploads/${f.filename}`
-    )
+    const uploaded = await Promise.all(uploads)
+    payload.images = uploaded            // [{publicId, width, height, format}, ...]
+    payload.coverImage = uploaded[0]?.publicId || null
 
-    // Exempel: sätt coverImage = första bilden
-    payload.images = imageUrls
-    payload.coverImage = imageUrls[0] ?? null
+    // spara i DB med mongoose
+    const doc = await Loppis.create(payload)
 
-    // Spara i DB, t.ex.:
     // const doc = await Loppis.create(payload)
-
-    return res.status(201).json({ success: true, response: { /* id: doc._id, */ images: imageUrls } })
+    res.status(201).json({ success: true, response: { images: uploaded } })
   } catch (err) {
-    console.error('Error in POST /loppis:', err)
-    return res.status(500).json({ success: false, message: err.message || 'Server error' })
+    console.error('POST /loppis error:', err)
+    res.status(500).json({ success: false, message: err.message || 'Server error' })
   }
 })
 

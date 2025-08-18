@@ -1,13 +1,17 @@
+import 'dotenv/config'               // <-- MÅSTE stå allra först
 import express from "express"
 import cors from "cors"
 import mongoose from "mongoose"
 import listEndpoints from "express-list-endpoints"
+
 
 import loppisRoutes from "./routes/loppisRoutes.js"
 import userRoutes from './routes/userRoutes.js'
 
 import { Loppis } from "./models/Loppis.js"
 import loppisData from "./updated_loppis_data.json"
+
+
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project"
 mongoose.connect(mongoUrl)

@@ -89,8 +89,8 @@ const Profile = ({ name }) => {
   }
 
   return (
-    <section>
-      <h2>Hello, {name}</h2>
+    <section className="bg-[url(./monstera.jpg)] bg-right">
+      <h2 className="text-white font-bold">Hello, {name}</h2>
 
       <h3>Mina Loppisar</h3>
       {error && <p className="text-red-500">{error}</p>}

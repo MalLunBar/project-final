@@ -30,7 +30,7 @@ const MyFavorites = () => {
 
         if (response.status === 404) {
           setLoppisList([])
-          setEmptyMsg("Inga gillade loppisar hittades för denna användare.")
+          setEmptyMsg("Du har inte gillat några loppisar ännu.")
           return
         }
 
@@ -43,7 +43,7 @@ const MyFavorites = () => {
         setLoppisList(Array.isArray(data.response.data) ? data.response.data : [])
         setLikedLoppis(data.response.data.map(l => l._id)) // store liked loppis IDs
         if (data.response.data.length === 0) {
-          setEmptyMsg("Du har inte gillat några loppisar än.")
+          setEmptyMsg("Du har inte gillat några loppisar ännu.")
         }
 
       } catch (error) {

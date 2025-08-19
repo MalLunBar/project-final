@@ -1,5 +1,5 @@
 // src/components/LoppisForm.jsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { ChevronDown, ChevronUp, Camera, Trash2 } from 'lucide-react'
 import Input from './Input'
 import Button from './Button'
@@ -63,7 +63,12 @@ const LoppisForm = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  const init = toInitialState(initialValues)
+  // Stabil "init-nyckel" baserad på innehållet (inte referensen)
+  const initKey = useMemo(() => JSON.stringify(initialValues ?? {}), [initialValues])
+
+  // initiera state en gång från initialValues (innehåll)
+  const init = useMemo(() => toInitialState(initialValues), [initKey])
+
   const [formData, setFormData] = useState(init.formData)
   const [selectedCategories, setSelectedCategories] = useState(init.selectedCategories)
   const [dates, setDates] = useState(init.dates)
@@ -77,7 +82,7 @@ const LoppisForm = ({
     setSelectedCategories(next.selectedCategories)
     setDates(next.dates)
     setCoordinates(next.coordinates)
-  }, [initialValues])
+  }, [initKey])
 
   const handleChange = (key) => (e) => {
     setFormData(prev => ({ ...prev, [key]: e.target.value }))
@@ -165,21 +170,28 @@ const LoppisForm = ({
   }
 
 
-  // Kunna visa redan uppladdade bilder i dropzonen
-  const initialPublicIds = Array.isArray(initialValues?.images) ? initialValues.images : []
+  // Visa redan uppladdade bilder i dropzonen – memoiserat på initKey
+  const initialPublicIds = useMemo(
+    () => (Array.isArray(initialValues?.images) ? initialValues.images : []),
+    [initKey]
+  )
   const cover = initialValues?.coverImage
-  const orderedIds = cover
-    ? [cover, ...initialPublicIds.filter(pid => pid !== cover)]
-    : initialPublicIds
+  const orderedIds = useMemo(
+    () => (cover ? [cover, ...initialPublicIds.filter(pid => pid !== cover)] : initialPublicIds),
+    [cover, initialPublicIds]
+  )
 
-  // bygg visningsbara URLs för dropzonen (små thumbnails)
-  const initialPreviewUrls = orderedIds.map(pid => IMG.thumb(pid))
+  // generera små Cloudinary-URLs för preview
+  const initialPreviewUrls = useMemo(
+    () => orderedIds.map(pid => IMG.thumb(pid)),
+    [orderedIds]
+  )
 
   return (
-    <section className='flex flex-col gap-6 px-4 py-6 mx-auto max-w-2xl rounded-lg bg-white'>
+    <section className='flex flex-col gap-4 mx-auto max-w-2xl rounded-lg bg-white'>
       <h2 className='text-xl font-semibold'>{title}</h2>
 
-      <form className='flex flex-col gap-6 divide-y divide-border' onSubmit={handleSubmit}>
+      <form className='flex flex-col gap-4 divide-y divide-border' onSubmit={handleSubmit}>
         {/* Beskrivning */}
         <fieldset className='flex p-2 flex-col gap-4 pb-6'>
           <legend className='font-semibold text-lg pb-2'>Beskrivning</legend>
@@ -187,7 +199,8 @@ const LoppisForm = ({
           {/* image upload placeholder */}
           <div className='flex py-8 w-full border-2 border-border border-dashed rounded-xl flex-col items-center justify-center gap-4'>
             <PhotoDropzone
-              initialFiles={initialPreviewUrls}           // i edit-läge: skicka med redan sparade URL:er här
+              key={initKey}
+              initialFiles={initialPreviewUrls}
               maxFiles={6}
               maxSizeMB={5}
               onFilesChange={setPhotos}

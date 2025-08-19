@@ -21,12 +21,12 @@ const Home = () => {
   }
 
   return (
-    <section>
+    <section className='flex flex-col gap-4 py-6 px-4'>
 
       {/* test av logga in funktion */}
       {user ? (
         <>
-          <h2>Välkommen {user.name}!</h2>
+          <h2>Välkommen, {user.name}!</h2>
           <Button
             text='Logga ut'
             onClick={logout}

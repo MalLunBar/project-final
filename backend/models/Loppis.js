@@ -66,9 +66,13 @@ const loppisSchema = new mongoose.Schema({
     type: String,
     maxLength: 500
   },
+  likes: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
   images: [{ type: String }],      // bara public_id
   coverImage: { type: String },    // public_id
-
   createdAt: {
     type: Date,
     default: Date.now

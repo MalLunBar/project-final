@@ -5,6 +5,9 @@ import multer from 'multer'
 
 import { v2 as cloudinary } from 'cloudinary'
 import { Loppis } from "../models/Loppis.js"
+import { Like } from '../models/Like.js'
+import { authenticateUser } from "../middleware/authMiddleware.js"
+import { useActionState } from "react"
 
 const router = express.Router()
 
@@ -134,26 +137,20 @@ router.get("/categories", async (req, res) => {
   }
 })
 
-// get all thoughts by a specific user
-// get all loppis ads by a specific user
-router.get("/user", async (req, res) => {
-  const userId = req.query.userId;
-
-  if (!userId) {
-    return res.status(400).json({
-      success: false,
-      response: null,
-      message: "User ID is required."
-    })
-  }
+// get all loppis ads by a specific (authenticated) user
+router.get("/user", authenticateUser, async (req, res) => {
+  const userId = req.user._id.toString()
 
   try {
     // (Valfritt) strikt validering av id:
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, response: null, message: "Invalid userId" })
+      return res.status(400).json({
+        success: false,
+        response: null,
+        message: "Invalid userId"
+      })
     }
 
-    // Mongoose castar normalt sträng -> ObjectId utifrån ditt schema
     const loppises = await Loppis.find({ createdBy: userId })
 
     // ⬇️ Viktig ändring: returnera 200 även om listan är tom
@@ -170,6 +167,60 @@ router.get("/user", async (req, res) => {
   }
 })
 
+// get all loppis liked by a specific user
+router.get("/user/liked", authenticateUser, async (req, res) => {
+  const user = req.user
+  const page = req.query.page || 1
+  const limit = req.query.limit || 10
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(user._id)) {
+      return res.status(400).json({
+        success: false,
+        response: null,
+        message: "Invalid user ID format."
+      })
+    }
+
+    const userLikes = await Like.find({ user: user })
+    if (!userLikes || userLikes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No likes found for this user."
+      })
+    }
+
+    const likedLoppis = await Loppis.find({ _id: { $in: userLikes.map(like => like.loppis) } })
+      .sort("-createdAt").skip((page - 1) * limit).limit(limit)
+
+    if (likedLoppis.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No liked loppis found for this user."
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      response: {
+        totalCount: likedLoppis.length,
+        currentPage: page,
+        limit: limit,
+        data: likedLoppis,
+      },
+      message: "Successfully fetched liked loppis ads."
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch liked loppis ads."
+    })
+  }
+})
 
 // get one loppis by id
 router.get("/:id", async (req, res) => {
@@ -205,10 +256,10 @@ router.get("/:id", async (req, res) => {
   }
 })
 
-//Like a loppis ad 
-//add authentication later
-router.post("/:id/like", async (req, res) => {
+// Like a loppis - only autheticated users
+router.patch("/:id/like", authenticateUser, async (req, res) => {
   const { id } = req.params
+  let action = ''
 
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -228,26 +279,39 @@ router.post("/:id/like", async (req, res) => {
       })
     }
 
-    // Toggle like status
-    loppis.isLiked = !loppis.isLiked
-    await loppis.save()
+    // check if user has already liked this loppis or not
+    const existingLike = await Like.findOne({ user: req.user._id, loppis: id })
+    if (!existingLike) {
+      action = 'liked'
+      // create a like entry
+      await new Like({ user: req.user._id, loppis: id }).save()
+      // increse loppis likes by one
+      await Loppis.findByIdAndUpdate(id, { $inc: { likes: 1 } }, { new: true, runValidators: true })
+    } else {
+      action = 'unliked'
+      // remove like entry
+      await Like.findByIdAndDelete(existingLike.id)
+      // decrese loppis likes by one
+      await Loppis.findByIdAndUpdate(id, { $inc: { likes: -1 } }, { new: true, runValidators: true })
+    }
 
     res.status(200).json({
       success: true,
-      response: loppis,
-      message: `Loppis ad ${loppis.isLiked ? 'liked' : 'unliked'} successfully!`
+      response: {
+        data: loppis,
+        action: action
+      },
+      message: `Loppis ${action} successfully!`
     })
+
   } catch (error) {
-    console.error("Error in POST /loppis/:id/like:", error)
     res.status(500).json({
       success: false,
       response: error,
-      message: "Failed to like/unlike loppis ad."
+      message: "Failed to like or unlike loppis."
     })
   }
 })
-
-
 
 //Edit loppis ad
 // liten hjälpare för geokodning via din egen backend-proxy
@@ -409,7 +473,7 @@ router.post('/', upload.array('images', 6), async (req, res) => {
     // spara i DB med mongoose
     const doc = await Loppis.create(payload)
     return res.status(201).json({ success: true, response: doc })
-    
+
   } catch (err) {
     console.error('POST /loppis error:', err)
     res.status(500).json({ success: false, message: err.message || 'Server error' })

@@ -1,4 +1,4 @@
-
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
@@ -6,6 +6,8 @@ import { MapPinned, Clock, CircleX } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
+import useAuthStore from '../stores/useAuthStore'
+import useModalStore from '../stores/useModalStore'
 import { IMG } from '../utils/imageVariants'
 
 // LoppisCard.jsx (bara relevanta delar)
@@ -45,11 +47,16 @@ const S = {
 
 const LoppisCard = ({
   loppis,
+  likedLoppis,
+  setLikedLoppis,     // function to update liked loppis in parent component
   variant = 'search', // 'search' | 'map' | 'profile'
   onClose,            // map: stäng popup
   showItemActions = 'false', // profile: om redigeringsläge är på
   onEdit,                     // profile: klick på penna på kortet
 }) => {
+
+  const { user, token } = useAuthStore()
+  const { openLoginModal } = useModalStore()
 
   // Hämta publicId för omslagsbild:
   const id = loppis.coverImage ?? loppis.images?.[0] ?? null
@@ -58,8 +65,40 @@ const LoppisCard = ({
   const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
-  /*TILLFÄLLIGT HÄMTA ALLA LOPPISAR*/
+  const url = 'http://localhost:8080/loppis/'
 
+  // check if loppis is liked by current user
+  const isLiked = likedLoppis?.includes(loppis._id)
+
+  // handle click on like button 
+  const likeLoppis = async (e) => {
+    e.stopPropagation() // förhindra att kortet klickas på
+    if (!user || !token) {
+      openLoginModal('Du måste vara inloggad för att gilla en loppis!')
+      return
+    }
+    try {
+      const response = await fetch(`${url}/${loppis._id}/like`, {
+        method: 'PATCH',
+        headers: { 'Authorization': token }
+      })
+      if (!response.ok) {
+        throw new Error('Något gick fel vid gillande av loppis.')
+      }
+      const data = await response.json()
+      console.log(`Loppis ${loppis._id} ${data.response.action}!`)
+      // uppdatte liked state based on response
+      if (data.response.action === 'liked') {
+        setLikedLoppis(prev => [...prev, loppis._id])
+      } else {
+        setLikedLoppis(prev => prev.filter(id => id !== loppis._id))
+      }
+    } catch (error) {
+      console.error('Fel vid gillande av loppis:', error)
+    } finally {
+      //
+    }
+  }
 
   return (
     <article className='bg-white flex flex-col gap-2 rounded-xl'>
@@ -76,12 +115,12 @@ const LoppisCard = ({
       <div className='flex justify-between items-start px-4 pb-4'>
 
         <div className='flex flex-col gap-2'>
-          <div className='flex items-start gap-2'>
+          <div className='flex items-start justify-between gap-2'>
             <Link to={`/loppis/${loppis._id}`}>
               <h3 className='font-semibold text-base'>{loppis.title}</h3>
             </Link>
 
-            <LikeButton />
+            <LikeButton onLike={likeLoppis} isLiked={isLiked} />
           </div>
           {/*if there are any categories, map them here*/}
           <div className='flex flex-wrap'>

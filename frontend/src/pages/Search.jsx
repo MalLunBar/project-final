@@ -7,11 +7,14 @@ import MapView from "../sections/MapView"
 import Input from "../components/Input"
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
+import useAuthStore from "../stores/useAuthStore"
 
 const Search = () => {
+  const { user, token } = useAuthStore()
   const [view, setView] = useState("map") //"map" or "list" for mobile
   const [showFilters, setShowFilters] = useState(false)  //mobile: hide search filters by default
   const [loppisList, setLoppisList] = useState([])
+  const [likedLoppis, setLikedLoppis] = useState([]) // store loppis IDs the current user has liked
   const [query, setQuery] = useState({
     city: "",
     dates: { id: "all", label: "Visa alla" },
@@ -39,7 +42,7 @@ const Search = () => {
     }
   }, [searchParams])
 
-  // fetch loppis data when fetch url changes
+  // fetch loppis data when fetch url changes 
   useEffect(() => {
     fetchLoppisData()
   }, [fetchUrl])
@@ -60,6 +63,32 @@ const Search = () => {
       //här kan vi ha loading set to false 
     }
   }
+
+  // if user is logged in, fetch their liked loppis
+  const fetchLikedLoppis = async () => {
+    if (!user || !token) return
+    try {
+      const response = await fetch(`${baseUrl}/user/liked`, {
+        method: 'GET',
+        headers: { 'Authorization': token }
+      })
+      if (!response.ok) {
+        throw new Error('Failed to fetch liked loppis data')
+      }
+      const data = await response.json()
+      // extract liked loppis IDs from trhe response
+      const likedIds = data.response.data.map((loppis) => loppis._id)
+      console.log('Liked loppis IDs: ', likedIds)
+      setLikedLoppis(likedIds)
+    } catch (error) {
+      console.error('Error fetching likes:', error)
+    }
+  }
+
+  // fetch liked loppis when user or token or loppislist changes
+  useEffect(() => {
+    fetchLikedLoppis()
+  }, [user, token])
 
   // geocoding - Now calls your backend, not Nominatim directly
   const geocodeCity = async (text) => {
@@ -187,8 +216,8 @@ const Search = () => {
           </div>
 
           {/* conditionally render map or list view */}
-          {view === 'map' && <MapView loppisList={loppisList} center={mapCenter} />}
-          {view === 'list' && <ListView loppisList={loppisList} />}
+          {view === 'map' && <MapView loppisList={loppisList} likedLoppis={likedLoppis} setLikedLoppis={setLikedLoppis} center={mapCenter} />}
+          {view === 'list' && <ListView loppisList={loppisList} likedLoppis={likedLoppis} setLikedLoppis={setLikedLoppis} />}
 
           {/* optional - toggle updates URL: /search?view=map */}
 
@@ -199,8 +228,8 @@ const Search = () => {
           <aside className='h-full p-4 bg-white border-r border-border shadow-sm'>
             <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
           </aside>
-          <MapView loppisList={loppisList} center={mapCenter} />
-          <ListView loppisList={loppisList} />
+          <MapView loppisList={loppisList} likedLoppis={likedLoppis} setLikedLoppis={setLikedLoppis} center={mapCenter} />
+          <ListView loppisList={loppisList} likedLoppis={likedLoppis} setLikedLoppis={setLikedLoppis} />
         </div>
       )}
 

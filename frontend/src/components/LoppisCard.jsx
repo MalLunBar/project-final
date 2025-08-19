@@ -1,15 +1,18 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { format } from 'date-fns'
-import { sv } from 'date-fns/locale'
+import { is, sv } from 'date-fns/locale'
 import { MapPinned, Clock, PencilLine, CircleX } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
 import useAuthStore from '../stores/useAuthStore'
+import useModalStore from '../stores/useModalStore'
 
 const LoppisCard = ({
   loppis,
+  likedLoppis,
+  setLikedLoppis,     // function to update liked loppis in parent component
   variant = 'search', // 'search' | 'map' | 'profile'
   onClose,            // map: stäng popup
   showItemActions = 'false', // profile: om redigeringsläge är på
@@ -17,20 +20,21 @@ const LoppisCard = ({
 }) => {
 
   const { user, token } = useAuthStore()
+  const { openLoginModal } = useModalStore()
 
   const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
   const url = 'http://localhost:8080/loppis/'
 
-  // tillfälligt state för like-knapp
-  const [liked, setLiked] = useState(false)
+  // check if loppis is liked by current user
+  const isLiked = likedLoppis?.includes(loppis._id)
 
-  // toggle like state and send like request to backend 
+  // handle click on like button 
   const likeLoppis = async (e) => {
     e.stopPropagation() // förhindra att kortet klickas på
     if (!user || !token) {
-      console.error("Användare är inte inloggad eller saknar token.")
+      openLoginModal('Du måste vara inloggad för att gilla en loppis!')
       return
     }
     try {
@@ -43,8 +47,12 @@ const LoppisCard = ({
       }
       const data = await response.json()
       console.log(`Loppis ${loppis._id} ${data.response.action}!`)
-
-      setLiked(!liked) // växla liked state
+      // uppdatte liked state based on response
+      if (data.response.action === 'liked') {
+        setLikedLoppis(prev => [...prev, loppis._id])
+      } else {
+        setLikedLoppis(prev => prev.filter(id => id !== loppis._id))
+      }
     } catch (error) {
       console.error('Fel vid gillande av loppis:', error)
     } finally {
@@ -69,7 +77,7 @@ const LoppisCard = ({
               <h3 className='font-semibold text-base'>{loppis.title}</h3>
             </Link>
 
-            <LikeButton onLike={likeLoppis} liked={liked} />
+            <LikeButton onLike={likeLoppis} isLiked={isLiked} />
           </div>
           {/*if there are any categories, map them here*/}
           <div className='flex flex-wrap'>

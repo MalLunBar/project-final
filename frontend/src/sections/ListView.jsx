@@ -1,6 +1,6 @@
 import LoppisList from "../components/LoppisList";
 
-const ListView = ({ loppisList }) => {
+const ListView = ({ loppisList, likedLoppis, setLikedLoppis }) => {
   return (
     <section className='h-full p-2 bg-white border-r border-border shadow-sm overflow-y-auto'>
       <div className='flex flex-col gap-2 divide-y divide-border'>
@@ -12,7 +12,7 @@ const ListView = ({ loppisList }) => {
 
         </div>
 
-        <LoppisList loppisList={loppisList} />
+        <LoppisList loppisList={loppisList} likedLoppis={likedLoppis} setLikedLoppis={setLikedLoppis} />
 
         {/* Page selector */}
         <p className='text-center'>Page: 1 </p>

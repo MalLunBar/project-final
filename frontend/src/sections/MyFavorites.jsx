@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import LoppisList from "../components/LoppisList"
 import useAuthStore from "../stores/useAuthStore"
+import LoppisCard from '../components/LoppisCard'
 
 const MyFavorites = () => {
   const { user, token } = useAuthStore()
   const [loppisList, setLoppisList] = useState([])
+  const [likedLoppis, setLikedLoppis] = useState([]) // store loppis IDs the current user has liked
   const [error, setError] = useState(null)
   const [emptyMsg, setEmptyMsg] = useState("")
 
@@ -39,6 +41,7 @@ const MyFavorites = () => {
 
         const data = await response.json()
         setLoppisList(Array.isArray(data.response.data) ? data.response.data : [])
+        setLikedLoppis(data.response.data.map(l => l._id)) // store liked loppis IDs
         if (data.response.data.length === 0) {
           setEmptyMsg("Du har inte gillat några loppisar än.")
         }
@@ -48,19 +51,24 @@ const MyFavorites = () => {
       }
     }
     fetchloppisList()
-  }, [user])
+  }, [user, likedLoppis])
 
   return (
     <section>
       <h3>Mina Favoriter</h3>
       {error && <p className="text-red-500">{error}</p>}
-      {!error && loppisList?.length > 0 && (
-        <LoppisList
-          loppisList={loppisList}
-          variant="search"
-        />
-      )}
-      {!error && loppisList?.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
+      <div className='flex flex-col gap-4'>
+        {!error && loppisList?.length > 0 && (
+          <LoppisList
+            loppisList={loppisList}
+            likedLoppis={likedLoppis}
+            setLikedLoppis={setLikedLoppis}
+          />
+        )}
+
+        {!error && loppisList?.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
+      </div>
+
     </section>
   )
 }

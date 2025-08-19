@@ -11,13 +11,8 @@ const Profile = () => {
 
 
 
-
-
-
-
-
   return (
-    <main className="bg-[url(./monstera.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen p-4">
+    <main className="bg-[url(./lines.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen p-4">
       <h2 className="text-white font-bold">Hej {user.name}!</h2>
 
       <Link to='/add' className='inline-flex items-center gap-2 px-3 py-2 border rounded-lg text-sm bg-white hover:bg-gray-50' >

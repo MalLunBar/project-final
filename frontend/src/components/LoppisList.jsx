@@ -20,7 +20,7 @@ const LoppisList = ({
     <section className='flex p-2 flex-col gap-4 items-center'>
 
       {variant === 'profile' && hasCards && (
-        <div className='flex justify-end mb-1'>
+        <div className='flex self-end mb-1'>
 
           <button
             onClick={() => setIsEditing(v => !v)}

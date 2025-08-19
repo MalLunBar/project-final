@@ -15,7 +15,7 @@ const LoppisList = ({
   const hasCards = Array.isArray(loppisList) && loppisList.length > 0
 
   return (
-    <section className='flex p-2 flex-col gap-2'>
+    <section className='flex p-2 flex-col gap-4'>
 
       {variant === 'profile' && hasCards && (
         <div className='flex justify-end mb-1'>
@@ -33,7 +33,7 @@ const LoppisList = ({
       )}
 
 
-      <ul className='flex flex-col gap-2'>
+      <ul className='flex flex-col gap-4'>
         {loppisList.map((loppis, index) => (
           <li key={index} className="flex items-stretch gap-2 relative">
             {/* KORTET: glid lite vänster när editeringsläge är på */}

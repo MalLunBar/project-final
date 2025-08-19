@@ -27,7 +27,7 @@ export const App = () => {
         <Route path='*' element={<NotFound />} />
       </Routes>
       {loginModalOpen && <LoginModal onClose={closeLoginModal} />}
-      <BottomNav />
+      {/* <BottomNav /> */}
     </BrowserRouter>
   )
 }

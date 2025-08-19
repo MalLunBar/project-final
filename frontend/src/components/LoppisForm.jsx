@@ -5,6 +5,7 @@ import Input from './Input'
 import Button from './Button'
 import SmallMap from './SmallMap'
 import PhotoDropzone from './PhotoDropzone'
+import { IMG } from '../utils/imageVariants'
 
 const normalizeDateInput = (val) => {
   if (!val) return ''
@@ -163,6 +164,17 @@ const LoppisForm = ({
     }
   }
 
+
+  // Kunna visa redan uppladdade bilder i dropzonen
+  const initialPublicIds = Array.isArray(initialValues?.images) ? initialValues.images : []
+  const cover = initialValues?.coverImage
+  const orderedIds = cover
+    ? [cover, ...initialPublicIds.filter(pid => pid !== cover)]
+    : initialPublicIds
+
+  // bygg visningsbara URLs för dropzonen (små thumbnails)
+  const initialPreviewUrls = orderedIds.map(pid => IMG.thumb(pid))
+
   return (
     <section className='flex flex-col gap-6 px-4 py-6 mx-auto max-w-2xl rounded-lg bg-white'>
       <h2 className='text-xl font-semibold'>{title}</h2>
@@ -175,7 +187,7 @@ const LoppisForm = ({
           {/* image upload placeholder */}
           <div className='flex py-8 w-full border-2 border-border border-dashed rounded-xl flex-col items-center justify-center gap-4'>
             <PhotoDropzone
-              initialFiles={initialValues?.images || []}           // i edit-läge: skicka med redan sparade URL:er här
+              initialFiles={initialPreviewUrls}           // i edit-läge: skicka med redan sparade URL:er här
               maxFiles={6}
               maxSizeMB={5}
               onFilesChange={setPhotos}

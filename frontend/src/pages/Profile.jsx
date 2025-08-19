@@ -89,10 +89,10 @@ const Profile = ({ name }) => {
   }
 
   return (
-    <section className="bg-[url(./monstera.jpg)] bg-right">
+    <section className="bg-[url(./monstera.jpg)] bg-center bg-no-repeat bg-cover p-4">
       <h2 className="text-white font-bold">Hello, {name}</h2>
 
-      <h3>Mina Loppisar</h3>
+      <h3 className="text-white">Mina Loppisar</h3>
       {error && <p className="text-red-500">{error}</p>}
       {!error && loppisList.length > 0 && (
         <LoppisList

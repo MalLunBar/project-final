@@ -8,6 +8,41 @@ import LikeButton from './LikeButton'
 import Details from './Details'
 import { IMG } from '../utils/imageVariants'
 
+// LoppisCard.jsx (bara relevanta delar)
+const S = {
+  container: {
+    map: 'w-[280px] rounded-xl bg-white shadow-md p-2',
+    profile: 'w-full rounded-xl bg-white shadow-sm p-4',
+    search: 'w-full rounded-xl bg-accent-light p-2',
+  },
+  layout: {
+    map: 'flex flex-col',                 // bild överst
+    profile: 'flex',                          // bild vänster, text höger
+    search: 'flex',
+  },
+  image: {
+    map: 'w-full h-40 object-cover rounded-lg',
+    profile: 'w-28 h-24 md:w-32 md:h-24 object-cover rounded-l-xl',
+    search: 'w-28 h-24 object-cover rounded-l-xl',
+  },
+  body: {
+    map: 'mt-2 space-y-1',
+    profile: 'flex-1 pl-4',
+    search: 'flex-1 p-4',
+  },
+  title: {
+    map: 'text-sm font-semibold line-clamp-2',
+    profile: 'text-base font-semibold',
+    search: 'text-base font-semibold',
+  },
+  meta: {
+    map: 'text-xs text-muted-foreground',
+    profile: 'text-sm text-muted-foreground',
+    search: 'text-sm text-muted-foreground',
+  },
+};
+
+
 const LoppisCard = ({
   loppis,
   variant = 'search', // 'search' | 'map' | 'profile'
@@ -27,20 +62,20 @@ const LoppisCard = ({
 
 
   return (
-    <article className='bg-accent-light flex flex-col gap-2 rounded-xl'>
-      <div>
+    <article className='bg-white flex flex-col gap-4 rounded-xl'>
+      <div className='w-full aspect-[4/3]overflow-hidden rounded-xl flex'>
         <img
           src={IMG.card(id)}
           srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
           alt={loppis.title}
-          className="w-40 h-36 md:w-32 md:h-24 object-cover rounded-l-xl"
+          className="w-full h-full object-cover object-center rounded-t-xl"
           loading="lazy"
         />
       </div>
 
-      <div className='flex justify-between items-start px-4'>
+      <div className='flex justify-between items-start px-6 pb-2'>
 
-        <div className='flex flex-col gap-2 p-2'>
+        <div className='flex flex-col gap-2'>
           <div className='flex items-start gap-2'>
             <Link to={`/loppis/${loppis._id}`}>
               <h3 className='font-semibold text-base'>{loppis.title}</h3>

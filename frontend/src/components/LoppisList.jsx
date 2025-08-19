@@ -61,11 +61,13 @@ const LoppisList = ({
                 {/* Penna ovanför */}
                 <button
                   onClick={() => onEditCard?.(loppis)}
-                  className="p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="p-2 rounded-3xl bg-white opacity-60 hover:opacity-90 focus:outline-none"
                   aria-label="Redigera"
                   title="Redigera"
                 >
-                  <PencilLine size={20} />
+                  <PencilLine
+                    size={30}
+                  />
                 </button>
 
                 {/* Soptunna under */}
@@ -73,14 +75,14 @@ const LoppisList = ({
                   onClick={() => onDeleteCard?.(loppis)}
                   disabled={Boolean(deletingId)}             // disable ALLA när en är igång
                   aria-busy={deletingId === loppis._id}      // markera aktiv rad
-                  className="p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="p-2 rounded-3xl bg-white opacity-60 hover:opacity-90 focus:outline-none"
                   aria-label="Ta bort"
                   title="Ta bort"
                 >
 
                   {deletingId === loppis._id
                     ? <Loader2 className="animate-spin" size={18} />
-                    : <Trash2 size={20} />}
+                    : <Trash2 size={30} />}
                 </button>
               </div>
             </div>

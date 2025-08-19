@@ -31,7 +31,7 @@ const AddLoppis = () => {
   }
 
   const blank = {
-    title: '', 
+    title: '',
     description: '',
     categories: [],
     dates: [{ date: '', startTime: '', endTime: '' }],
@@ -40,12 +40,14 @@ const AddLoppis = () => {
   }
 
   return (
-    <LoppisForm
-      initialValues={blank}
-      submitLabel='Lägg till loppis'
-      title='Lägg till en loppis'
-      onSubmit={addLoppis}
-    />
+    <section className='py-6 px-4'>
+      <LoppisForm
+        initialValues={blank}
+        submitLabel='Lägg till loppis'
+        title='Lägg till en loppis'
+        onSubmit={addLoppis}
+      />
+    </section>
   )
 }
 

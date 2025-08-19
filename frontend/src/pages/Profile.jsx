@@ -89,7 +89,7 @@ const Profile = ({ name }) => {
   }
 
   return (
-    <section className="bg-[url(./monstera.jpg)] bg-center bg-no-repeat bg-cover p-4">
+    <section className="bg-[url(./monstera.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen p-4">
       <h2 className="text-white font-bold">Hello, {name}</h2>
 
       <h3 className="text-white">Mina Loppisar</h3>

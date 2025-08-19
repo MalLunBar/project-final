@@ -192,12 +192,12 @@ const LoppisForm = ({
       <h2 className='text-xl font-semibold'>{title}</h2>
 
       <form className='flex flex-col gap-4 divide-y divide-border' onSubmit={handleSubmit}>
-        {/* Beskrivning */}
-        <fieldset className='flex p-2 flex-col gap-4 pb-6'>
-          <legend className='font-semibold text-lg pb-2'>Beskrivning</legend>
 
-          {/* image upload placeholder */}
-          <div className='flex py-8 w-full border-2 border-border border-dashed rounded-xl flex-col items-center justify-center gap-4'>
+
+        {/* Foto-dropzone */}
+        <fieldset className='flex p-2 flex-col gap-4 pb-6'>
+          <legend className='font-semibold text-lg pb-2'>Bilder</legend>
+          <div className='flex py-8 w-full border-2 border-border rounded-xl flex-col items-center justify-center gap-4'>
             <PhotoDropzone
               key={initKey}
               initialFiles={initialPreviewUrls}
@@ -206,7 +206,11 @@ const LoppisForm = ({
               onFilesChange={setPhotos}
             />
           </div>
+        </fieldset>
 
+        {/* Beskrivning */}
+        <fieldset className='flex p-2 flex-col gap-4 pb-6'>
+          <legend className='font-semibold text-lg pb-2'>Beskrivning</legend>
           <Input
             label='Rubrik*'
             type='text'

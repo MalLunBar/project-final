@@ -15,7 +15,7 @@ const LoppisList = ({
   const hasCards = Array.isArray(loppisList) && loppisList.length > 0
 
   return (
-    <section className='flex p-2 flex-col gap-4'>
+    <section className='flex p-2 flex-col gap-4 items-center'>
 
       {variant === 'profile' && hasCards && (
         <div className='flex justify-end mb-1'>

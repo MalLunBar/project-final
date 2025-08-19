@@ -68,7 +68,7 @@ const LoppisCard = ({
           src={IMG.card(id)}
           srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
           alt={loppis.title}
-          className="w-full h-full object-cover object-center rounded-t-xl border-16 border-white"
+          className="w-full h-full object-cover object-center border-20 border-white rounded-2xl"
           loading="lazy"
         />
       </div>

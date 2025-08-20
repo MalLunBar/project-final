@@ -1,8 +1,8 @@
-const API_URL = 'http://localhost:8080' // local development URL
+const API_URL = 'http://localhost:8080/loppis' // local development URL
 
 // api request to fetch a user's liked loppis
 export const fetchLikedLoppis = async (token) => {
-  const response = await fetch(`${API_URL}/loppis/user/liked`, {
+  const response = await fetch(`${API_URL}/user/liked`, {
     method: 'GET',
     headers: {
       'Authorization': token,
@@ -19,7 +19,7 @@ export const fetchLikedLoppis = async (token) => {
 
 // api request to like or unlike a loppis
 export const toggleLikeLoppis = async (loppisId, token) => {
-  const response = await fetch(`${API_URL}/loppis/${loppisId}/like`, {
+  const response = await fetch(`${API_URL}/${loppisId}/like`, {
     method: 'PATCH',
     headers: {
       'Authorization': token,

@@ -9,6 +9,7 @@ import Details from './Details'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import { IMG } from '../utils/imageVariants'
+import useLikesStore from '../stores/useLikesStore'
 
 // LoppisCard.jsx (bara relevanta delar)
 const S = {
@@ -47,8 +48,6 @@ const S = {
 
 const LoppisCard = ({
   loppis,
-  likedLoppis,
-  setLikedLoppis,     // function to update liked loppis in parent component
   variant = 'search', // 'search' | 'map' | 'profile'
   onClose,            // map: stäng popup
   showItemActions = 'false', // profile: om redigeringsläge är på
@@ -57,6 +56,7 @@ const LoppisCard = ({
 
   const { user, token } = useAuthStore()
   const { openLoginModal } = useModalStore()
+  const { likedLoppisIds, toggleLike } = useLikesStore()
 
   // Hämta publicId för omslagsbild:
   const id = loppis.coverImage ?? loppis.images?.[0] ?? null
@@ -65,10 +65,8 @@ const LoppisCard = ({
   const address = `${loppis.location.address.street}, ${loppis.location.address.city}`
   const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
 
-  const url = 'http://localhost:8080/loppis/'
-
   // check if loppis is liked by current user
-  const isLiked = likedLoppis?.includes(loppis._id)
+  const isLiked = likedLoppisIds?.includes(loppis._id)
 
   // handle click on like button 
   const likeLoppis = async (e) => {
@@ -77,27 +75,7 @@ const LoppisCard = ({
       openLoginModal('Du måste vara inloggad för att gilla en loppis!')
       return
     }
-    try {
-      const response = await fetch(`${url}/${loppis._id}/like`, {
-        method: 'PATCH',
-        headers: { 'Authorization': token }
-      })
-      if (!response.ok) {
-        throw new Error('Något gick fel vid gillande av loppis.')
-      }
-      const data = await response.json()
-      console.log(`Loppis ${loppis._id} ${data.response.action}!`)
-      // uppdatte liked state based on response
-      if (data.response.action === 'liked') {
-        setLikedLoppis(prev => [...prev, loppis._id])
-      } else {
-        setLikedLoppis(prev => prev.filter(id => id !== loppis._id))
-      }
-    } catch (error) {
-      console.error('Fel vid gillande av loppis:', error)
-    } finally {
-      //
-    }
+    toggleLike(loppis._id, user.id, token)
   }
 
   return (

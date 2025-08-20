@@ -19,7 +19,7 @@ const useLikesStore = create((set, get) => ({
   },
 
   // toggle like/unlike for a loppis
-  toggleLike: async (loppisId, token) => {
+  toggleLike: async (loppisId, userId, token) => {
     // optimistic update
     const { likedLoppisIds } = get()
     const isLiked = likedLoppisIds.includes(loppisId)
@@ -33,7 +33,7 @@ const useLikesStore = create((set, get) => ({
     try {
       await toggleLikeLoppis(loppisId, token)
       // reload liked loppis after successful API call to ensure state is consistent
-      get().loadLikedLoppis(token)
+      get().loadLikedLoppis(userId, token)
     } catch (error) {
       console.error('Failed to update like status:', error.message)
       // rollback optimistic update if API call fails

@@ -4,8 +4,6 @@ import LoppisCard from "./LoppisCard"
 
 const LoppisList = ({
   loppisList,
-  likedLoppis,                  // array of liked loppis IDs
-  setLikedLoppis,               // function to update liked loppis in parent component
   variant = 'search',           // 'search' | 'map' | 'profile'
   onEditCard,                    // profile
   onDeleteCard,                  // profile
@@ -42,8 +40,6 @@ const LoppisList = ({
             <div className={`transition-transform duration-300 ease-out ${variant === 'profile' && isEditing ? '-translate-x-2' : ''}`}>
               <LoppisCard
                 loppis={loppis}
-                likedLoppis={likedLoppis}
-                setLikedLoppis={setLikedLoppis}
                 variant={variant}
                 showItemActions={variant === 'profile' && isEditing}
                 onEdit={onEditCard}

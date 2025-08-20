@@ -38,20 +38,18 @@ const FlyTo = ({ center, zoom = 11 }) => {
 }
 
 // Liten wrapper som kan stänga aktuell popup
-const PopupCard = ({ loppis, likedLoppis, setLikedLoppis }) => {
+const PopupCard = ({ loppis }) => {
   const map = useMap()
   return (
     <LoppisCard
       loppis={loppis}
-      likedLoppis={likedLoppis}
-      setLikedLoppis={setLikedLoppis}
       variant='map'
       onClose={() => map.closePopup()}   // stäng den öppna popupen
     />
   )
 }
 
-const MapView = ({ loppisList, likedLoppis, setLikedLoppis, center = [59.3293, 18.0686], zoom = 11 }) => {
+const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
 
   // Create a Leaflet divIcon with Lucide SVG
   const markerIcon = L.divIcon({
@@ -97,8 +95,7 @@ const MapView = ({ loppisList, likedLoppis, setLikedLoppis, center = [59.3293, 1
               <Popup
                 className="my-popup"
                 closeButton={false}>
-                <PopupCard loppis={loppis} likedLoppis={likedLoppis}
-                  setLikedLoppis={setLikedLoppis} />
+                <PopupCard loppis={loppis} />
               </Popup>
             </Marker>
           ))}

@@ -1,23 +1,25 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/useAuthStore'
 import Input from "../components/Input"
 import Button from "../components/Button"
 
 const SignUp = () => {
+  const { register, isLoading, error, clearError } = useAuthStore()
   const [formData, setFormData] = useState({
     name: "",
     lastName: "",
     email: "",
     password: "",
   })
-
-  const register = useAuthStore(state => state.register)
-  const isLoading = useAuthStore((state) => state.isLoading);
-  const error = useAuthStore((state) => state.error)
-
   const navigate = useNavigate()
 
+  // clear error when component mounts
+  useEffect(() => {
+    clearError()
+  }, [])
+
+  // handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {

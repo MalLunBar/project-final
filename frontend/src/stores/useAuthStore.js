@@ -58,7 +58,9 @@ const useAuthStore = create(
         logout: () => {
           set({ user: null, token: null })
           localStorage.removeItem('token')
-        }
+        },
+
+        clearError: () => set({ error: null })
       }),
       {
         name: 'auth-storage', // localStorage key

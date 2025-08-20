@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
 import LoginForm from "../components/LoginForm"
@@ -6,10 +7,12 @@ import useModalStore from '../stores/useModalStore'
 
 const LoginModal = ({ onClose }) => {
   const loginMessage = useModalStore(state => state.loginMessage)
-  const login = useAuthStore(state => state.login)
-  const isLoading = useAuthStore((state) => state.isLoading);
-  const error = useAuthStore((state) => state.error)
-  const user = useAuthStore((state) => state.user)
+  const { login, isLoading, error, clearError } = useAuthStore()
+
+  // clear error when component mounts
+  useEffect(() => {
+    clearError()
+  }, [])
 
   const handleLogin = async (email, password) => {
     try {

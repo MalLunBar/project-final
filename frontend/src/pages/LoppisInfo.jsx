@@ -9,12 +9,17 @@ import Details from '../components/Details'
 import LikeButton from '../components/LikeButton'
 import { cldUrl } from '../utils/cloudinaryUrl'
 import { IMG } from '../utils/imageVariants'
+import useLikesStore from '../stores/useLikesStore'
+import useAuthStore from '../stores/useAuthStore'
 
 const LoppisInfo = () => {
   const { loppisId } = useParams()
+  const { token } = useAuthStore()
+  const { likedLoppisIds, toggleLike } = useLikesStore()
   const [loppis, setLoppis] = useState({})
   const [loading, setLoading] = useState(true)
   const fetchUrl = `http://localhost:8080/loppis/${loppisId}`
+  const isLiked = likedLoppisIds.includes(loppisId)
 
   useEffect(() => {
     const fetchLoppisData = async () => {
@@ -58,7 +63,7 @@ const LoppisInfo = () => {
 
       {/* Tillbaka-knapp */}
 
-      <LikeButton />
+      <LikeButton onLike={() => toggleLike(loppis._id, token)} isLiked={isLiked} />
 
       {/* HERO-BILD (NYTT) */}
 
@@ -91,7 +96,7 @@ const LoppisInfo = () => {
           ))}
         </div>
       )}
-      
+
 
       {/* Titel och plats */}
       <div className="flex items-start justify-between">

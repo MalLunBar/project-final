@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import LoppisList from "../components/LoppisList"
 import useAuthStore from "../stores/useAuthStore"
+import useLikesStore from '../stores/useLikesStore'
 
 const MyFavorites = () => {
   const { user, token } = useAuthStore()
-  const [loppisList, setLoppisList] = useState([])
-  const [likedLoppis, setLikedLoppis] = useState([]) // store loppis IDs the current user has liked
+  const { likedLoppisData, loadLikedLoppis } = useLikesStore()
   const [error, setError] = useState(null)
   const [emptyMsg, setEmptyMsg] = useState("")
 
@@ -14,58 +14,22 @@ const MyFavorites = () => {
       setError("Du måste vara inloggad för att se dina favorit-loppisar.")
       return
     }
+    loadLikedLoppis(user.id, token)
+  }, [user])
 
-    const fetchUrl = new URL("http://localhost:8080/loppis/user/liked")
-
-    const fetchloppisList = async () => {
-      try {
-        setError(null)
-        setEmptyMsg("")
-
-        const response = await fetch(fetchUrl, {
-          method: 'GET',
-          headers: { 'Authorization': token }
-        })
-
-        if (response.status === 404) {
-          setLoppisList([])
-          setEmptyMsg("Du har inte gillat några loppisar ännu.")
-          return
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => null)
-          throw new Error(errorData?.message || "Något gick fel vid hämtning av loppisList.")
-        }
-
-        const data = await response.json()
-        setLoppisList(Array.isArray(data.response.data) ? data.response.data : [])
-        setLikedLoppis(data.response.data.map(l => l._id)) // store liked loppis IDs
-        if (data.response.data.length === 0) {
-          setEmptyMsg("Du har inte gillat några loppisar ännu.")
-        }
-
-      } catch (error) {
-        setError(error.message || "Ett okänt fel inträffade.")
-      }
-    }
-    fetchloppisList()
-  }, [user, likedLoppis])
 
   return (
     <section>
       <h3>Mina Favoriter</h3>
       {error && <p className="text-red-500">{error}</p>}
       <div className='flex flex-col gap-4'>
-        {!error && loppisList?.length > 0 && (
+        {!error && likedLoppisData?.length > 0 && (
           <LoppisList
-            loppisList={loppisList}
-            likedLoppis={likedLoppis}
-            setLikedLoppis={setLikedLoppis}
+            loppisList={likedLoppisData}
           />
         )}
 
-        {!error && loppisList?.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
+        {!error && likedLoppisData?.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
       </div>
 
     </section>

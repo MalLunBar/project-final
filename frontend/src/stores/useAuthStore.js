@@ -46,9 +46,6 @@ const useAuthStore = create(
               isLoading: false,
               error: null,
             })
-            // load liked loppis for this user
-            const { loadLikedLoppis } = useLikesStore.getState()
-            await loadLikedLoppis(token)
           } catch (err) {
             set({
               error: err.message || "Registreringen misslyckades",

@@ -12,10 +12,10 @@ const SignUp = () => {
     password: "",
   })
 
-  const register = useAuthStore(state => state.login)
+  const register = useAuthStore(state => state.register)
   const isLoading = useAuthStore((state) => state.isLoading);
   const error = useAuthStore((state) => state.error)
-  const user = useAuthStore((state) => state.user)
+
   const navigate = useNavigate()
 
   const handleSubmit = async (event) => {

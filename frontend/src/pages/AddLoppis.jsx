@@ -1,10 +1,12 @@
 // src/pages/AddLoppis.jsx
+import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/useAuthStore'
 import LoppisForm from '../components/LoppisForm'
 
 const AddLoppis = () => {
   const user = useAuthStore(s => s.user)
   const userId = user?._id ?? user?.id
+  const navigate = useNavigate()
 
   const addLoppis = async (fd) => {
     if (!userId) throw new Error('Ingen användare')
@@ -28,6 +30,8 @@ const AddLoppis = () => {
     const data = await res.json().catch(() => ({}))
     if (!res.ok || !data.success) throw new Error(data.message || 'Misslyckades')
     // TODO: ev. redirect / toast
+    // re-direct to the loppis details page
+    navigate(`/loppis/${data.response._id}`)
   }
 
   const blank = {
@@ -40,14 +44,14 @@ const AddLoppis = () => {
   }
 
   return (
-    <section className='py-6 px-4'>
+    <main className='py-6 px-4'>
       <LoppisForm
         initialValues={blank}
         submitLabel='Lägg till loppis'
         title='Lägg till en loppis'
         onSubmit={addLoppis}
       />
-    </section>
+    </main>
   )
 }
 

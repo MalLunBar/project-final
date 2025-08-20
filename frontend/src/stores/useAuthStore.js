@@ -46,8 +46,6 @@ const useAuthStore = create(
               isLoading: false,
               error: null,
             })
-            // save user to localStorage
-            localStorage.setItem('token', token)
             // load liked loppis for this user
             const { loadLikedLoppis } = useLikesStore.getState()
             await loadLikedLoppis(token)

@@ -13,7 +13,7 @@ export const registerUser = async (userData) => {
     throw new Error(errorData?.message || 'Register failed')
   }
   const data = await response.json()
-  return data.response || {} // returns user data {id, accessToken}}
+  return data.response || {} // returns user data {id, firstName, accessToken}}
 }
 
 // API call to login a user

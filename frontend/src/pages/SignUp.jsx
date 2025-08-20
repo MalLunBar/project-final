@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { useNavigate } from 'react-router-dom'
+import useAuthStore from '../stores/useAuthStore'
 import Input from "../components/Input"
 import Button from "../components/Button"
 
@@ -10,46 +12,33 @@ const SignUp = () => {
     password: "",
   })
 
+  const register = useAuthStore(state => state.login)
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const error = useAuthStore((state) => state.error)
+  const user = useAuthStore((state) => state.user)
+  const navigate = useNavigate()
+
   const handleSubmit = async (event) => {
     event.preventDefault()
-
     try {
-      const response = await fetch("http://localhost:8080/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: formData.name,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-        }),
+      // call register function from auth store
+      await register({
+        firstName: formData.name,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
       })
-      {/* Ändra till ett global error message state senare */ }
-      if (response.status === 409) {
-        console.log("Ett konto med den här e-postadressen finns redan.")
-        return
-      }
-
-      if (!response.ok) {
-        throw new Error("Något gick fel vid registrering.")
-      }
-
-      const data = await response.json()
-
-
-
-      // Rensa formuläret
+      // clear form data after successful registration
       setFormData({
         name: "",
         lastName: "",
         email: "",
         password: "",
       })
-
-    } catch (error) {
-      console.error("Något gick fel vid registrering:", error)
+      // redirect to home page
+      navigate('/')
+    } catch (err) {
+      console.error("Något gick fel vid registrering:", err)
     }
   }
 
@@ -60,8 +49,8 @@ const SignUp = () => {
       </div>
 
       {/* Ändra de som behöver vara rerquired senare */}
-      <form 
-        onSubmit={handleSubmit} 
+      <form
+        onSubmit={handleSubmit}
         className="">
         <Input
           id='signup-name'
@@ -99,9 +88,15 @@ const SignUp = () => {
           showLabel={true}
           required={true}
         />
+        {/* Show error message if register fails */}
+        {error && (
+          <div className="text-red-500 text-sm mt-2">
+            {error}
+          </div>
+        )}
         <Button
           type="submit"
-          text="Registrera"
+          text={isLoading ? 'Registrerar...' : 'Registrera'}
           ariaLabel="Registrera">
         </Button>
       </form>

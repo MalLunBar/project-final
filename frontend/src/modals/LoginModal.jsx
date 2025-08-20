@@ -15,7 +15,6 @@ const LoginModal = ({ onClose }) => {
     try {
       // call login function from auth store
       await login({ email, password })
-      console.log('Logged in user: ', user.firstName)
       // close modal
       onClose()
     } catch (err) {

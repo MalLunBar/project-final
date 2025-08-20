@@ -1,0 +1,43 @@
+const API_URL = 'http://localhost:8080/loppis' // local development URL
+
+// fetch loppis list with optional filters
+export const getLoppisList = async (params) => {
+
+}
+
+// fetch single loppis by ID
+export const getLoppisById = async (id) => {
+
+}
+
+// create a new loppis
+export const createLoppis = async (loppisData, token) => {
+
+}
+
+// update an existing loppis by ID
+export const updateLoppis = async (id, loppisData, token) => {
+
+}
+
+// delete a loppis by ID
+export const deleteLoppis = async (id, token) => {
+
+}
+
+// like/unlike loppis
+export const toggleLikeLoppis = async (id, token) => {
+  const response = await fetch(`${API_URL}/${id}/like`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    }
+  })
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Failed to like/unlike loppis')
+  }
+  const data = await response.json()
+  return { action: data.response.action, loppis: data.response.data }
+} 

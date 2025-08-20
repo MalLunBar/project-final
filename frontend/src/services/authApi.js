@@ -30,5 +30,3 @@ export const loginUser = async (credentials) => {
   const data = await response.json()
   return data.response || {} // returns user data {id, firstName, accessToken}
 }
-
-// API call to fetch user profile by ID

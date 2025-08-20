@@ -98,7 +98,7 @@ const SignUp = () => {
         )}
         <Button
           type="submit"
-          text={isLoading ? 'Registrerar...' : 'Registrera'}
+          text={isLoading ? 'Skapar konto...' : 'Registrera'}
           ariaLabel="Registrera">
         </Button>
       </form>

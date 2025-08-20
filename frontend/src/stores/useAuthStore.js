@@ -26,7 +26,7 @@ const useAuthStore = create(
             })
             // load liked loppis for this user
             const { loadLikedLoppis } = useLikesStore.getState()
-            await loadLikedLoppis(currentUser.accessToken)
+            await loadLikedLoppis(currentUser.id, currentUser.accessToken)
           } catch (err) {
             set({
               error: err.message || "Inloggningen misslyckades",

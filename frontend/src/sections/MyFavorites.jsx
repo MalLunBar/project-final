@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import LoppisList from "../components/LoppisList"
 import useAuthStore from "../stores/useAuthStore"
-import LoppisCard from '../components/LoppisCard'
 
 const MyFavorites = () => {
   const { user, token } = useAuthStore()

@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt-nodejs";
 import { User } from "../models/User.js"
+import { authenticateUser } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
@@ -88,6 +89,91 @@ router.post('/login', async (req, res) => {
       success: false,
       message: "Failed to log in",
       error,
+    })
+  }
+})
+
+// list loppis created by (authenticated) user
+router.get("/:id/loppis", authenticateUser, async (req, res) => {
+  const userId = req.user._id.toString()
+
+  try {
+    // (Valfritt) strikt validering av id:
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        response: null,
+        message: "Invalid userId"
+      })
+    }
+
+    const loppises = await Loppis.find({ createdBy: userId })
+
+    // ⬇️ Viktig ändring: returnera 200 även om listan är tom
+    return res.status(200).json({
+      success: true,
+      response: loppises
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch loppis ads for user."
+    })
+  }
+})
+
+// list loppis liked by (authenticated) user
+router.get("/:id/likes", authenticateUser, async (req, res) => {
+  const user = req.user
+  const page = req.query.page || 1
+  const limit = req.query.limit || 10
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(user._id)) {
+      return res.status(400).json({
+        success: false,
+        response: null,
+        message: "Invalid user ID format."
+      })
+    }
+
+    const userLikes = await Like.find({ user: user })
+    if (!userLikes || userLikes.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No likes found for this user."
+      })
+    }
+
+    const likedLoppis = await Loppis.find({ _id: { $in: userLikes.map(like => like.loppis) } })
+      .sort("-createdAt").skip((page - 1) * limit).limit(limit)
+
+    if (likedLoppis.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No liked loppis found for this user."
+      })
+    }
+
+    res.status(200).json({
+      success: true,
+      response: {
+        totalCount: likedLoppis.length,
+        currentPage: page,
+        limit: limit,
+        data: likedLoppis,
+      },
+      message: "Successfully fetched liked loppis ads."
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch liked loppis ads."
     })
   }
 })

@@ -1,14 +1,15 @@
 import { create } from 'zustand'
-import { fetchLikedLoppis, toggleLikeLoppis } from '../services/likesApi.js'
+import { getUserLikes } from '../services/usersApi.js'
+import { toggleLikeLoppis } from '../services/loppisApi.js'
 
 const useLikesStore = create((set, get) => ({
   likedLoppisData: [],
   likedLoppisIds: [],
 
   // load liked loppis on app start or login
-  loadLikedLoppis: async (token) => {
+  loadLikedLoppis: async (userId, token) => {
     try {
-      const data = await fetchLikedLoppis(token)
+      const data = await getUserLikes(userId, token)
       const ids = data.map((l) => l._id)
       set({ likedLoppisData: data, likedLoppisIds: ids })
     } catch (error) {

@@ -26,6 +26,7 @@ const useAuthStore = create(
             })
             // load liked loppis for this user
             const { loadLikedLoppis } = useLikesStore.getState()
+            console.log('Loading liked loppis for user: ', currentUser.id)
             await loadLikedLoppis(currentUser.id, currentUser.accessToken)
           } catch (err) {
             set({

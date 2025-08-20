@@ -1,6 +1,9 @@
-import express from "express";
-import bcrypt from "bcrypt-nodejs";
+import express from "express"
+import bcrypt from "bcrypt-nodejs"
+import mongoose from 'mongoose'
 import { User } from "../models/User.js"
+import { Loppis } from "../models/Loppis.js"
+import { Like } from '../models/Like.js'
 import { authenticateUser } from "../middleware/authMiddleware.js"
 
 const router = express.Router()

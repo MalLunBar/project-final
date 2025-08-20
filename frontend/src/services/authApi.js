@@ -1,11 +1,34 @@
-const API_URL = 'http://localhost:8080/user' // local development URL
+const API_URL = 'http://localhost:8080/users' // local development URL
 // borde URL vara .../auth istället? 
 
-export const login = async (credentials) => {
+// API call to register a new user
+export const registerUser = async (userData) => {
+  const response = await fetch(`${API_URL}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  })
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Register failed')
+  }
+  const data = await response.json()
+  return data.response || {} // returns user data {id, accessToken}}
+}
+
+// API call to login a user
+export const loginUser = async (credentials) => {
   const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials)
   })
-
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Login failed')
+  }
+  const data = await response.json()
+  return data.response || {} // returns user data {id, firstName, accessToken}
 }
+
+// API call to fetch user profile by ID

@@ -7,34 +7,18 @@ import useModalStore from '../stores/useModalStore'
 const LoginModal = ({ onClose }) => {
   const loginMessage = useModalStore(state => state.loginMessage)
   const login = useAuthStore(state => state.login)
-  const url = "http://localhost:8080/users/login" // local api
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const error = useAuthStore((state) => state.error)
+  const user = useAuthStore((state) => state.user)
 
   const handleLogin = async (email, password) => {
-    console.log("logging in")
-    console.log('email and password from login modal:', email, password)
     try {
-      const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      const data = await response.json()
-      if (!response.ok) {
-        console.error("Login failed. Please check you email and password and try again.")
-        // --------------TODO: Show error message in the UI -----------
-        return
-      }
-      const currentUser = data.response
-      console.log("inloggningen lyckades! Inloggad användare: ", currentUser.firstName)
-      // save in Zustand
-      login({ id: currentUser.id, name: currentUser.firstName }, currentUser.accessToken)
-
-      localStorage.setItem('token', data.token); // optional
+      // call login function from auth store
+      await login({ email, password })
+      console.log('Logged in user: ', user.firstName)
       // close modal
       onClose()
-    } catch (error) {
+    } catch (err) {
       console.error('Login error:', err)
     }
   }
@@ -67,9 +51,16 @@ const LoginModal = ({ onClose }) => {
             {loginMessage}
           </div>
         )}
+        {/* Show error message if login fails */}
+        {error && (
+          <div className="text-red-500 text-sm mt-2">
+            {error}
+          </div>
+        )}
 
         {/* Login form */}
-        <LoginForm type='login' onSubmit={handleLogin} />
+        <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
+
         {/* Link to signup page */}
         <span className='flex gap-1 self-center text-sm text-gray-600'>
           <p>Har du inget konto? </p>

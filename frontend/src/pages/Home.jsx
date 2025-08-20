@@ -26,7 +26,7 @@ const Home = () => {
       {/* test av logga in funktion */}
       {user ? (
         <>
-          <h2>Välkommen, {user.name}!</h2>
+          <h2>Välkommen, {user.firstName}!</h2>
           <Button
             text='Logga ut'
             onClick={logout}

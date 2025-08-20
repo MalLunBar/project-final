@@ -2,7 +2,7 @@ import { useState } from "react"
 import Input from "./Input"
 import Button from "./Button"
 
-const LoginForm = ({ onSubmit }) => {
+const LoginForm = ({ onSubmit, isLoading }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -44,7 +44,7 @@ const LoginForm = ({ onSubmit }) => {
       />
 
       <Button
-        text='Logga in'
+        text={isLoading ? "Loggar in..." : "Logga in"}
         type='submit'
         ariaLabel='Logga in'
       />

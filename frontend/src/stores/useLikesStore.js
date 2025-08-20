@@ -2,16 +2,18 @@ import { create } from 'zustand'
 import { fetchLikedLoppis, toggleLikeLoppis } from '../services/likesApi.js'
 
 const useLikesStore = create((set, get) => ({
+  likedLoppisData: [],
   likedLoppisIds: [],
 
   // load liked loppis on app start or login
   loadLikedLoppis: async (token) => {
     try {
-      const likedLoppis = await fetchLikedLoppis(token)
-      set({ likedLoppisIds: likedLoppis.map(l => l._id) })
+      const data = await fetchLikedLoppis(token)
+      const ids = data.map((l) => l._id)
+      set({ likedLoppisData: data, likedLoppisIds: ids })
     } catch (error) {
       console.error('Failed to load liked loppis:', error.message)
-      set({ likedLoppisIds: [] })
+      set({ likedLoppisData: [], likedLoppisIds: [] })
     }
   },
 
@@ -28,26 +30,17 @@ const useLikesStore = create((set, get) => ({
 
     // make API call
     try {
-      const { action, loppis } = await toggleLikeLoppis(loppisId, token)
-      if (action === 'unliked') {
-        set(state => ({
-          likedLoppisIds: state.likedLoppisIds.filter(id => id !== loppis._id)
-        }))
-      } else if (action === 'liked') {
-        set(state => ({
-          likedLoppisIds: [...state.likedLoppisIds, loppis._id]
-        }))
-      } else {
-        throw new Error('Unexpected action response from server')
-      }
+      await toggleLikeLoppis(loppisId, token)
+      // reload liked loppis after successful API call to ensure state is consistent
+      get().loadLikedLoppis(token)
     } catch (error) {
       console.error('Failed to update like status:', error.message)
       // rollback optimistic update if API call fails
-      set(state => ({
+      set({
         likedLoppisIds: isLiked
-          ? state.likedLoppisIds // rollback to previous state if unlike failed
-          : state.likedLoppisIds.filter(id => id !== loppisId) // remove the newly added loppis if like failed
-      }))
+          ? [...likedLoppisIds, loppisId] // rollback unlike
+          : likedLoppisIds.filter(id => id !== loppisId) // rollback like
+      })
     }
   }
 }))

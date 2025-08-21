@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Squash as Hamburger } from 'hamburger-react'
-import { CircleUserRound, Moon } from 'lucide-react'
+import { CircleUserRound, Moon, CirclePlus, Search } from 'lucide-react'
 import Menu from '../components/Menu'
 import MenuItem from '../components/MenuItem'
 import NavItem from '../components/NavItem'
@@ -29,12 +29,15 @@ const TopNav = () => {
         className="flex items-center justify-between p-3 lg:p-4"
         aria-label="Main"
       >
+        {/* Logo - only show when hamburger menu is closed? */}
+        <MenuLogo  />
+
 
         {/* Mobile Navigation */}
         <div className='lg:hidden'>
           {isOpen &&
             <div
-              className='fixed left-0 top-0 w-[70%] h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
+              className='fixed right-0 top-0 w-[70%] h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
               onClick={handleMenu}
             >
               {/* show menulogo here? */}
@@ -50,11 +53,35 @@ const TopNav = () => {
               </Menu>
             </div>
           }
-          <Hamburger toggled={isOpen} size={24} toggle={setIsOpen} label='Show menu' rounded />
+
+          <div className='flex items-center justify-end'>
+            {/* add */}
+            <NavItem
+              icon={CirclePlus}
+              linkTo='/add'
+              text="Ny Loppis" />
+
+            {/* Search */}
+            <NavItem
+              icon={Search}
+              linkTo='/loppis'
+              text="Sök Loppis" />
+
+            {/* profile */}
+            <NavItem
+              icon={CircleUserRound}
+              linkTo='/profile'
+              text="Profil" />
+
+            <Hamburger
+              toggled={isOpen}
+              size={20}
+              toggle={setIsOpen} label='Show menu' rounded />
+
+          </div>
         </div>
 
-        {/* Logo - only show when hamburger menu is closed? */}
-        <MenuLogo />
+
 
         {/* Desktop Navigation */}
         <div className='hidden lg:flex items-center justify-between px-5'>
@@ -70,13 +97,10 @@ const TopNav = () => {
           </Menu>
         </div>
 
-        {/* Icons menu */}
-        <div className='flex items-center gap-1'>
-          {/* light/dark mode toggle */}
-          <NavItem icon={Moon} linkTo='/' />
-          {/* profile */}
-          <NavItem icon={CircleUserRound} linkTo='/profile' />
-        </div>
+
+
+
+
 
       </nav>
     </header>

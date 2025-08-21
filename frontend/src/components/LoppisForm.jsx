@@ -6,6 +6,8 @@ import Button from './Button'
 import SmallMap from './SmallMap'
 import PhotoDropzone from './PhotoDropzone'
 import { IMG } from '../utils/imageVariants'
+import { geocodeCity } from '../services/geocodingApi'
+import { getLoppisCategories } from '../services/loppisApi'
 
 const normalizeDateInput = (val) => {
   if (!val) return ''
@@ -104,12 +106,11 @@ const LoppisForm = ({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:8080/loppis/categories')
-        if (!response.ok) throw new Error('Failed to fetch categories')
-        const data = await response.json()
-        setCategories(data?.response ?? [])
-      } catch (e) {
-        console.error('Error fetching categories:', e)
+        const categories = await getLoppisCategories()
+        setCategories(categories)
+      } catch (err) {
+        // --------------------TODO: handle error appropriately
+        console.error('Error fetching categories:', err)
         setCategories([])
       }
     }
@@ -121,17 +122,17 @@ const LoppisForm = ({
     if (!formData.street || !formData.city) return
     const address = `${formData.street}, ${formData.postalCode} ${formData.city}, Sweden`
     try {
-      const response = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(address)}`)
-      if (!response.ok) throw new Error('Failed to fetch coordinates')
-      const data = await response.json()
-      if (Array.isArray(data) && data.length > 0) {
-        const { lat, lon } = data[0]
-        setCoordinates([lat, lon])
-      } else {
-        setCoordinates(null)
+      const { lat, lon } = await geocodeCity(address)
+      if (!lat || !lon) {
+        throw new Error('Kunde inte hitta koordinater för adressen')
       }
-    } catch (e) {
-      console.error('Error fetching coordinates:', e)
+      setCoordinates([lat, lon])
+    } catch (err) {
+      // --------------------TODO: handle error appropriately
+      console.error('Error fetching coordinates:', err)
+      setCoordinates(null)
+    } finally {
+      // -------------------TODO: handle loading state
     }
   }
 

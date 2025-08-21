@@ -315,8 +315,7 @@ router.patch('/:id', async (req, res) => {
 })
 
 // Delete loppis ad
-//add authentication later
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateUser, async (req, res) => {
   const { id } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -341,7 +340,7 @@ router.delete("/:id", async (req, res) => {
     res.status(200).json({
       success: true,
       response: deletedLoppis,
-      message: "Loppis ad deleted successfully!"
+      message: "Loppis deleted successfully!"
     })
   } catch (error) {
     console.error("Error in DELETE /loppis/:id:", error)

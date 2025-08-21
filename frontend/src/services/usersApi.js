@@ -34,7 +34,7 @@ export const getUserLoppis = async (id, token) => {
     throw new Error(errorData?.message || 'Failed to fetch loppis list')
   }
   const data = await response.json()
-  return data.response.data || []
+  return data.response || []
 }
 
 // fetch list loppis liked by user

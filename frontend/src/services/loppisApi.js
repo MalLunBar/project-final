@@ -28,7 +28,19 @@ export const updateLoppis = async (id, loppisData, token) => {
 
 // delete a loppis by ID
 export const deleteLoppis = async (id, token) => {
-
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    }
+  })
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Failed to delete loppis.')
+  }
+  const data = await response.json()
+  return data.response || {} // returns deleted loppis
 }
 
 // like/unlike loppis

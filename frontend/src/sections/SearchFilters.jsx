@@ -1,12 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Input from "../components/Input"
 import Button from "../components/Button"
 import FilterOption from "../components/FilterOption"
+import { getLoppisCategories } from '../services/loppisApi'
 
 const SearchFilters = ({ query, setQuery, onSearch }) => {
-
-  const [dates, setDates] = useState('')
-
+  const [categoryOptions, setCategoryOptions] = useState([])
   const dateOptions = [
     { id: 'all', label: 'Visa alla' },
     { id: 'today', label: 'Idag' },
@@ -15,19 +14,20 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
     { id: 'next_week', label: 'Nästa vecka' },
   ]
 
-  // change to fetch categories from api later
-  const categoryOptions = [
-    "Vintage",
-    "Barn",
-    "Trädgård",
-    "Kläder",
-    "Möbler",
-    "Böcker",
-    "Husdjur",
-    "Elektronik",
-    "Kök",
-    "Blandat"
-  ]
+  // fetch category options
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await getLoppisCategories()
+        setCategoryOptions(categories)
+      } catch (err) {
+        // --------------------TODO: handle error appropriately
+        console.error('Error fetching categories:', err)
+        setCategoryOptions([])
+      }
+    }
+    fetchCategories()
+  }, [])
 
   // generic onChange helper
   const handleChange = (key) => (e) => {

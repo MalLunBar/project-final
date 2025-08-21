@@ -9,6 +9,7 @@ import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
 import useAuthStore from "../stores/useAuthStore"
 import { getLoppisList } from '../services/loppisApi'
+import { geocodeCity } from '../services/geocodingApi'
 
 const Search = () => {
   const { user, token } = useAuthStore()
@@ -52,16 +53,6 @@ const Search = () => {
     fetchLoppisList()
   }, [searchParams])
 
-  // geocoding - Now calls your backend, not Nominatim directly
-  const geocodeCity = async (text) => {
-    const res = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(text)}`)
-    if (!res.ok) throw new Error("Geocoding failed")
-    const results = await res.json()
-    if (!results || results.length === 0) throw new Error("Inga träffar")
-    const { lat, lon } = results[0]
-    return [parseFloat(lat), parseFloat(lon)]
-  }
-
   // search 
   const handleSearch = async (e) => {
     e.preventDefault()
@@ -81,8 +72,8 @@ const Search = () => {
     try {
       // if city is entered - fly to that location on map
       if (!query.city.trim()) return
-      const center = await geocodeCity(query.city.trim())
-      setMapCenter(center)        // triggers MapView.flyTo via props
+      const { lat, lon } = await geocodeCity(query.city.trim())
+      setMapCenter([parseFloat(lat), parseFloat(lon)])        // triggers MapView.flyTo via props
     } catch (err) {
       setError(err.message || "Kunde inte hitta platsen")
     } finally {

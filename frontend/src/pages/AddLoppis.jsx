@@ -4,7 +4,7 @@ import useAuthStore from '../stores/useAuthStore'
 import LoppisForm from '../components/LoppisForm'
 
 const AddLoppis = () => {
-  const user = useAuthStore(s => s.user)
+  const { user, token } = useAuthStore()
   const userId = user?._id ?? user?.id
   const navigate = useNavigate()
 
@@ -23,7 +23,7 @@ const AddLoppis = () => {
     const res = await fetch('http://localhost:8080/loppis', {
       method: 'POST',
       body: fd,
-      // headers: { Authorization: `Bearer ${token}` } // om du har auth-token
+      headers: { 'Authorization': token } // om du har auth-token
     })
 
 

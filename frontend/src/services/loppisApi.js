@@ -7,7 +7,13 @@ export const getLoppisList = async (params) => {
 
 // fetch single loppis by ID
 export const getLoppisById = async (id) => {
-
+  const response = await fetch(`${API_URL}/${id}`)
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Failed to fetch loppis data')
+  }
+  const data = await response.json()
+  return data.response || {} // returns loppis object
 }
 
 // create a new loppis

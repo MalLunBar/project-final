@@ -1,37 +1,37 @@
 // src/pages/AddLoppis.jsx
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/useAuthStore'
+import { createLoppis } from '../services/loppisApi'
 import LoppisForm from '../components/LoppisForm'
 
 const AddLoppis = () => {
-  const user = useAuthStore(s => s.user)
+  const { user, token } = useAuthStore()
   const userId = user?._id ?? user?.id
   const navigate = useNavigate()
 
   const addLoppis = async (fd) => {
-    if (!userId) throw new Error('Ingen användare')
+    try {
+      // 1) Läs befintlig payload ("data"), lägg till createdBy och skriv tillbaka
+      const raw = fd.get('data')
+      const base = raw ? JSON.parse(raw) : {}
+      const next = { ...base, createdBy: userId }
 
-    // 1) Läs befintlig payload ("data"), lägg till createdBy och skriv tillbaka
-    const raw = fd.get('data')
-    const base = raw ? JSON.parse(raw) : {}
-    const next = { ...base, createdBy: userId }
+      fd.delete('data')
+      fd.append('data', JSON.stringify(next))
 
-    fd.delete('data')
-    fd.append('data', JSON.stringify(next))
-
-    // 2) Skicka som multipart/form-data (låter browser sätta Content-Type + boundary)
-    const res = await fetch('http://localhost:8080/loppis', {
-      method: 'POST',
-      body: fd,
-      // headers: { Authorization: `Bearer ${token}` } // om du har auth-token
-    })
-
-
-    const data = await res.json().catch(() => ({}))
-    if (!res.ok || !data.success) throw new Error(data.message || 'Misslyckades')
-    // TODO: ev. redirect / toast
-    // re-direct to the loppis details page
-    navigate(`/loppis/${data.response._id}`)
+      // 2) Skicka som multipart/form-data (låter browser sätta Content-Type + boundary)
+      const newLoppis = await createLoppis(fd, token)
+      if (!newLoppis || !newLoppis._id) {
+        throw new Error('Misslyckades att skapa loppis')
+      }
+      // re-direct to the loppis details page
+      navigate(`/loppis/${newLoppis._id}`)
+    } catch (err) {
+      // --------------------TODO: handle error appropriately
+      console.error('Failed to create loppis:', err)
+    } finally {
+      // -------------------TODO: handle loading state
+    }
   }
 
   const blank = {

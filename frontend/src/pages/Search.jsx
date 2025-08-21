@@ -9,6 +9,8 @@ import Input from "../components/Input"
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
 import useAuthStore from "../stores/useAuthStore"
+import { getLoppisList } from '../services/loppisApi'
+import { geocodeCity } from '../services/geocodingApi'
 
 const Search = () => {
   const { user, token } = useAuthStore()
@@ -27,13 +29,12 @@ const Search = () => {
   const [centerBy, setCenterBy] = useState('city')
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const isSmallMobile = useMediaQuery({ query: '(max-width: 480px)' })
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
   const isLaptop = useMediaQuery({ query: '(max-width: 1279px)' })
 
-  const baseUrl = 'http://localhost:8080/loppis'
-  const [fetchUrl, setFetchUrl] = useState(baseUrl)
 
   // Geo store
   const location = useGeoStore(s => s.location)
@@ -41,46 +42,25 @@ const Search = () => {
   const geoError = useGeoStore(s => s.error)
   const requestLocation = useGeoStore(s => s.requestLocation)
 
-  // update fetch URL when searchParams changes
+  // fetch loppis list on initial laod or when searchParams change
   useEffect(() => {
-    if (searchParams) {
-      setFetchUrl(`${baseUrl}?${searchParams}`)
-    } else {
-      setFetchUrl(baseUrl)
-    }
-  }, [searchParams])
-
-  // fetch loppis data when fetch url changes 
-  useEffect(() => {
-    fetchLoppisData()
-  }, [fetchUrl])
-
-  const fetchLoppisData = async () => {
-    try {
-      console.log('Fetching from:', fetchUrl)
-      const response = await fetch(fetchUrl)
-      if (!response.ok) {
-        throw new Error('Failed to fetch loppis data')
+    const fetchLoppisList = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await getLoppisList(searchParams)
+        setLoppisList(data.data || [])
+        console.log('Fetched loppis data: ', data.data)
+      } catch (err) {
+        // --------------------TODO: handle error appropriately
+        console.error('Failed to fetch loppis data:', err)
+        setError(err.message || 'Kunde inte hämta loppisdata')
+      } finally {
+        setLoading(false)
       }
-      const data = await response.json()
-      setLoppisList(data.response.data)
-      console.log('Loppis list: ', data.response.data)
-    } catch (error) {
-      console.error('Error fetching loppis data:', error)
-    } finally {
-      //här kan vi ha loading set to false 
     }
-  }
-
-  // geocoding - Now calls your backend, not Nominatim directly
-  const geocodeCity = async (text) => {
-    const res = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(text)}`)
-    if (!res.ok) throw new Error("Geocoding failed")
-    const results = await res.json()
-    if (!results || results.length === 0) throw new Error("Inga träffar")
-    const { lat, lon } = results[0]
-    return [parseFloat(lat), parseFloat(lon)]
-  }
+    fetchLoppisList()
+  }, [searchParams])
 
   // search 
   const handleSearch = async (e) => {
@@ -101,8 +81,8 @@ const Search = () => {
     try {
       // if city is entered - fly to that location on map
       if (!query.city.trim()) return
-      const center = await geocodeCity(query.city.trim())
-      setMapCenter(center)        // triggers MapView.flyTo via props
+      const { lat, lon } = await geocodeCity(query.city.trim())
+      setMapCenter([parseFloat(lat), parseFloat(lon)])        // triggers MapView.flyTo via props
       setCenterBy('city')
     } catch (err) {
       setError(err.message || "Kunde inte hitta platsen")
@@ -281,7 +261,7 @@ const Search = () => {
           />
           <ListView
             loppisList={loppisList}
-           />
+          />
         </div>
       )}
 

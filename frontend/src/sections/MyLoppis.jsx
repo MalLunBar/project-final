@@ -3,11 +3,14 @@ import LoppisList from "../components/LoppisList"
 import EditModal from "../modals/EditModal"
 import ConfirmDialog from '../components/ConfirmDialog'
 import useAuthStore from "../stores/useAuthStore"
+import { getUserLoppis } from '../services/usersApi'
+import { deleteLoppis } from '../services/loppisApi'
 
 const MyLoppis = () => {
   const { user, token } = useAuthStore()
   const [loppisList, setLoppisList] = useState([])
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
   const [emptyMsg, setEmptyMsg] = useState("")
   const [editingLoppis, setEditingLoppis] = useState(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -20,39 +23,25 @@ const MyLoppis = () => {
       return
     }
 
-    const fetchUrl = new URL("http://localhost:8080/loppis/user")
-
     const fetchloppisList = async () => {
+      setLoading(true)
+      setError(null)
+      setEmptyMsg("")
       try {
-        setError(null)
-        setEmptyMsg("")
-
-        const response = await fetch(fetchUrl, {
-          method: 'GET',
-          headers: { 'Authorization': token }
-        })
-
-        if (response.status === 404) {
-          setLoppisList([])
-          setEmptyMsg("Inga loppisar hittades för denna användare.")
-          return
+        const data = await getUserLoppis(user.id, token)
+        if (!data || data.length === 0) {
+          setEmptyMsg('Du har inga loppisar ännu.')
         }
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => null)
-          throw new Error(errorData?.message || "Något gick fel vid hämtning av loppisList.")
-        }
-
-        const data = await response.json()
-        setLoppisList(Array.isArray(data.response) ? data.response : [])
-        if (data.response.length === 0) {
-          setEmptyMsg("Du har inga loppisar än.")
-        }
-
-      } catch (error) {
-        setError(error.message || "Ett okänt fel inträffade.")
+        setLoppisList(data)
+      } catch (err) {
+        // --------------------TODO: handle error appropriately
+        console.error('Failed to fetch loppis data:', err)
+        setError(err.message || 'Kunde inte hämta loppisdata')
+      } finally {
+        setLoading(false)
       }
     }
+
     fetchloppisList()
   }, [user])
 
@@ -76,14 +65,13 @@ const MyLoppis = () => {
     if (deletingId) return               // blockera parallella deletes
     setDeletingId(l._id)
     try {
-      const res = await fetch(`http://localhost:8080/loppis/${l._id}`, { method: 'DELETE' })
-      const text = await res.text()                // undvik JSON-parse på ev. HTML
-      if (!res.ok) throw new Error(text || res.statusText)
-
+      await deleteLoppis(l._id, token)
+      // optimistically remove from list
       setLoppisList(prev => prev.filter(item => item._id !== l._id))
-    } catch (e) {
-      alert('Kunde inte ta bort. Försök igen.')
-      console.error(e)
+    } catch (err) {
+      // --------------------TODO: handle error appropriately
+      console.error('Failed to delete loppis: ', err)
+      setError(err.message || 'Kunde inte radera loppis')
     } finally {
       setDeletingId(null)
       setConfirmLoppis(null)

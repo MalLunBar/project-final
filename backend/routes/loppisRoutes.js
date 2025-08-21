@@ -238,8 +238,8 @@ async function geocodeAddress({ street, postalCode, city }) {
   const { lat, lon } = arr[0]
   return { lat: parseFloat(lat), lon: parseFloat(lon) }
 }
-//add authentication later
-router.patch('/:id', async (req, res) => {
+
+router.patch('/:id', authenticateUser, async (req, res) => {
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ success: false, response: null, message: 'Invalid ID format.' })
@@ -315,8 +315,7 @@ router.patch('/:id', async (req, res) => {
 })
 
 // Delete loppis ad
-//add authentication later
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateUser, async (req, res) => {
   const { id } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -341,7 +340,7 @@ router.delete("/:id", async (req, res) => {
     res.status(200).json({
       success: true,
       response: deletedLoppis,
-      message: "Loppis ad deleted successfully!"
+      message: "Loppis deleted successfully!"
     })
   } catch (error) {
     console.error("Error in DELETE /loppis/:id:", error)
@@ -354,8 +353,8 @@ router.delete("/:id", async (req, res) => {
 })
 
 // add a loppis ad
-// ------------- TODO: Add authentication later -----------------------
-router.post('/', upload.array('images', 6), async (req, res) => {
+router.post('/', authenticateUser, upload.array('images', 6), async (req, res) => {
+  const user = req.user
 
   try {
 

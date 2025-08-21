@@ -11,6 +11,7 @@ import { cldUrl } from '../utils/cloudinaryUrl'
 import { IMG } from '../utils/imageVariants'
 import useLikesStore from '../stores/useLikesStore'
 import useAuthStore from '../stores/useAuthStore'
+import { getLoppisById } from '../services/loppisApi'
 
 const LoppisInfo = () => {
   const { loppisId } = useParams()
@@ -18,32 +19,34 @@ const LoppisInfo = () => {
   const { likedLoppisIds, toggleLike } = useLikesStore()
   const [loppis, setLoppis] = useState({})
   const [loading, setLoading] = useState(true)
-  const fetchUrl = `http://localhost:8080/loppis/${loppisId}`
+  const [error, setError] = useState(null)
   const isLiked = likedLoppisIds.includes(loppisId)
 
   useEffect(() => {
     const fetchLoppisData = async () => {
+      setLoading(true)
+      setError(null)
       try {
-        setLoading(true)
-        const response = await fetch(fetchUrl)
-        if (!response.ok) {
-          throw new Error('Failed to fetch loppis data')
-        }
-        const data = await response.json()
-        setLoppis(data.response)
-      } catch (error) {
+        const data = await getLoppisById(loppisId)
+        setLoppis(data)
+      } catch (err) {
         // --------------------TODO: handle error appropriately
-        console.error('Error fetching loppis data:', error)
+        console.error('Failed to fetch loppis data:', err)
+        setError(err.message || 'Kunde inte hämta loppisdata')
       } finally {
         setLoading(false)
       }
     }
     fetchLoppisData()
-  }, [])
+  }, [loppisId])
 
   // -------------------------TODO: add loading component
   if (loading) {
     return <p>Loading...</p>
+  }
+  // -------------------------TODO: add error component?
+  if (error) {
+    return <p className="text-red-500">{error}</p>
   }
 
   // --- Bild-URLs (NYTT) ---
@@ -54,14 +57,16 @@ const LoppisInfo = () => {
 
 
   const addressLine = `${loppis.location?.address?.street}, ${loppis.location?.address?.city}`
+  {/* TODO: Lista alla datum (om fler än ett), nu visas bara det första */ }
   const dateText = loppis?.dates?.[0]
-    ? `${format(loppis.dates[0].date, 'EEEE d MMMM', { locale: sv })}, kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
+    ? `${format(loppis.dates[0].date, 'EEEE d MMMM', { locale: sv })}, 
+    kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
     : 'Inga datum angivna'
 
   return (
     <section className='p-4 max-w-3xl'>
 
-      {/* Tillbaka-knapp */}
+      {/* TODO: Tillbaka-knapp */}
 
       <LikeButton onLike={() => toggleLike(loppis._id, token)} isLiked={isLiked} />
 
@@ -121,15 +126,11 @@ const LoppisInfo = () => {
       </div>
 
       {/* Detaljer */}
+      {/* TODO: Lista alla datum (om fler än ett), nu visas bara det första */}
       <div>
         <Details
           icon={Clock}
-          text={
-            loppis?.dates?.[0]
-              ? `${format(loppis.dates[0].date, 'EEEE d MMMM', { locale: sv })}, 
-            kl ${loppis.dates[0].startTime}-${loppis.dates[0].endTime}`
-              : 'Inga datum angivna'
-          }
+          text={dateText}
         />
         <Details
           icon={MapPinned}

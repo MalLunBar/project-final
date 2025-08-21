@@ -25,8 +25,8 @@ const useAuthStore = create(
               error: null,
             })
             // load liked loppis for this user
-            const { loadLikedLoppis } = useLikesStore.getState()
             console.log('Loading liked loppis for user: ', currentUser.id)
+            const { loadLikedLoppis } = useLikesStore.getState()
             await loadLikedLoppis(currentUser.id, currentUser.accessToken)
           } catch (err) {
             set({
@@ -65,6 +65,14 @@ const useAuthStore = create(
       }),
       {
         name: 'auth-storage', // localStorage key
+        onRehydrateStorage: () => (state) => {
+          // called when Zustand rehydrates (restores) the state from localStorage
+          if (state?.user && state?.token) {
+            console.log('AuthStore rehydrated, fetching likes for user: ', state.user.id)
+            const { loadLikedLoppis } = useLikesStore.getState()
+            loadLikedLoppis(state.user.id, state.token) //refetch likes
+          }
+        }
       }
     ),
     {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
-import { Map, List, Funnel, X } from "lucide-react"
+import { Map, LocateFixed, List, Funnel, X } from "lucide-react"
+import useGeoStore from '../stores/useGeoStore'
 import SearchFilters from "../sections/SearchFilters"
 import ListView from "../sections/ListView"
 import MapView from "../sections/MapView"
@@ -22,6 +23,8 @@ const Search = () => {
   const [searchParams, setSearchParams] = useState()
 
   const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]) // default Stockholm
+  // Vem ska styra kartans center? 'city' eller 'user'
+  const [centerBy, setCenterBy] = useState('city')
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState(null)
 
@@ -31,6 +34,12 @@ const Search = () => {
 
   const baseUrl = 'http://localhost:8080/loppis'
   const [fetchUrl, setFetchUrl] = useState(baseUrl)
+
+  // Geo store
+  const location = useGeoStore(s => s.location)
+  const geoStatus = useGeoStore(s => s.status)
+  const geoError = useGeoStore(s => s.error)
+  const requestLocation = useGeoStore(s => s.requestLocation)
 
   // update fetch URL when searchParams changes
   useEffect(() => {
@@ -94,6 +103,7 @@ const Search = () => {
       if (!query.city.trim()) return
       const center = await geocodeCity(query.city.trim())
       setMapCenter(center)        // triggers MapView.flyTo via props
+      setCenterBy('city')
     } catch (err) {
       setError(err.message || "Kunde inte hitta platsen")
     } finally {
@@ -115,6 +125,18 @@ const Search = () => {
     setShowFilters(prev => !prev)
   }
 
+  // Ett “effektivt” center som beror på centerBy
+  const effectiveCenter =
+    centerBy === 'user' && location
+      ? [location.lat, location.lng]
+      : mapCenter
+
+  // När MapView (eller kartans flytande ikon) vill hämta plats:
+  const handleRequestLocation = async () => {
+    await requestLocation()
+    setCenterBy('user') // börja styra av användarens position
+  }
+
 
   return (
     <main className='h-screen'>
@@ -128,14 +150,7 @@ const Search = () => {
           <div className={`${view === 'map' ? 'absolute z-1050' : 'relative z-auto'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
             <div div className='flex flex-col gap-2'>
               <div className='flex justify-between gap-2'>
-                <Button
-                  type='button'
-                  text={isSmallMobile ? '' : 'Sökfilter'}
-                  icon={Funnel}
-                  active={true}
-                  ariaLabel='Visa sökfilter'
-                  onClick={toggleShowFilters}
-                />
+
                 {/* show search field if filters not open */}
                 {/* TODO: Add a magnifying icon in search field*/}
                 {!showFilters &&
@@ -151,14 +166,39 @@ const Search = () => {
                     />
                   </form>
                 }
-                <Button
-                  type='button'
-                  text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
-                  icon={view === 'map' ? List : Map}
-                  active={true}
-                  ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
-                  onClick={toggleView}
-                />
+                <div className='flex flex-col items-center gap-1 mr-2'>
+                  <Button
+                    type="button"
+                    text={
+                      isSmallMobile
+                        ? ''
+                        : geoStatus === 'requesting'
+                          ? 'Hämtar…'
+                          : 'Min plats'
+                    }
+                    icon={LocateFixed}
+                    active={true}
+                    ariaLabel="Använd min plats"
+                    disabled={geoStatus === 'requesting'}
+                    onClick={handleRequestLocation}
+                  />
+                  <Button
+                    type='button'
+                    text={isSmallMobile ? '' : 'Sökfilter'}
+                    icon={Funnel}
+                    active={true}
+                    ariaLabel='Visa sökfilter'
+                    onClick={toggleShowFilters}
+                  />
+                  <Button
+                    type='button'
+                    text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
+                    icon={view === 'map' ? List : Map}
+                    active={true}
+                    ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
+                    onClick={toggleView}
+                  />
+                </div>
               </div>
 
               {/* Display selected filters */}
@@ -181,16 +221,34 @@ const Search = () => {
 
             {showFilters &&
               <aside className={`fixed top-0 left-0 z-1050 w-full max-w-sm h-full px-4 py-22 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
-                <X strokeWidth={3} onClick={toggleShowFilters} className='absolute right-5 hover:text-accent' />
-                <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
+                <X
+                  strokeWidth={3}
+                  onClick={toggleShowFilters}
+                  className='absolute right-5 hover:text-accent'
+                />
+                <SearchFilters
+                  query={query}
+                  setQuery={setQuery}
+                  onSearch={handleSearch}
+                />
               </aside>
             }
 
           </div>
 
           {/* conditionally render map or list view */}
-          {view === 'map' && <MapView loppisList={loppisList} center={mapCenter} />}
-          {view === 'list' && <ListView loppisList={loppisList} />}
+          {view === 'map' &&
+            <MapView
+              loppisList={loppisList}
+              center={effectiveCenter}
+              onRequestLocation={handleRequestLocation}
+              hasUserLocation={!!location}
+
+            />}
+          {view === 'list' &&
+            <ListView
+              loppisList={loppisList}
+            />}
 
           {/* optional - toggle updates URL: /search?view=map */}
 
@@ -199,10 +257,31 @@ const Search = () => {
         // Desktop: views side-by-side
         <div className='grid h-full grid-cols-[2fr_6fr_4fr]'>
           <aside className='h-full p-4 bg-white border-r border-border shadow-sm'>
-            <SearchFilters query={query} setQuery={setQuery} onSearch={handleSearch} />
+            <div>
+              <Button
+                type="button"
+                text={geoStatus === 'requesting' ? 'Hämtar…' : 'Använd min plats'}
+                icon={LocateFixed}
+                active={true}
+                ariaLabel="Använd min plats"
+                disabled={geoStatus === 'requesting'}
+                onClick={handleRequestLocation}
+              />
+            </div>
+            <SearchFilters
+              query={query}
+              setQuery={setQuery}
+              onSearch={handleSearch} />
           </aside>
-          <MapView loppisList={loppisList} center={mapCenter} />
-          <ListView loppisList={loppisList} />
+          <MapView
+            loppisList={loppisList}
+            center={effectiveCenter}
+            onRequestLocation={handleRequestLocation}
+            hasUserLocation={!!location}
+          />
+          <ListView
+            loppisList={loppisList}
+           />
         </div>
       )}
 

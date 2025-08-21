@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl, Circle, CircleMarker, Tooltip } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { useEffect } from 'react'
 import LoppisCard from '../components/LoppisCard'
@@ -6,6 +6,7 @@ import L from "leaflet"
 import { MapPin } from "lucide-react"
 import ReactDOMServer from "react-dom/server"
 import 'leaflet/dist/leaflet.css'
+import useGeoStore from '../stores/useGeoStore'
 
 const createCustomClusterIcon = (cluster) => {
   const count = cluster.getChildCount()
@@ -37,6 +38,35 @@ const FlyTo = ({ center, zoom = 11 }) => {
   return null
 }
 
+function UserLocationLayer() {
+  const loc = useGeoStore(s => s.location)
+  if (!loc) return null
+
+  const { lat, lng, accuracy } = loc
+  const acc = Number.isFinite(accuracy) ? Math.max(accuracy, 25) : 50
+
+  return (
+    <>
+      {/* Accuracy-cirkel */}
+      <Circle
+        center={[lat, lng]}
+        radius={acc}
+        pathOptions={{ color: '#60A5FA', weight: 1, opacity: 0.8, fillOpacity: 0.15 }}
+      />
+      {/* Blå prick */}
+      <CircleMarker
+        center={[lat, lng]}
+        radius={6}
+        pathOptions={{ color: '#1D4ED8', weight: 2, fillOpacity: 1 }}
+      >
+        <Tooltip direction="top" offset={[0, -6]} opacity={0.9}>
+          Du är här
+        </Tooltip>
+      </CircleMarker>
+    </>
+  )
+}
+
 // Liten wrapper som kan stänga aktuell popup
 const PopupCard = ({ loppis }) => {
   const map = useMap()
@@ -44,12 +74,16 @@ const PopupCard = ({ loppis }) => {
     <LoppisCard
       loppis={loppis}
       variant='map'
-      onClose={() => map.closePopup()}   // stäng den öppna popupen
+      onClose={() => map.closePopup()}
     />
   )
 }
 
-const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
+const MapView = ({
+  loppisList,
+  center = [59.3293, 18.0686],
+  zoom = 11
+}) => {
 
   // Create a Leaflet divIcon with Lucide SVG
   const markerIcon = L.divIcon({
@@ -60,7 +94,7 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
   })
 
   return (
-    <section className='h-full'>
+    <section className='h-full relative'>
       <MapContainer
         center={center}
         zoom={zoom}
@@ -78,6 +112,11 @@ const MapView = ({ loppisList, center = [59.3293, 18.0686], zoom = 11 }) => {
 
         {/* Imperatively move the map when `center` changes */}
         <FlyTo center={center} zoom={zoom} />
+
+        {/* User location layer */}
+        <UserLocationLayer />
+
+        {/* Custom cluster group with custom icon */}
         <MarkerClusterGroup
           chuckedLoading
           iconCreateFunction={createCustomClusterIcon}

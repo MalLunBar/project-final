@@ -22,6 +22,7 @@ export const App = () => {
         <Route path='/loppis' element={<Search />} />
         <Route path='/loppis/:loppisId' element={<LoppisInfo />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path="/profile/:tab" element={<Profile />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/add' element={<AddLoppis />} />
         <Route path='*' element={<NotFound />} />

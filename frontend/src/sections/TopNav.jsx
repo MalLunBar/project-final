@@ -30,7 +30,7 @@ const TopNav = () => {
         aria-label="Main"
       >
         {/* Logo - only show when hamburger menu is closed? */}
-        <MenuLogo />
+        <MenuLogo  />
 
 
         {/* Mobile Navigation */}

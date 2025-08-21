@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { House } from 'lucide-react'
+
 
 const MenuLogo = () => {
   return (
@@ -7,9 +7,10 @@ const MenuLogo = () => {
       className='hover:text-text'
       to='/'
     >
-      <div className='flex gap-1 md:gap-2'>
-        <House strokeWidth={3} className='w-[22px] md:w-[24px] text-text' />
-        <h1 className='font-semibold text-lg md:text-xl'>Runt Hörnet</h1>
+      <div className='flex gap-1 md:gap-2 w-14 h-14'>
+        <img 
+          src="logo-1.png" 
+          alt="Runt hörnet logga" />
       </div>
     </Link>
   )

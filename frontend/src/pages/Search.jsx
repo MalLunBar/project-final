@@ -8,6 +8,7 @@ import Input from "../components/Input"
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
 import useAuthStore from "../stores/useAuthStore"
+import { getLoppisList } from '../services/loppisApi'
 
 const Search = () => {
   const { user, token } = useAuthStore()
@@ -24,44 +25,32 @@ const Search = () => {
   const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]) // default Stockholm
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const isSmallMobile = useMediaQuery({ query: '(max-width: 480px)' })
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
   const isLaptop = useMediaQuery({ query: '(max-width: 1279px)' })
 
-  const baseUrl = 'http://localhost:8080/loppis'
-  const [fetchUrl, setFetchUrl] = useState(baseUrl)
 
-  // update fetch URL when searchParams changes
+  // fetch loppis list on initial laod or when searchParams change
   useEffect(() => {
-    if (searchParams) {
-      setFetchUrl(`${baseUrl}?${searchParams}`)
-    } else {
-      setFetchUrl(baseUrl)
-    }
-  }, [searchParams])
-
-  // fetch loppis data when fetch url changes 
-  useEffect(() => {
-    fetchLoppisData()
-  }, [fetchUrl])
-
-  const fetchLoppisData = async () => {
-    try {
-      console.log('Fetching from:', fetchUrl)
-      const response = await fetch(fetchUrl)
-      if (!response.ok) {
-        throw new Error('Failed to fetch loppis data')
+    const fetchLoppisList = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await getLoppisList(searchParams)
+        setLoppisList(data.data || [])
+        console.log('Fetched loppis data: ', data.data)
+      } catch (err) {
+        // --------------------TODO: handle error appropriately
+        console.error('Failed to fetch loppis data:', err)
+        setError(err.message || 'Kunde inte hämta loppisdata')
+      } finally {
+        setLoading(false)
       }
-      const data = await response.json()
-      setLoppisList(data.response.data)
-      console.log('Loppis list: ', data.response.data)
-    } catch (error) {
-      console.error('Error fetching loppis data:', error)
-    } finally {
-      //här kan vi ha loading set to false 
     }
-  }
+    fetchLoppisList()
+  }, [searchParams])
 
   // geocoding - Now calls your backend, not Nominatim directly
   const geocodeCity = async (text) => {

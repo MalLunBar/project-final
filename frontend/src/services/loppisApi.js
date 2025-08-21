@@ -2,7 +2,14 @@ const API_URL = 'http://localhost:8080/loppis' // local development URL
 
 // fetch loppis list with optional filters
 export const getLoppisList = async (params) => {
-
+  const query = !params ? '' : `?${params}`
+  const response = await fetch(`${API_URL}${query}`)
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Failed to fetch loppis data')
+  }
+  const data = await response.json()
+  return data.response || { data: [], totalCount: 0, currentPage: 1, limit: 10 } // returns data and pagination info
 }
 
 // fetch single loppis by ID

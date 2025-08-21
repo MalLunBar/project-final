@@ -353,8 +353,8 @@ router.delete("/:id", authenticateUser, async (req, res) => {
 })
 
 // add a loppis ad
-// ------------- TODO: Add authentication later -----------------------
-router.post('/', upload.array('images', 6), async (req, res) => {
+router.post('/', authenticateUser, upload.array('images', 6), async (req, res) => {
+  const user = req.user
 
   try {
 

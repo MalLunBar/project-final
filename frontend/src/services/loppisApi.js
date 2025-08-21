@@ -25,7 +25,17 @@ export const getLoppisById = async (id) => {
 
 // create a new loppis
 export const createLoppis = async (loppisData, token) => {
-
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    body: loppisData,
+    headers: { 'Authorization': token }
+  })
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Failed to create new loppis')
+  }
+  const data = await response.json()
+  return data.response || {} // returns loppis object
 }
 
 // update an existing loppis by ID

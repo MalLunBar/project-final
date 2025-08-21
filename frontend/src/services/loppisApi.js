@@ -40,7 +40,20 @@ export const createLoppis = async (loppisData, token) => {
 
 // update an existing loppis by ID
 export const updateLoppis = async (id, loppisData, token) => {
-
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(loppisData),
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json'
+    }
+  })
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Failed to edit loppis')
+  }
+  const data = await response.json()
+  return data.response || {} // returns loppis object
 }
 
 // delete a loppis by ID

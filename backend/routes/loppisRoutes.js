@@ -238,8 +238,8 @@ async function geocodeAddress({ street, postalCode, city }) {
   const { lat, lon } = arr[0]
   return { lat: parseFloat(lat), lon: parseFloat(lon) }
 }
-//add authentication later
-router.patch('/:id', async (req, res) => {
+
+router.patch('/:id', authenticateUser, async (req, res) => {
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ success: false, response: null, message: 'Invalid ID format.' })

@@ -1,24 +1,27 @@
 // src/components/EditLoppisModal.jsx
 import { X } from 'lucide-react'
 import LoppisForm from '../components/LoppisForm'
+import { updateLoppis } from '../services/loppisApi'
+import useAuthStore from '../stores/useAuthStore'
 
 const EditModal = ({ open, loppis, onClose, onSaved }) => {
+  const { token } = useAuthStore()
   if (!open || !loppis) return null
 
-  const updateLoppis = async (payload) => {
-    // Justera endpoint/metod om ditt API använder PATCH el. annan path
-    const res = await fetch(`http://localhost:8080/loppis/${loppis._id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    const data = await res.json()
-    if (!res.ok || !data.success) throw new Error(data.message || 'Misslyckades')
-    onSaved?.(data.response)   // skicka tillbaka uppdaterad loppis
+  const editLoppis = async (payload) => {
+    try {
+      console.log(payload)
+      const updated = await updateLoppis(loppis._id, payload, token)
+      console.log(updated)
+      onSaved?.(updated)   // skicka tillbaka uppdaterad loppis
+    } catch (err) {
+      // --------------------TODO: handle error appropriately
+      console.error('Failed to update loppis:', err)
+    }
   }
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center'>
+    <div className='fixed inset-0 z-1100 flex items-center justify-center'>
       <div className='absolute inset-0 bg-black/40' onClick={onClose} />
       <div className='relative z-10 max-w-3xl w-[94vw] md:w-[720px] rounded-2xl bg-white shadow-xl'>
         {/* Header */}
@@ -40,7 +43,7 @@ const EditModal = ({ open, loppis, onClose, onSaved }) => {
             initialValues={loppis}
             submitLabel='Spara'
             title=''
-            onSubmit={updateLoppis}
+            onSubmit={editLoppis}
             onCancel={onClose}
           />
         </div>

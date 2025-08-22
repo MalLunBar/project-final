@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, CirclePlus } from 'lucide-react'
+import { useKeenSlider } from 'keen-slider/react'
+import 'keen-slider/keen-slider.min.css'
+import { CirclePlus, ToyBrick, Lamp } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
+import CardLink from '../components/CardLink'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 
@@ -11,6 +14,52 @@ const Home = () => {
   const { user, logout } = useAuthStore()
   const { openLoginModal } = useModalStore()
   const navigate = useNavigate()
+
+  // TODO: fetch categories from api
+  const categories = [
+    { id: 'vintage', label: "Vintage", icon: Lamp },
+    { id: 'barn', label: "Barn", icon: ToyBrick },
+    // "Trädgård",
+    // "Kläder",
+    // "Möbler",
+    // "Böcker",
+    // "Husdjur",
+    // "Elektronik",
+    // "Kök",
+    // "Blandat"
+  ]
+
+  // TODO: fetch popular loppis
+  const loppisExamples = [
+    { id: 1, title: "Vintage Clothes Market", img: "/images/loppis1.jpg" },
+    { id: 2, title: "Book Fair", img: "/images/loppis2.jpg" },
+    { id: 3, title: "Antique Furniture Sale", img: "/images/loppis3.jpg" },
+  ]
+
+  // för test
+  const upcoming = [
+    { id: 1, title: "Big Summer Loppis", date: "Sat, Aug 24", city: "Stockholm" },
+    { id: 2, title: "Vintage Fair", date: "Sun, Aug 25", city: "Göteborg" },
+  ]
+
+  const [sliderRef] = useKeenSlider({
+    loop: true,
+    slides: {
+      perView: 1,
+      spacing: 15,
+    },
+    breakpoints: {
+      "(min-width: 640px)": {
+        slides: { perView: 2, spacing: 15 },
+      },
+      "(min-width: 1024px)": {
+        slides: { perView: 3, spacing: 20 },
+      },
+    },
+    autoplay: {
+      delay: 3000,
+    },
+  })
 
   const handleAdd = () => {
     if (!user) {
@@ -39,38 +88,113 @@ const Home = () => {
 
       {/* Carousel section */}
       {/* popular / near / upcoming */}
-      <h3>Populära Loppisar</h3>
+      <section className="w-full max-w-3xl mt-10 px-4">
+        <h2 className="text-xl font-semibold mb-4">Populära Loppisar</h2>
+        <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden">
+          {loppisExamples.map((l) => (
+            <div
+              key={l.id}
+              className="keen-slider__slide flex flex-col items-center justify-center bg-gray-100"
+            >
+              <img src={l.img} alt={l.title} className="w-full h-64 object-cover" />
+              <p className="p-4 font-medium">{l.title}</p>
+            </div>
+          ))}
+        </div>
+        {/* TODO: lägg till pilar? */}
+      </section>
 
 
 
       {/* Categories grid */}
+      <section className="w-full max-w-3xl mt-10 px-4">
+        <h2 className="text-xl font-semibold mb-4">Sök efter kategori</h2>
+
+        <div
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+        >
+          {categories.map(cat => <CardLink icon={cat.icon} label={cat.label} to='/' />)}
+          {/* TODO: ändra to till: /search?category=${cat.id}` */}
+
+          {/* {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => navigate(`/`)}
+              className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow hover:shadow-md transition"
+            >
+              <p className="font-medium">{cat.label}</p>
+            </button>
+          ))} */}
+
+        </div>
+      </section>
+
+      {/* Upcoming Events */}
+      <section className="w-full max-w-3xl mt-10 px-4">
+        <h2 className="text-xl font-semibold mb-4">Happening this weekend</h2>
+        <div className="space-y-3">
+          {upcoming.map((event) => (
+            <div
+              key={event.id}
+              className="p-4 bg-white rounded-2xl shadow flex justify-between items-center"
+            >
+              <div>
+                <h3 className="font-semibold">{event.title}</h3>
+                <p className="text-sm text-gray-600">
+                  {event.date} • {event.city}
+                </p>
+              </div>
+              <button
+                onClick={() => navigate(`/loppis/${event.id}`)}
+                className="text-accent font-semibold"
+              >
+                View →
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
 
 
       {/* CTA - Add your own loppis */}
-      <Button text='Lägg till loppis' icon={CirclePlus} onClick={handleAdd} />
+      <section className="w-full max-w-xl mt-10 bg-light p-10 rounded-2xl text-center shadow-lg">
+        <h2 className="text-2xl font-bold mb-3">Have items to sell?</h2>
+        <p className="mb-6">List your own loppis and reach more people!</p>
+        <button
+          onClick={() => navigate("/add-loppis")}
+          className="bg-white text-accent font-semibold py-3 px-6 rounded-full shadow hover:bg-gray-100 transition"
+        >
+          List Your Loppis
+        </button>
+        <Button text='Lägg till loppis' icon={CirclePlus} onClick={handleAdd} />
+      </section>
+
 
 
 
 
 
       {/* test av logga in funktion - TA BORT NÄR DET FINNS LOGGA UT KNAPP NÅGON ANNANSTANS */}
-      {user ? (
-        <>
-          <h2>Välkommen, {user.firstName}!</h2>
-          <Button
-            text='Logga ut'
-            onClick={logout}
-          />
-        </>
-      ) : (
-        <>
-          <h2>Välkommen!</h2>
-          <Button
-            text='Logga in'
-            onClick={() => openLoginModal()}
-          />
-        </>
-      )}
+      <section className='mt-20'>
+        {user ? (
+          <>
+            <h2>Välkommen, {user.firstName}!</h2>
+            <Button
+              text='Logga ut'
+              onClick={logout}
+            />
+          </>
+        ) : (
+          <>
+            <h2>Välkommen!</h2>
+            <Button
+              text='Logga in'
+              onClick={() => openLoginModal()}
+            />
+          </>
+        )}
+      </section>
+
 
     </main>
   )

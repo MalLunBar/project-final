@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
-import { CirclePlus, ToyBrick, Lamp } from 'lucide-react'
+import { Baby, Lamp, Flower2, Shirt, Sofa, Book } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import CardLink from '../components/CardLink'
@@ -18,11 +18,11 @@ const Home = () => {
   // TODO: fetch categories from api
   const categories = [
     { id: 'vintage', label: "Vintage", icon: Lamp },
-    { id: 'barn', label: "Barn", icon: ToyBrick },
-    // "Trädgård",
-    // "Kläder",
-    // "Möbler",
-    // "Böcker",
+    { id: 'barn', label: "Barn", icon: Baby },
+    { id: 'trädgård', label: "Trädgård", icon: Flower2 },
+    { id: 'kläder', label: "Kläder", icon: Shirt },
+    { id: 'möbler', label: "Möbler", icon: Sofa },
+    { id: 'böcker', label: "Böcker", icon: Book },
     // "Husdjur",
     // "Elektronik",
     // "Kök",
@@ -37,9 +37,9 @@ const Home = () => {
   ]
 
   // för test
-  const upcoming = [
-    { id: 1, title: "Big Summer Loppis", date: "Sat, Aug 24", city: "Stockholm" },
-    { id: 2, title: "Vintage Fair", date: "Sun, Aug 25", city: "Göteborg" },
+  const upcomingExamples = [
+    { id: 1, title: "Stor Sommarloppis", date: "Lör 24 Aug", city: "Stockholm" },
+    { id: 2, title: "Vintage Loppis", date: "Sön 25 Aug", city: "Göteborg" },
   ]
 
   const [sliderRef] = useKeenSlider({
@@ -73,7 +73,7 @@ const Home = () => {
     <main className='flex flex-col items-center w-full gap-4'>
 
       {/* Hero section */}
-      <section className='w-full bg-[url(./monstera.jpg)] bg-center bg-no-repeat bg-cover py-18 px-6 text-center'>
+      <section className='w-full bg-[url(./monstera.jpg)] bg-center bg-no-repeat bg-cover py-22 px-6 text-center'>
         <h1 className='text-white text-2xl font-semibold mb-6'>Hitta en loppis nära dig</h1>
         <form>
           <Input
@@ -113,27 +113,24 @@ const Home = () => {
         <div
           className="grid grid-cols-2 sm:grid-cols-4 gap-4"
         >
-          {categories.map(cat => <CardLink icon={cat.icon} label={cat.label} to='/' />)}
-          {/* TODO: ändra to till: /search?category=${cat.id}` */}
-
-          {/* {categories.map((cat) => (
-            <button
+          {categories.map(cat =>
+            <CardLink
               key={cat.id}
-              onClick={() => navigate(`/`)}
-              className="flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow hover:shadow-md transition"
-            >
-              <p className="font-medium">{cat.label}</p>
-            </button>
-          ))} */}
+              icon={cat.icon}
+              label={cat.label}
+              to={`/search?category=${cat.id}`}
+              className='hover:bg-hover hover:shadow-md'
+            />)}
+          {/* TODO: ändra bakgrundsfärg på korten? */}
 
         </div>
       </section>
 
-      {/* Upcoming Events */}
+      {/* Upcoming Loppis */}
       <section className="w-full max-w-3xl mt-10 px-4">
-        <h2 className="text-xl font-semibold mb-4">Happening this weekend</h2>
+        <h2 className="text-xl font-semibold mb-4">På gång i helgen</h2>
         <div className="space-y-3">
-          {upcoming.map((event) => (
+          {upcomingExamples.map((event) => (
             <div
               key={event.id}
               className="p-4 bg-white rounded-2xl shadow flex justify-between items-center"
@@ -146,9 +143,9 @@ const Home = () => {
               </div>
               <button
                 onClick={() => navigate(`/loppis/${event.id}`)}
-                className="text-accent font-semibold"
+                className="text-accent font-semibold cursor-pointer"
               >
-                View →
+                Visa →
               </button>
             </div>
           ))}
@@ -158,15 +155,14 @@ const Home = () => {
 
       {/* CTA - Add your own loppis */}
       <section className="w-full max-w-xl mt-10 bg-light p-10 rounded-2xl text-center shadow-lg">
-        <h2 className="text-2xl font-bold mb-3">Have items to sell?</h2>
-        <p className="mb-6">List your own loppis and reach more people!</p>
+        <h2 className="text-2xl font-semibold mb-3">Har du saker att sälja?</h2>
+        <p className="mb-6">Lägg upp din egen loppis och nå ut till fler loppisälskare!</p>
         <button
-          onClick={() => navigate("/add-loppis")}
-          className="bg-white text-accent font-semibold py-3 px-6 rounded-full shadow hover:bg-gray-100 transition"
+          onClick={() => handleAdd()}
+          className="bg-white text-accent font-semibold py-3 px-6 rounded-full shadow cursor-pointer hover:bg-gray-100 transition"
         >
-          List Your Loppis
+          Skapa Loppis
         </button>
-        <Button text='Lägg till loppis' icon={CirclePlus} onClick={handleAdd} />
       </section>
 
 
@@ -175,7 +171,7 @@ const Home = () => {
 
 
       {/* test av logga in funktion - TA BORT NÄR DET FINNS LOGGA UT KNAPP NÅGON ANNANSTANS */}
-      <section className='mt-20'>
+      <section className='mt-20 flex items-center gap-2'>
         {user ? (
           <>
             <h2>Välkommen, {user.firstName}!</h2>

@@ -2,33 +2,18 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
-import { Baby, Lamp, Flower2, Shirt, Sofa, Book, Cat, Tv, CookingPot, Shapes } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import CardLink from '../components/CardLink'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import HeroSearch from '../sections/HeroSearch'
+import CategoryGrid from '../sections/CategoryGrid'
 
 
 const Home = () => {
   const { user, logout } = useAuthStore()
   const { openLoginModal } = useModalStore()
-  const navigate = useNavigate()
 
-  // TODO: fetch categories from api?
-  const categories = [
-    { id: 'vintage', label: "Vintage", icon: Lamp },
-    { id: 'children', label: "Barn", icon: Baby },
-    { id: 'garden', label: "Trädgård", icon: Flower2 },
-    { id: 'clothes', label: "Kläder", icon: Shirt },
-    { id: 'furniture', label: "Möbler", icon: Sofa },
-    { id: 'books', label: "Böcker", icon: Book },
-    { id: 'pets', label: "Husdjur", icon: Cat },
-    { id: 'electronics', label: "Elektronik", icon: Tv },
-    { id: 'kitchen', label: "Kök", icon: CookingPot },
-    { id: 'other', label: "Blandat", icon: Shapes }
-  ]
 
   // TODO: fetch popular loppis
   const loppisExamples = [
@@ -78,7 +63,7 @@ const Home = () => {
 
       {/* Carousel section */}
       {/* popular / near / upcoming */}
-      <section className="w-full max-w-3xl mt-10 px-4">
+      <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">
         <h2 className="text-xl font-semibold mb-4">Populära Loppisar</h2>
         <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden">
           {loppisExamples.map((l) => (
@@ -95,30 +80,11 @@ const Home = () => {
         {/* TODO: ändra till loppisCard */}
       </section>
 
-
-
       {/* Categories grid */}
-      <section className="w-full max-w-3xl mt-10 px-4">
-        <h2 className="text-xl font-semibold mb-4">Sök efter kategori</h2>
-
-        <div
-          className="grid grid-cols-2 sm:grid-cols-4 gap-4"
-        >
-          {categories.map(cat =>
-            <CardLink
-              key={cat.id}
-              icon={cat.icon}
-              label={cat.label}
-              to={`/search?category=${cat.id}`}
-              className='hover:bg-hover hover:shadow-md'
-            />)}
-          {/* TODO: ändra bakgrundsfärg på korten? */}
-
-        </div>
-      </section>
+      <CategoryGrid />
 
       {/* Upcoming Loppis */}
-      <section className="w-full max-w-3xl mt-10 px-4">
+      <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">
         <h2 className="text-xl font-semibold mb-4">Kommande loppisar</h2>
         <div className="space-y-3">
           {upcomingExamples.map((event) => (
@@ -145,7 +111,7 @@ const Home = () => {
 
 
       {/* CTA - Add your own loppis */}
-      <section className="w-full max-w-xl mt-10 bg-light p-10 rounded-2xl text-center shadow-lg">
+      <section className="w-full max-w-xl mt-14 bg-light p-10 rounded-2xl text-center shadow-lg">
         <h2 className="text-2xl font-semibold mb-3">Har du saker att sälja?</h2>
         <p className="mb-6">Lägg upp din egen loppis och nå ut till fler loppisälskare!</p>
         <button

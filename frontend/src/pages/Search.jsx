@@ -20,9 +20,9 @@ const Search = () => {
   const [showFilters, setShowFilters] = useState(false)  //mobile: hide search filters by default
   const [loppisList, setLoppisList] = useState([])
   const [query, setQuery] = useState({
-    city: params.get("city") || "",
+    city: params.get('city') || '',
     dates: { id: "all", label: "Visa alla" },
-    categories: [],
+    categories: [params.get('category')] || [],
   })
   const [searchParams, setSearchParams] = useState()
 

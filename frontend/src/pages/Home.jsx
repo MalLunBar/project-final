@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
-import { Baby, Lamp, Flower2, Shirt, Sofa, Book } from 'lucide-react'
+import { Baby, Lamp, Flower2, Shirt, Sofa, Book, Cat, Tv, CookingPot, Shapes } from 'lucide-react'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import CardLink from '../components/CardLink'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
+import HeroSearch from '../sections/HeroSearch'
 
 
 const Home = () => {
@@ -15,18 +16,18 @@ const Home = () => {
   const { openLoginModal } = useModalStore()
   const navigate = useNavigate()
 
-  // TODO: fetch categories from api
+  // TODO: fetch categories from api?
   const categories = [
     { id: 'vintage', label: "Vintage", icon: Lamp },
-    { id: 'barn', label: "Barn", icon: Baby },
-    { id: 'trädgård', label: "Trädgård", icon: Flower2 },
-    { id: 'kläder', label: "Kläder", icon: Shirt },
-    { id: 'möbler', label: "Möbler", icon: Sofa },
-    { id: 'böcker', label: "Böcker", icon: Book },
-    // "Husdjur",
-    // "Elektronik",
-    // "Kök",
-    // "Blandat"
+    { id: 'children', label: "Barn", icon: Baby },
+    { id: 'garden', label: "Trädgård", icon: Flower2 },
+    { id: 'clothes', label: "Kläder", icon: Shirt },
+    { id: 'furniture', label: "Möbler", icon: Sofa },
+    { id: 'books', label: "Böcker", icon: Book },
+    { id: 'pets', label: "Husdjur", icon: Cat },
+    { id: 'electronics', label: "Elektronik", icon: Tv },
+    { id: 'kitchen', label: "Kök", icon: CookingPot },
+    { id: 'other', label: "Blandat", icon: Shapes }
   ]
 
   // TODO: fetch popular loppis
@@ -73,18 +74,7 @@ const Home = () => {
     <main className='flex flex-col items-center w-full gap-4'>
 
       {/* Hero section */}
-      <section className='w-full bg-[url(./monstera.jpg)] bg-center bg-no-repeat bg-cover py-22 px-6 text-center'>
-        <h1 className='text-white text-2xl font-semibold mb-6'>Hitta en loppis nära dig</h1>
-        <form>
-          <Input
-            label='Sök stad eller område...'
-            type='text'
-          />
-          {/* submit knapp */}
-        </form>
-        {/* My location - knapp */}
-
-      </section>
+      <HeroSearch />
 
       {/* Carousel section */}
       {/* popular / near / upcoming */}
@@ -96,12 +86,13 @@ const Home = () => {
               key={l.id}
               className="keen-slider__slide flex flex-col items-center justify-center bg-gray-100"
             >
-              <img src={l.img} alt={l.title} className="w-full h-64 object-cover" />
+              <img src={l.img} alt={l.title} className="w-full h-50 object-cover" />
               <p className="p-4 font-medium">{l.title}</p>
             </div>
           ))}
         </div>
         {/* TODO: lägg till pilar? */}
+        {/* TODO: ändra till loppisCard */}
       </section>
 
 
@@ -128,7 +119,7 @@ const Home = () => {
 
       {/* Upcoming Loppis */}
       <section className="w-full max-w-3xl mt-10 px-4">
-        <h2 className="text-xl font-semibold mb-4">På gång i helgen</h2>
+        <h2 className="text-xl font-semibold mb-4">Kommande loppisar</h2>
         <div className="space-y-3">
           {upcomingExamples.map((event) => (
             <div

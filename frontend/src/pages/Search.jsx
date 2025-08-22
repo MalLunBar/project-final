@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
+import { useSearchParams } from "react-router-dom"
 import { Map, LocateFixed, List, Funnel, X } from "lucide-react"
 import useGeoStore from '../stores/useGeoStore'
 import SearchFilters from "../sections/SearchFilters"
@@ -13,12 +14,13 @@ import { getLoppisList } from '../services/loppisApi'
 import { geocodeCity } from '../services/geocodingApi'
 
 const Search = () => {
+  const [params] = useSearchParams()
   const { user, token } = useAuthStore()
   const [view, setView] = useState("map") //"map" or "list" for mobile
   const [showFilters, setShowFilters] = useState(false)  //mobile: hide search filters by default
   const [loppisList, setLoppisList] = useState([])
   const [query, setQuery] = useState({
-    city: "",
+    city: params.get("city") || "",
     dates: { id: "all", label: "Visa alla" },
     categories: [],
   })

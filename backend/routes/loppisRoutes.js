@@ -228,7 +228,7 @@ router.patch("/:id/like", authenticateUser, async (req, res) => {
 })
 
 //Edit loppis ad
-// liten hjälpare för geokodning via din egen backend-proxy
+// === GEOKODNINGSHJÄLPARE (behåll precis som innan) ===
 async function geocodeAddress({ street, postalCode, city }) {
   const q = `${street}, ${postalCode} ${city}, Sweden`
   const res = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(q)}`)
@@ -239,7 +239,8 @@ async function geocodeAddress({ street, postalCode, city }) {
   return { lat: parseFloat(lat), lon: parseFloat(lon) }
 }
 
-router.patch('/:id', authenticateUser, async (req, res) => {
+// === PATCH: uppdatera loppis, inkl. bilder via multipart/form-data ===
+router.patch('/:id', authenticateUser, upload.array('images', 6), async (req, res) => {
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ success: false, response: null, message: 'Invalid ID format.' })
@@ -251,19 +252,91 @@ router.patch('/:id', authenticateUser, async (req, res) => {
       return res.status(404).json({ success: false, response: null, message: 'Loppis not found!' })
     }
 
-    // Plocka ut ev. inkommande fält
-    const body = req.body || {}
-    const addrIn = body.location?.address || {}
+    // 1) Plocka ut data från body
+    // - Om frontend skickar JSON i fältet "data", parsa den
+    // - Annars använd req.body som det är (multipart-fält blir strings)
+    let body = req.body || {}
+    if (body && typeof body === 'object' && body.data) {
+      body = typeof body.data === 'string' ? JSON.parse(body.data) : body.data
+    }
 
-    // Jämför adress (trim för att undvika falska skillnader)
+    // 2) Ladda upp nya bilder (om några filer skickats)
+    let newPublicIds = []
+    if (req.files && req.files.length > 0) {
+      const uploads = req.files.map(
+        file =>
+          new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              { folder: 'loppis', resource_type: 'image' },
+              (err, result) => (err ? reject(err) : resolve(result.public_id))
+            )
+            stream.end(file.buffer)
+          })
+      )
+      newPublicIds = await Promise.all(uploads) // t.ex. ["loppis/abc123", ...]
+    }
+
+    // 3) Bygg ny bilder-lista utifrån strategi
+    //   - imageMode: 'replace' | 'append' (default)
+    //   - images: array av befintliga public_id (för att "behålla" och/eller "reordna")
+    //   - removeImages: array av public_id att ta bort
+    const imageMode = (body.imageMode || 'append').toLowerCase()
+    const keepListRaw = Array.isArray(body.images) ? body.images : null
+    const removeList = Array.isArray(body.removeImages) ? new Set(body.removeImages) : new Set()
+
+    // Starta från "befintlig" lista
+    let finalImages = existing.images ? [...existing.images] : []
+
+    if (imageMode === 'replace') {
+      // Ersätt allt med de nyuppladdade
+      finalImages = [...newPublicIds]
+    } else {
+      // 'append' (default):
+      // Om keepList (body.images) finns: filtrera/reordna befintliga utifrån denna lista
+      if (keepListRaw) {
+        const keepSet = new Set(finalImages) // endast befintliga tillåtna i keep
+        finalImages = keepListRaw.filter(pid => keepSet.has(pid))
+      }
+
+      // Ta bort ev. removeImages
+      if (removeList.size > 0) {
+        finalImages = finalImages.filter(pid => !removeList.has(pid))
+      }
+
+      // Lägg till nyuppladdade sist
+      if (newPublicIds.length > 0) {
+        finalImages = [...finalImages, ...newPublicIds]
+      }
+    }
+
+    // Bestäm coverImage
+    //  - Om body.coverImage satt och finns i finalImages: använd den
+    //  - Annars: behåll gammal coverImage om den finns kvar i finalImages
+    //  - Annars: första bilden eller null
+    let coverImage = existing.coverImage || null
+    if (body.coverImage && finalImages.includes(body.coverImage)) {
+      coverImage = body.coverImage
+    } else if (!coverImage || !finalImages.includes(coverImage)) {
+      coverImage = finalImages[0] || null
+    }
+
+    // 4) Avgör om adressen ändrats → geokoda
+    const addrIn = body.location?.address || {}
     const oldAddr = existing.location?.address || {}
-    const streetChanged = addrIn.street?.trim() !== undefined && addrIn.street.trim() !== (oldAddr.street || '')
-    const cityChanged = addrIn.city?.trim() !== undefined && addrIn.city.trim() !== (oldAddr.city || '')
-    const postalCodeChanged = addrIn.postalCode?.trim() !== undefined && addrIn.postalCode.trim() !== (oldAddr.postalCode || '')
+
+    const streetChanged =
+      addrIn.street?.trim() !== undefined && addrIn.street.trim() !== (oldAddr.street || '')
+    const cityChanged =
+      addrIn.city?.trim() !== undefined && addrIn.city.trim() !== (oldAddr.city || '')
+    const postalCodeChanged =
+      addrIn.postalCode?.trim() !== undefined &&
+      addrIn.postalCode.trim() !== (oldAddr.postalCode || '')
+
     const addressChanged = streetChanged || cityChanged || postalCodeChanged
 
-    // Bygg $set med dot-paths för säkra updates (rör inte coordinates i onödan)
+    // 5) Bygg $set med dot-paths (uppdatera endast fält som skickas)
     const $set = {}
+
     if (body.title !== undefined) $set.title = body.title
     if (body.description !== undefined) $set.description = body.description
     if (body.categories !== undefined) $set.categories = body.categories
@@ -273,7 +346,16 @@ router.patch('/:id', authenticateUser, async (req, res) => {
     if (addrIn.city !== undefined) $set['location.address.city'] = addrIn.city
     if (addrIn.postalCode !== undefined) $set['location.address.postalCode'] = addrIn.postalCode
 
-    // Om adressändring → geokoda och uppdatera coordinates
+    // Bilder (om strategin lett till en ny lista)
+    if (imageMode === 'replace' || newPublicIds.length > 0 || keepListRaw || removeList.size > 0) {
+      $set.images = finalImages
+      $set.coverImage = coverImage
+    } else if (body.coverImage !== undefined) {
+      // enbart coverImage ändrat
+      $set.coverImage = coverImage
+    }
+
+    // 6) Geokoda om adressen ändrats
     if (addressChanged) {
       const geo = await geocodeAddress({
         street: $set['location.address.street'] ?? oldAddr.street,
@@ -284,33 +366,40 @@ router.patch('/:id', authenticateUser, async (req, res) => {
         return res.status(422).json({
           success: false,
           response: null,
-          message: 'Kunde inte geokoda den nya adressen. Kontrollera stavning/postnummer.'
+          message: 'Kunde inte geokoda den nya adressen. Kontrollera stavning/postnummer.',
         })
       }
       $set['location.coordinates'] = {
         type: 'Point',
-        coordinates: [geo.lon, geo.lat], // OBS: [lng, lat]
+        coordinates: [geo.lon, geo.lat], // [lng, lat]
       }
     }
 
+    // 7) Skydd mot helt tomma updates
+    if (Object.keys($set).length === 0) {
+      return res.status(400).json({
+        success: false,
+        response: null,
+        message:
+          'No changes provided. Skickade du några fält i "data" eller filer i "images[]"?',
+      })
+    }
+
+    // 8) Kör uppdateringen
     const updated = await Loppis.findByIdAndUpdate(id, { $set }, {
       new: true,
       runValidators: true,
       validateModifiedOnly: true,
     })
 
-    return res.status(200).json({
-      success: true,
-      response: updated,
-      message: 'Loppis updated successfully!'
-    })
+    return res
+      .status(200)
+      .json({ success: true, response: updated, message: 'Loppis updated successfully!' })
   } catch (err) {
     console.error('Error in PATCH /loppis/:id:', err)
-    return res.status(500).json({
-      success: false,
-      response: null,
-      message: 'Failed to update loppis ad.'
-    })
+    return res
+      .status(500)
+      .json({ success: false, response: null, message: 'Failed to update loppis ad.' })
   }
 })
 

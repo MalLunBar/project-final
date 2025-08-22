@@ -10,12 +10,10 @@ const EditModal = ({ open, loppis, onClose, onSaved }) => {
 
   const editLoppis = async (payload) => {
     try {
-      console.log(payload)
+      // payload ÄR FormData från LoppisForm
       const updated = await updateLoppis(loppis._id, payload, token)
-      console.log(updated)
-      onSaved?.(updated)   // skicka tillbaka uppdaterad loppis
+      onSaved?.(updated)
     } catch (err) {
-      // --------------------TODO: handle error appropriately
       console.error('Failed to update loppis:', err)
     }
   }

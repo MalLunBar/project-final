@@ -1,5 +1,28 @@
 const API_URL = 'http://localhost:8080/loppis' // local development URL
 
+// Valfri hjälpare om du vill bygga FormData någon annanstans
+export const buildLoppisFormData = (dataObj, files = []) => {
+  const fd = new FormData()
+  fd.append('data', JSON.stringify(dataObj))
+  for (const file of files) fd.append('images', file)
+  return fd
+}
+
+// Intern hjälpare: skickar FormData oförändrat, annars JSON
+const makeRequest = (url, method, payload, token) => {
+  const opts = { method, headers: { Authorization: token } }
+
+  if (payload instanceof FormData) {
+    // Viktigt: sätt INTE Content-Type själv (boundary sätts automatiskt)
+    opts.body = payload
+  } else {
+    opts.headers['Content-Type'] = 'application/json'
+    opts.body = JSON.stringify(payload)
+  }
+
+  return fetch(url, opts)
+}
+
 // fetch loppis list with optional filters
 export const getLoppisList = async (params) => {
   const query = !params ? '' : `?${params}`
@@ -9,7 +32,7 @@ export const getLoppisList = async (params) => {
     throw new Error(errorData?.message || 'Failed to fetch loppis data')
   }
   const data = await response.json()
-  return data.response || { data: [], totalCount: 0, currentPage: 1, limit: 10 } // returns data and pagination info
+  return data.response || { data: [], totalCount: 0, currentPage: 1, limit: 10 }
 }
 
 // fetch single loppis by ID
@@ -20,40 +43,29 @@ export const getLoppisById = async (id) => {
     throw new Error(errorData?.message || 'Failed to fetch loppis data')
   }
   const data = await response.json()
-  return data.response || {} // returns loppis object
+  return data.response || {}
 }
 
-// create a new loppis
-export const createLoppis = async (loppisData, token) => {
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    body: loppisData,
-    headers: { 'Authorization': token }
-  })
+// CREATE (accepterar FormData eller JSON — du använder FormData)
+export const createLoppis = async (dataOrFormData, token) => {
+  const response = await makeRequest(API_URL, 'POST', dataOrFormData, token)
   if (!response.ok) {
-    const errorData = await response.json()
+    const errorData = await response.json().catch(() => ({}))
     throw new Error(errorData?.message || 'Failed to create new loppis')
   }
   const data = await response.json()
-  return data.response || {} // returns loppis object
+  return data.response || {}
 }
 
-// update an existing loppis by ID
-export const updateLoppis = async (id, loppisData, token) => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(loppisData),
-    headers: {
-      'Authorization': token,
-      'Content-Type': 'application/json'
-    }
-  })
+// UPDATE (accepterar FormData eller JSON — du skickar FormData från LoppisForm)
+export const updateLoppis = async (id, dataOrFormData, token) => {
+  const response = await makeRequest(`${API_URL}/${id}`, 'PATCH', dataOrFormData, token)
   if (!response.ok) {
-    const errorData = await response.json()
+    const errorData = await response.json().catch(() => ({}))
     throw new Error(errorData?.message || 'Failed to edit loppis')
   }
   const data = await response.json()
-  return data.response || {} // returns loppis object
+  return data.response || {}
 }
 
 // delete a loppis by ID
@@ -61,16 +73,16 @@ export const deleteLoppis = async (id, token) => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': token,
-      'Content-Type': 'application/json'
-    }
+      Authorization: token,
+      'Content-Type': 'application/json',
+    },
   })
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to delete loppis.')
   }
   const data = await response.json()
-  return data.response || {} // returns deleted loppis
+  return data.response || {}
 }
 
 // like/unlike loppis
@@ -78,9 +90,9 @@ export const toggleLikeLoppis = async (id, token) => {
   const response = await fetch(`${API_URL}/${id}/like`, {
     method: 'PATCH',
     headers: {
-      'Authorization': token,
-      'Content-Type': 'application/json'
-    }
+      Authorization: token,
+      'Content-Type': 'application/json',
+    },
   })
   if (!response.ok) {
     const errorData = await response.json()
@@ -98,5 +110,5 @@ export const getLoppisCategories = async () => {
     throw new Error(errorData?.message || 'Failed to fetch loppis categories')
   }
   const data = await response.json()
-  return data.response || [] // returns array of categories
+  return data.response || []
 }

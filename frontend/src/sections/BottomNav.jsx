@@ -6,7 +6,7 @@ const BottomNav = () => {
 
   const navItems = [
     { id: 1, text: 'Hem', icon: Home, linkTo: '/' },
-    { id: 2, text: 'Sök', icon: Search, linkTo: '/loppis' },
+    { id: 2, text: 'Sök', icon: Search, linkTo: '/search' },
     { id: 3, text: 'Favoriter', icon: Heart, linkTo: '/profile' },
   ]
 

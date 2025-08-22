@@ -19,7 +19,7 @@ export const App = () => {
       <TopNav />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/loppis' element={<Search />} />
+        <Route path='/search' element={<Search />} />
         <Route path='/loppis/:loppisId' element={<LoppisInfo />} />
         <Route path='/profile' element={<Profile />} />
         <Route path="/profile/:tab" element={<Profile />} />

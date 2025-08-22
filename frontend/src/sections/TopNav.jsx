@@ -17,7 +17,7 @@ const TopNav = () => {
 
   const menuItems = [
     { id: 1, text: 'HEM', linkTo: '/' },
-    { id: 2, text: 'SÖK LOPPIS', linkTo: '/loppis' },
+    { id: 2, text: 'SÖK LOPPIS', linkTo: '/search' },
     { id: 3, text: 'LÄGG TILL LOPPIS', linkTo: '/add' },
     { id: 4, text: 'OM OSS', linkTo: '/about' },
     { id: 5, text: 'KONTAKT', linkTo: '/contact' },
@@ -30,7 +30,7 @@ const TopNav = () => {
         aria-label="Main"
       >
         {/* Logo - only show when hamburger menu is closed? */}
-        <MenuLogo  />
+        <MenuLogo />
 
 
         {/* Mobile Navigation */}
@@ -64,7 +64,7 @@ const TopNav = () => {
             {/* Search */}
             <NavItem
               icon={Search}
-              linkTo='/loppis'
+              linkTo='/search'
               text="Sök Loppis" />
 
             {/* profile */}

@@ -20,7 +20,7 @@ const CarouselCard = ({ loppis }) => {
   // Hämta publicId för omslagsbild:
   const id = loppis.coverImage ?? loppis.images?.[0] ?? null
   // format date
-  const dateString = `${format(loppis.dates[0].date, 'EEE d MMMM', { locale: sv })}`
+  const dateString = `${format(loppis.dates[0].date, 'EEE d MMM', { locale: sv })}`
 
   // handle click on like button 
   const likeLoppis = async (e) => {
@@ -34,10 +34,19 @@ const CarouselCard = ({ loppis }) => {
 
   return (
     <article className="keen-slider__slide flex flex-col items-center justify-center bg-white rounded-xl shadow">
-      <img src='loppis-placeholder-image.png' alt={loppis.title} className="w-full h-60 object-cover" />
+      <div className='relative w-full h-full'>
+        <img
+          src={IMG.card(id)}
+          srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
+          alt={loppis.title}
+          className='w-full h-full object-cover object-center'
+          loading='lazy'
+        />
+        <LikeButton className='absolute right-2 top-2' onLike={likeLoppis} isLiked={isLiked} />
+      </div>
       <div className='p-2 text-center' >
         <h3 className="font-medium">{loppis.title}</h3>
-        <p className="text-gray-600 text-sm">{loppis.location.address.city} • This weekend</p>
+        <p className="text-gray-600 text-sm">{loppis.location.address.city} • {dateString}</p>
       </div>
     </article>
   )

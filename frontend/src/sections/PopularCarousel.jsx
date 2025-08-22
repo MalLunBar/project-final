@@ -60,14 +60,14 @@ const PopularCarousel = () => {
         {/* left arrow */}
         <button
           onClick={() => slider.current?.prev()}
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/50 p-2 rounded-full shadow cursor-pointer hover:bg-white transition-opacity duration-200"
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full shadow cursor-pointer hover:bg-white transition-opacity duration-200"
         >
           <ChevronLeft size={24} strokeWidth={2} className="text-accent" />
         </button>
         {/* right arrow */}
         <button
           onClick={() => slider.current?.next()}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 p-2 rounded-full shadow cursor-pointer hover:bg-white transition-opacity duration-200"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 p-2 rounded-full shadow cursor-pointer hover:bg-white transition-opacity duration-200"
         >
           <ChevronRight size={24} strokeWidth={2} className="text-accent" />
         </button>

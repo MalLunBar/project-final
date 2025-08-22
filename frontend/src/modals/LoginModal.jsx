@@ -18,6 +18,7 @@ const LoginModal = ({ onClose }) => {
     try {
       // call login function from auth store
       await login({ email, password })
+      console.log('[UI] login done. store state:', useAuthStore.getState())
       // close modal
       onClose()
     } catch (err) {

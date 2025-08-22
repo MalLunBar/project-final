@@ -7,9 +7,8 @@ import NavItem from '../components/NavItem'
 import MenuLogo from '../components/MenuLogo'
 
 const TopNav = () => {
-  
-  const [isOpen, setIsOpen] = useState(false)
 
+  const [isOpen, setIsOpen] = useState(false)
 
   // close menu when an item is clicked
   const handleMenu = () => {
@@ -19,10 +18,10 @@ const TopNav = () => {
   const menuItems = [
     { id: 1, text: 'HEM', linkTo: '/' },
     { id: 2, text: 'SÖK LOPPIS', linkTo: '/loppis' },
-    { id: 3, text: 'LÄGG TILL LOPPIS', linkTo: '/add' },
+    { id: 3, text: 'LÄGG TILL LOPPIS', linkTo: '/add', requiresAuth: true },
     { id: 4, text: 'OM OSS', linkTo: '/about' },
     { id: 5, text: 'KONTAKT', linkTo: '/contact' },
-    { id: 6, text: 'PROFIL', linkTo: '/profile' },
+    { id: 6, text: 'PROFIL', linkTo: '/profile', requiresAuth: true },
   ]
 
   return (
@@ -46,7 +45,7 @@ const TopNav = () => {
                     key={item.id}
                     className='pb-4'
                   >
-                    <MenuItem text={item.text} linkTo={item.linkTo} />
+                    <MenuItem text={item.text} linkTo={item.linkTo} requiresAuth={item.requiresAuth} />
                   </li>
                 ))}
               </Menu>
@@ -63,7 +62,8 @@ const TopNav = () => {
               <NavItem
                 icon={CirclePlus}
                 linkTo='/add'
-                text="Skapa" />
+                text="Skapa"
+                requiresAuth />
 
               {/* Search */}
               <NavItem
@@ -75,7 +75,8 @@ const TopNav = () => {
               <NavItem
                 icon={CircleUserRound}
                 linkTo='/profile'
-                text="Profil" />
+                text="Profil"
+                requiresAuth />
             </div>
 
             <Hamburger
@@ -98,7 +99,7 @@ const TopNav = () => {
                 key={item.id}
                 className=''
               >
-                <MenuItem text={item.text} linkTo={item.linkTo} />
+                <MenuItem text={item.text} linkTo={item.linkTo} requiresAuth={item.requiresAuth} />
               </li>
             ))}
           </Menu>

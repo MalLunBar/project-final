@@ -25,7 +25,7 @@ export const App = () => {
           path='/profile'
           element={
             // <ProtectedPage>
-              <Profile />
+            <Profile />
             // </ProtectedPage>
           } />
         <Route path="/profile/:tab" element={<Profile />} />

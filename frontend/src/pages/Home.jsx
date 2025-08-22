@@ -1,51 +1,23 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useKeenSlider } from 'keen-slider/react'
-import 'keen-slider/keen-slider.min.css'
 import Button from '../components/Button'
-import Input from '../components/Input'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import HeroSearch from '../sections/HeroSearch'
+import PopularCarousel from '../sections/PopularCarousel'
 import CategoryGrid from '../sections/CategoryGrid'
-
 
 const Home = () => {
   const { user, logout } = useAuthStore()
   const { openLoginModal } = useModalStore()
+  const navigate = useNavigate()
 
 
-  // TODO: fetch popular loppis
-  const loppisExamples = [
-    { id: 1, title: "Vintage Clothes Market", img: "/images/loppis1.jpg" },
-    { id: 2, title: "Book Fair", img: "/images/loppis2.jpg" },
-    { id: 3, title: "Antique Furniture Sale", img: "/images/loppis3.jpg" },
-  ]
-
-  // för test
+  // TODO: fetch upcoming loppis
   const upcomingExamples = [
     { id: 1, title: "Stor Sommarloppis", date: "Lör 24 Aug", city: "Stockholm" },
     { id: 2, title: "Vintage Loppis", date: "Sön 25 Aug", city: "Göteborg" },
   ]
-
-  const [sliderRef] = useKeenSlider({
-    loop: true,
-    slides: {
-      perView: 1,
-      spacing: 15,
-    },
-    breakpoints: {
-      "(min-width: 640px)": {
-        slides: { perView: 2, spacing: 15 },
-      },
-      "(min-width: 1024px)": {
-        slides: { perView: 3, spacing: 20 },
-      },
-    },
-    autoplay: {
-      delay: 3000,
-    },
-  })
 
   const handleAdd = () => {
     if (!user) {
@@ -58,29 +30,13 @@ const Home = () => {
   return (
     <main className='flex flex-col items-center w-full gap-4'>
 
-      {/* Hero section */}
+      {/* Hero section with search bar → quick entry point to search*/}
       <HeroSearch />
 
-      {/* Carousel section */}
-      {/* popular / near / upcoming */}
-      <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">
-        <h2 className="text-xl font-semibold mb-4">Populära Loppisar</h2>
-        <div ref={sliderRef} className="keen-slider rounded-xl overflow-hidden">
-          {loppisExamples.map((l) => (
-            <div
-              key={l.id}
-              className="keen-slider__slide flex flex-col items-center justify-center bg-gray-100"
-            >
-              <img src={l.img} alt={l.title} className="w-full h-50 object-cover" />
-              <p className="p-4 font-medium">{l.title}</p>
-            </div>
-          ))}
-        </div>
-        {/* TODO: lägg till pilar? */}
-        {/* TODO: ändra till loppisCard */}
-      </section>
+      {/* Carousel section with popular loppis*/}
+      <PopularCarousel />
 
-      {/* Categories grid */}
+      {/* Categories grid quick links → leads to filtered search */}
       <CategoryGrid />
 
       {/* Upcoming Loppis */}

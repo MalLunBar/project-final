@@ -108,6 +108,34 @@ router.get("/", async (req, res) => {
   }
 })
 
+// get popular loppis (most likes)
+router.get("/popular", async (req, res) => {
+  // returns the 10 most liked loppis
+  const limit = 10
+
+  try {
+    const popularLoppis = await Loppis.find().sort("-likes").limit(limit)
+
+    if (popularLoppis.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No Loppis found on that query. Try another one."
+      })
+    }
+    res.status(200).json({
+      success: true,
+      response: popularLoppis
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch popular Loppis."
+    })
+  }
+})
+
 //get all the category from enums in Loppis model
 router.get("/categories", async (req, res) => {
 

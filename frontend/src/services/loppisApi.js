@@ -12,6 +12,17 @@ export const getLoppisList = async (params) => {
   return data.response || { data: [], totalCount: 0, currentPage: 1, limit: 10 } // returns data and pagination info
 }
 
+// fetch a list with popular loppis (most likes)
+export const getPopularLoppis = async () => {
+  const response = await fetch(`${API_URL}/popular`)
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData?.message || 'Failed to fetch loppis data')
+  }
+  const data = await response.json()
+  return data.response || [] // returns array of loppis
+}
+
 // fetch single loppis by ID
 export const getLoppisById = async (id) => {
   const response = await fetch(`${API_URL}/${id}`)

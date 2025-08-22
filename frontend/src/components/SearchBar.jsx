@@ -12,7 +12,7 @@ const SearchBar = ({ value, setValue }) => {
       />
       <button
         type='submit'
-        className='text-accent hover:text-accent-dark ml-2'
+        className='cursor-pointer text-accent hover:text-accent-dark ml-2'
         aria-label='Sök'
       >
         <Search size={26} strokeWidth={3} />

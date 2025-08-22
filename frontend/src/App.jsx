@@ -24,9 +24,9 @@ export const App = () => {
         <Route
           path='/profile'
           element={
-            // <ProtectedPage>
-            <Profile />
-            // </ProtectedPage>
+            <ProtectedPage>
+              <Profile />
+            </ProtectedPage>
           } />
         <Route path="/profile/:tab" element={<Profile />} />
         <Route path='/signup' element={<SignUp />} />

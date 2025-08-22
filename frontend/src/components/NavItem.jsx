@@ -4,7 +4,7 @@ const NavItem = ({ icon: Icon, ariaLabel, linkTo, text }) => {
   return (
     <Link
       to={linkTo}
-      className='flex flex-col items-center rounded-full p-1 hover:bg-hover '
+      className='flex flex-col items-center rounded-full min-w-12 hover:bg-hover '
       aria-label={ariaLabel}
       title={ariaLabel}
     >

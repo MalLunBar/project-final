@@ -8,7 +8,7 @@ import useModalStore from '../stores/useModalStore'
 
 
 const Home = () => {
-  const { user, logout } = useAuthStore()
+  const { user } = useAuthStore()
   const { openLoginModal } = useModalStore()
   const navigate = useNavigate()
 
@@ -22,26 +22,6 @@ const Home = () => {
 
   return (
     <section className='flex flex-col gap-4 py-6 px-4'>
-
-      {/* test av logga in funktion */}
-      {user ? (
-        <>
-          <h2>Välkommen, {user.firstName}!</h2>
-          <Button
-            text='Logga ut'
-            onClick={logout}
-          />
-        </>
-      ) : (
-        <>
-          <h2>Välkommen!</h2>
-          <Button
-            text='Logga in'
-            onClick={() => openLoginModal()}
-          />
-        </>
-      )}
-
 
       <h3>Hitta en loppis nära dig</h3>
 

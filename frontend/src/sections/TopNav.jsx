@@ -7,8 +7,9 @@ import NavItem from '../components/NavItem'
 import MenuLogo from '../components/MenuLogo'
 
 const TopNav = () => {
-
+  
   const [isOpen, setIsOpen] = useState(false)
+
 
   // close menu when an item is clicked
   const handleMenu = () => {
@@ -21,23 +22,21 @@ const TopNav = () => {
     { id: 3, text: 'LÄGG TILL LOPPIS', linkTo: '/add' },
     { id: 4, text: 'OM OSS', linkTo: '/about' },
     { id: 5, text: 'KONTAKT', linkTo: '/contact' },
+    { id: 6, text: 'PROFIL', linkTo: '/profile' },
   ]
 
   return (
     <header className="sticky top-0 w-full left-0 z-1100 bg-white border-b border-border shadow-sm">
       <nav
-        className="flex items-center justify-between p-3 lg:p-4"
+        className="p-3 lg:p-4"
         aria-label="Main"
       >
-        {/* Logo - only show when hamburger menu is closed? */}
-        <MenuLogo  />
-
 
         {/* Mobile Navigation */}
         <div className='lg:hidden'>
           {isOpen &&
             <div
-              className='fixed right-0 top-0 w-[70%] h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
+              className='fixed right-0 top-0 w-[60%] max-w-70 h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
               onClick={handleMenu}
             >
               {/* show menulogo here? */}
@@ -54,28 +53,35 @@ const TopNav = () => {
             </div>
           }
 
-          <div className='flex items-center justify-end'>
-            {/* add */}
-            <NavItem
-              icon={CirclePlus}
-              linkTo='/add'
-              text="Ny Loppis" />
+          {/* Logo - only show when hamburger menu is closed? */}
 
-            {/* Search */}
-            <NavItem
-              icon={Search}
-              linkTo='/loppis'
-              text="Sök Loppis" />
+          <div className='flex items-center justify-between'>
+            <MenuLogo />
 
-            {/* profile */}
-            <NavItem
-              icon={CircleUserRound}
-              linkTo='/profile'
-              text="Profil" />
+            <div className='flex items-center justify-between md:min-w-60 gap-2'>
+              {/* add */}
+              <NavItem
+                icon={CirclePlus}
+                linkTo='/add'
+                text="Skapa" />
+
+              {/* Search */}
+              <NavItem
+                icon={Search}
+                linkTo='/loppis'
+                text="Sök" />
+
+              {/* profile */}
+              <NavItem
+                icon={CircleUserRound}
+                linkTo='/profile'
+                text="Profil" />
+            </div>
 
             <Hamburger
+              className='mb-2'
               toggled={isOpen}
-              size={20}
+              size={30}
               toggle={setIsOpen} label='Show menu' rounded />
 
           </div>
@@ -85,6 +91,7 @@ const TopNav = () => {
 
         {/* Desktop Navigation */}
         <div className='hidden lg:flex items-center justify-between px-5'>
+          <MenuLogo />
           <Menu type='desktop'>
             {menuItems.map(item => (
               <li

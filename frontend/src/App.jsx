@@ -6,6 +6,7 @@ import Profile from './pages/Profile'
 import SignUp from './pages/SignUp'
 import AddLoppis from './pages/AddLoppis'
 import NotFound from './pages/NotFound'
+import AboutUs from './pages/AboutUs'
 import TopNav from './sections/TopNav'
 import LoginModal from './modals/LoginModal'
 import useModalStore from './stores/useModalStore'
@@ -37,6 +38,7 @@ export const App = () => {
               <AddLoppis />
             </ProtectedPage>
           } />
+        <Route path='/about' element={<AboutUs />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
       {loginModalOpen && <LoginModal onClose={closeLoginModal} />}

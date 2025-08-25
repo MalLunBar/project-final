@@ -121,6 +121,7 @@ const Search = () => {
 
   const resetFilters = () => {
     setSearchParams(new URLSearchParams())
+    setCityInput('')
   }
 
   // helper to get date labels from id

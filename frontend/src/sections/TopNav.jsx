@@ -24,9 +24,9 @@ const TopNav = () => {
   ]
 
   return (
-    <header className="sticky top-0 w-full left-0 z-1100 bg-white border-b border-border shadow-sm">
+    <header className="sticky top-0 w-full left-0 z-1100 h-16 flex items-center bg-white border-b border-border shadow-sm">
       <nav
-        className="flex items-center justify-between p-3 lg:p-4"
+        className="flex-1 flex items-center justify-between px-3 lg:px-4"
         aria-label="Main"
       >
         {/* Logo - only show when hamburger menu is closed? */}

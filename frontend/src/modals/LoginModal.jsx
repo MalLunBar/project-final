@@ -18,6 +18,7 @@ const LoginModal = ({ onClose }) => {
     try {
       // call login function from auth store
       await login({ email, password })
+      console.log('[UI] login done. store state:', useAuthStore.getState())
       // close modal
       onClose()
     } catch (err) {
@@ -37,7 +38,7 @@ const LoginModal = ({ onClose }) => {
         onClick={onClose}
       />
       {/* Modal box */}
-      <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl py-14 px-10  w-full max-w-md z-10">
+      <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl py-5 px-10  w-full max-w-md z-10">
         {/* Modal title */}
         <h2>Logga in</h2>
         {/* Close button */}
@@ -64,7 +65,7 @@ const LoginModal = ({ onClose }) => {
         <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
 
         {/* Link to signup page */}
-        <span className='flex gap-1 self-center text-sm text-gray-600'>
+        <span className='flex self-center text-sm text-gray-600'>
           <p>Har du inget konto? </p>
           <Link
             to='/signup'

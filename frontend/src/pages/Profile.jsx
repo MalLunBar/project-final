@@ -1,26 +1,19 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { CirclePlus, Gem, Heart, Settings as SettingsIcon, ChevronLeft } from 'lucide-react'
+import { CirclePlus, Gem, Heart, ChevronLeft } from 'lucide-react'
 import useAuthStore from "../stores/useAuthStore"
+import useModalStore from '../stores/useModalStore'
 import MyFavorites from "../sections/MyFavorites"
 import MyLoppis from "../sections/MyLoppis"
 import CardLink from "../components/CardLink"
+import Button from '../components/Button'
 
-
-const SettingsSection = () => {
-  return (
-    <section className="mt-2">
-      <p className="text-sm text-gray-600">
-        Här kan du lägga in dina profilinställningar senare (namn, bild, notiser, mm).
-      </p>
-    </section>
-  )
-}
 
 
 const Profile = () => {
-  const { user, token } = useAuthStore()
+  const { user, logout, token } = useAuthStore()
   const { tab } = useParams()
+  const { openLoginModal } = useModalStore()
   const navigate = useNavigate()
 
 
@@ -33,10 +26,6 @@ const Profile = () => {
     favoriter: {
       title: "Mina favoriter",
       render: () => <MyFavorites />,
-    },
-    settings: {
-      title: "Settings",
-      render: () => <SettingsSection />,
     },
   }), [])
 
@@ -73,11 +62,11 @@ const Profile = () => {
       {/* Header */}
       <div className="flex items-center gap-4">
         <img
-          src={user.profilePicture || "default-profile.png"}
+          src="default-profile.png" // Placeholder image, replace with actual user image
           alt="Profilbild"
           className="w-16 h-16 rounded-full border border-gray-300 object-cover"
         />
-        <p className="text-2xl font-bold">{user.firstName}</p>
+        <p className="text-2xl font-bold">namn</p> {/* Replace with user name */}
       </div>
       {/* Quick action */}
       <div className='flex items-center justify-end mt-4 mb-6'>
@@ -108,12 +97,27 @@ const Profile = () => {
           to="/profile/favoriter"
           icon={Heart}
           label="Mina favoriter" />
-        <CardLink
-          to="/profile/settings"
-          icon={SettingsIcon}
-          label="Settings"
-          className="basis-full"
-        />
+
+        <div>
+          {/* test av logga in funktion */}
+          {user ? (
+            <>
+
+              <Button
+                text='Logga ut'
+                onClick={logout}
+              />
+            </>
+          ) : (
+            <>
+
+              <Button
+                text='Logga in'
+                onClick={() => openLoginModal()}
+              />
+            </>
+          )}
+        </div>
       </section>
     </main>
   )

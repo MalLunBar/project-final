@@ -8,7 +8,7 @@ import PopularCarousel from '../sections/PopularCarousel'
 import CategoryGrid from '../sections/CategoryGrid'
 
 const Home = () => {
-  const { user, logout } = useAuthStore()
+  const { user } = useAuthStore()
   const { openLoginModal } = useModalStore()
   const navigate = useNavigate()
 
@@ -76,32 +76,6 @@ const Home = () => {
         >
           Skapa Loppis
         </button>
-      </section>
-
-
-
-
-
-
-      {/* test av logga in funktion - TA BORT NÄR DET FINNS LOGGA UT KNAPP NÅGON ANNANSTANS */}
-      <section className='mt-20 flex items-center gap-2'>
-        {user ? (
-          <>
-            <h2>Välkommen, {user.firstName}!</h2>
-            <Button
-              text='Logga ut'
-              onClick={logout}
-            />
-          </>
-        ) : (
-          <>
-            <h2>Välkommen!</h2>
-            <Button
-              text='Logga in'
-              onClick={() => openLoginModal()}
-            />
-          </>
-        )}
       </section>
 
 

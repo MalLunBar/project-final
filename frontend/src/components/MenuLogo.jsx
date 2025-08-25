@@ -6,7 +6,7 @@ const MenuLogo = () => {
     <Link
       to='/'
     >
-      <div className='flex gap-1 md:gap-2 w-14 h-14'>
+      <div className='w-14 h-14 md:w-16 md:h-16 lg:w-18 lg:h-18'>
         <img
           src="logo-1.png"
           alt="Runt hörnet logga" />

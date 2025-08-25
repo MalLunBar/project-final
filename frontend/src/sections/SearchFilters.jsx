@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
-import Input from "../components/Input"
+import { useSearchParams } from "react-router-dom"
+import SearchBar from "../components/SearchBar"
 import Button from "../components/Button"
 import FilterOption from "../components/FilterOption"
 import { getLoppisCategories } from '../services/loppisApi'
 
-const SearchFilters = ({ query, setQuery, onSearch }) => {
+const SearchFilters = ({ cityInput, setCityInput, onSearch }) => {
+  const [params, setParams] = useSearchParams()
   const [categoryOptions, setCategoryOptions] = useState()
   const dateOptions = [
     { id: 'all', label: 'Visa alla' },
@@ -13,6 +15,11 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
     { id: 'weekend', label: 'I helgen' },
     { id: 'next_week', label: 'Nästa vecka' },
   ]
+
+  // read from URL
+  const selectedCity = cityInput
+  const selectedDate = params.get("date") || "all"
+  const selectedCategories = params.getAll("category")
 
   // fetch category options
   useEffect(() => {
@@ -29,26 +36,35 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
     fetchCategories()
   }, [])
 
-  // generic onChange helper
-  const handleChange = (key) => (e) => {
-    setQuery(prev => ({ ...prev, [key]: e.target.value }))
-  }
+  // generic onChange helper to update params
+  const updateParam = (key, value) => {
+    const newParams = new URLSearchParams(params)
 
-  // dates onChange helper
-  const changeDates = (e) => {
-    setQuery((prev) => ({
-      ...prev,
-      dates: dateOptions.find((f) => f.id === e.target.value)
-    }))
+    if (!value || value === "all") {
+      newParams.delete(key)
+    } else {
+      newParams.set(key, value)
+    }
+
+    setParams(newParams)
   }
 
   // toggle category
-  const toggleCategory = (value) => {
-    if (query.categories.includes(value)) {
-      setQuery((prev => ({ ...prev, categories: prev.categories.filter((cat) => cat !== value) })))
+  const toggleCategory = (category) => {
+    const newParams = new URLSearchParams(params)
+    const categories = newParams.getAll("category")
+
+    if (categories.includes(category)) {
+      // remove
+      const updated = categories.filter((c) => c !== category)
+      newParams.delete("category")
+      updated.forEach((c) => newParams.append("category", c))
     } else {
-      setQuery(prev => ({ ...prev, categories: [...prev.categories, value] }))
+      // add
+      newParams.append("category", category)
     }
+
+    setParams(newParams)
   }
 
   return (
@@ -64,15 +80,9 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
       >
 
         {/* Search on city */}
-        {/* Add a search icon? */}
-        <Input
-          label='Område'
-          type='text'
-          value={query.city}
-          onChange={handleChange('city')}
-          showLabel={true}
-          required={false}
-          placeholder='Sök stad eller område'
+        <SearchBar
+          value={selectedCity}
+          setValue={(e) => setCityInput(e.target.value)}
         />
 
         {/* Opening hours */}
@@ -80,7 +90,6 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
           <legend className='font-medium'>Öppettider</legend>
           <div className='flex flex-wrap gap-1'>
             {dateOptions.map((option) => {
-              const selected = query.dates.id === option.id
               return (
                 <FilterOption
                   key={option.id}
@@ -88,8 +97,8 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
                   name='dates'
                   value={option.id}
                   label={option.label}
-                  selected={selected}
-                  onChange={changeDates}
+                  checked={selectedDate === option.id}
+                  onChange={(e) => updateParam("date", e.target.value)}
                 />
               )
             })}
@@ -101,7 +110,6 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
           <legend className='font-medium'>Kategorier</legend>
           <div className='flex flex-wrap gap-1'>
             {categoryOptions?.map((option) => {
-              const selected = query.categories.includes(option)
               return (
                 <FilterOption
                   key={option}
@@ -109,7 +117,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
                   name='categories'
                   value={option}
                   label={option}
-                  selected={selected}
+                  checked={selectedCategories.includes(option)}
                   onChange={() => toggleCategory(option)}
                 />
               )
@@ -119,7 +127,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
 
         {/* Submit button */}
         <Button
-          text='Hitta loppis'
+          text='Visa loppis'
           type='submit'
           ariaLabel='Sök efter loppis'
           onClick={onSearch}

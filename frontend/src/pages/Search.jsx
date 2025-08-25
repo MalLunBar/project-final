@@ -7,46 +7,45 @@ import SearchFilters from "../sections/SearchFilters"
 import ListView from "../sections/ListView"
 import MapView from "../sections/MapView"
 import SearchBar from '../components/SearchBar'
-import Input from "../components/Input"
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
-import useAuthStore from "../stores/useAuthStore"
 import { getLoppisList } from '../services/loppisApi'
 import { geocodeCity } from '../services/geocodingApi'
 
 const Search = () => {
-  const [view, setView] = useState("map") //"map" or "list" for mobile, or "desktop"
-  const [showFilters, setShowFilters] = useState(false) // hide search filters by default
-
+  // fetch states
   const [searchParams, setSearchParams] = useSearchParams() // get searchParams from React Router’s useSearchParams
-
+  // derive query object directly from searchParams
+  const query = {
+    city: searchParams.get("city") || "",
+    date: searchParams.get("date") || "all",
+    categories: searchParams.getAll("category"),
+  }
+  const [cityInput, setCityInput] = useState(query.city)
   const [loppisList, setLoppisList] = useState([])
 
-  const [query, setQuery] = useState({
-    city: searchParams.get('city') || '',
-    dates: { id: "all", label: "Visa alla" },
-    categories: searchParams.getAll('category') || [],
-  })
-
-
+  // map states
   const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]) // default Stockholm
   // Vem ska styra kartans center? 'city' eller 'user'
   const [centerBy, setCenterBy] = useState('city')
-  const [isSearching, setIsSearching] = useState(false)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-  const isSmallMobile = useMediaQuery({ query: '(max-width: 480px)' })
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
-
-
   // Geo store
   const location = useGeoStore(s => s.location)
   const geoStatus = useGeoStore(s => s.status)
   const geoError = useGeoStore(s => s.error)
   const requestLocation = useGeoStore(s => s.requestLocation)
 
-  // set layout on initial load or when screen size changes
+  // layout states
+  const [view, setView] = useState("map") //"map" or "list" for mobile, or "desktop"
+  const [showFilters, setShowFilters] = useState(false) // hide search filters by default
+  const isSmallMobile = useMediaQuery({ query: '(max-width: 480px)' })
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
+
+  // ux states
+  const [isSearching, setIsSearching] = useState(false)
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  // set layout when screen size changes
   useEffect(() => {
     if (isMobile) {
       // moblie - hide search filters and set view to map
@@ -59,7 +58,7 @@ const Search = () => {
     }
   }, [isMobile])
 
-  // fetch loppis list on initial laod or when searchParams change
+  // fetch loppis list when searchParams change
   useEffect(() => {
     const fetchLoppisList = async () => {
       setLoading(true)
@@ -78,19 +77,53 @@ const Search = () => {
       }
     }
     fetchLoppisList()
-    // update map center
-    updateMapCenter(query.city.trim())
   }, [searchParams])
 
-  // build search param string from query state
-  const buildSearchParams = (query) => {
-    const params = new URLSearchParams()
-    if (query.city) params.append('city', query.city)
-    if (query.dates.id !== 'all') params.append('date', query.dates.id)
-    if (query.categories?.length) {
-      query.categories.forEach(cat => params.append('category', cat))
+  // ----- helpers to update searchParams and URL -----
+  const updateCity = (city) => {
+    const newParams = new URLSearchParams(searchParams)
+    if (city) {
+      newParams.set("city", city)
+    } else {
+      newParams.delete("city")
     }
-    return params
+    setSearchParams(newParams)
+  }
+
+  const updateDate = (dateId) => {
+    const newParams = new URLSearchParams(searchParams)
+    if (dateId && dateId !== "all") {
+      newParams.set("date", dateId)
+    } else {
+      newParams.delete("date")
+    }
+    setSearchParams(newParams)
+  }
+
+  const addCategory = (category) => {
+    const newParams = new URLSearchParams(searchParams)
+    newParams.append("category", category)
+    setSearchParams(newParams)
+  }
+
+  const removeCategory = (category) => {
+    const newParams = new URLSearchParams(searchParams)
+    const remaining = newParams.getAll("category").filter((cat) => cat !== category)
+    newParams.delete("category") // clear old categories
+    remaining.forEach((cat) => newParams.append("category", cat)) // re-add remaining
+    setSearchParams(newParams)
+  }
+
+  // helper to get date labels from id
+  const getDateLabel = (id) => {
+    const dateOptions = [
+      { id: 'all', label: 'Visa alla' },
+      { id: 'today', label: 'Idag' },
+      { id: 'tomorrow', label: 'Imorgon' },
+      { id: 'weekend', label: 'I helgen' },
+      { id: 'next_week', label: 'Nästa vecka' },
+    ]
+    return dateOptions.find((opt) => opt.id === id)?.label || id
   }
 
   // update map center on map from query
@@ -108,31 +141,24 @@ const Search = () => {
     }
   }
 
+  // useEffect to update map center from search params
+  useEffect(() => {
+    if (centerBy !== "city") return // respect user override
+
+    if (query.city) {
+      // geocode new city
+      updateMapCenter(query.city.trim())
+    } else {
+      // reset to default (Stockholm)
+      setMapCenter([59.3293, 18.0686])
+    }
+  }, [query.city, centerBy])
+
   // handle form search 
   const handleSearch = (e) => {
     e.preventDefault()
+    updateCity(cityInput.trim())
     setShowFilters(false)
-    // update searchParams from query
-    setSearchParams(buildSearchParams(query))
-  }
-
-  // remove active category filter
-  const removeCategory = (category) => {
-    const newParams = new URLSearchParams(searchParams)
-    const categories = newParams.getAll("category").filter((cat) => cat !== category)
-    // clear old categories
-    newParams.delete("category")
-    // re-add remaining
-    categories.forEach((cat) => newParams.append("category", cat))
-    // update searchsearchParams from query → updates the URL → triggers useEffect → fetch
-    setSearchParams(newParams)
-  }
-
-  // Remove active dates filter
-  const clearDate = () => {
-    const newParams = new URLSearchParams(searchParams)
-    newParams.delete("date")
-    setSearchParams(newParams)
   }
 
   // toggle view for mobile
@@ -178,20 +204,20 @@ const Search = () => {
                 {!showFilters &&
                   <form onSubmit={handleSearch}>
                     <SearchBar
-                      value={query.city}
-                      setValue={(e) => setQuery((prev => ({ ...prev, city: e.target.value })))} />
+                      value={cityInput}
+                      setValue={(e) => setCityInput(e.target.value)} />
                   </form>
                 }
-                {/* Display selected filters */}
+                {/* Active filters */}
                 <div className='flex gap-2 flex-wrap'>
-                  {searchParams.get("date") &&
+                  {query.date !== "all" &&
                     <FilterTag
-                      text={query.dates.label}
-                      onClose={clearDate} />
+                      text={getDateLabel(query.date)}
+                      onClose={() => updateDate("all")} />
                   }
-                  {searchParams.getAll("category").map((category) => (
+                  {query.categories.map((category) => (
                     <FilterTag
-                      key={`filter-${category}`}
+                      key={category}
                       text={category}
                       onClose={() => removeCategory(category)}
                     />
@@ -249,8 +275,8 @@ const Search = () => {
             />
           }
           <SearchFilters
-            query={query}
-            setQuery={setQuery}
+            cityInput={cityInput}
+            setCityInput={setCityInput}
             onSearch={handleSearch} />
         </aside>
 

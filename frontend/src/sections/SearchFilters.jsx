@@ -127,7 +127,7 @@ const SearchFilters = ({ cityInput, setCityInput, onSearch }) => {
 
         {/* Submit button */}
         <Button
-          text='Visa loppis'
+          text='Visa loppisar'
           type='submit'
           ariaLabel='Sök efter loppis'
           onClick={onSearch}

@@ -66,12 +66,17 @@ const Search = () => {
       try {
         const data = await getLoppisList(searchParams.toString())
         console.log('fetching with params: ', searchParams.toString())
-        setLoppisList(data.data || [])
+        const results = data.data || []
+        if (results.length === 0) {
+          setError("Inga loppisar hittades för den här sökningen")
+          setLoppisList([])
+        }
+        setLoppisList(results)
         console.log('Fetched loppis data: ', data.data)
       } catch (err) {
-        // --------------------TODO: handle error appropriately
         console.error('Failed to fetch loppis data:', err)
         setError(err.message || 'Kunde inte hämta loppisdata')
+        setLoppisList([])
       } finally {
         setLoading(false)
       }
@@ -112,6 +117,10 @@ const Search = () => {
     newParams.delete("category") // clear old categories
     remaining.forEach((cat) => newParams.append("category", cat)) // re-add remaining
     setSearchParams(newParams)
+  }
+
+  const resetFilters = () => {
+    setSearchParams(new URLSearchParams())
   }
 
   // helper to get date labels from id
@@ -158,7 +167,9 @@ const Search = () => {
   const handleSearch = (e) => {
     e.preventDefault()
     updateCity(cityInput.trim())
-    setShowFilters(false)
+    if (isMobile) {
+      setShowFilters(false)
+    }
   }
 
   // toggle view for mobile
@@ -193,57 +204,91 @@ const Search = () => {
       <div className='h-full relative lg:grid grid-cols-[2fr_6fr_4fr]'>
         {/* TODO: ändra grid fractions för laptop/desktop */}
 
-        {/* Mobile control panel */}
-        {isMobile && (
-          <div className={`${view === 'map' ? 'absolute z-1050' : 'relative z-static'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
-            <div div className='flex justify-between items-start gap-2'>
-              {/* Search bar and active filters */}
-              <div className='flex flex-col gap-2'>
+        {/* Search filters */}
+        <aside className={`absolute lg:relative top-0 left-0 z-1050 h-full w-full max-w-sm p-4 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
+          {isMobile &&
+            <X
+              strokeWidth={3}
+              onClick={toggleShowFilters}
+              className='absolute right-5 cursor-pointer hover:text-accent'
+            />
+          }
+          <SearchFilters
+            cityInput={cityInput}
+            setCityInput={setCityInput}
+            onSearch={handleSearch} />
+        </aside>
 
-                {/* show search field if filters not open */}
-                {!showFilters &&
-                  <form onSubmit={handleSearch}>
-                    <SearchBar
-                      value={cityInput}
-                      setValue={(e) => setCityInput(e.target.value)} />
-                  </form>
-                }
-                {/* Active filters */}
-                <div className='flex gap-2 flex-wrap'>
-                  {query.date !== "all" &&
-                    <FilterTag
-                      text={getDateLabel(query.date)}
-                      onClose={() => updateDate("all")} />
-                  }
-                  {query.categories.map((category) => (
-                    <FilterTag
-                      key={category}
-                      text={category}
-                      onClose={() => removeCategory(category)}
-                    />
-                  ))}
-                </div>
-              </div>
+        {/* Active filters + toggle buttons */}
+        <div className={`
+          flex justify-between items-start py-2 gap-2 px-0.5 min-[340px]:px-2 sm:p-5 w-full
+          ${!isMobile ?
+            "absolute top-0 left-[320px] z-1050 max-w-[430px] xl:max-w-xl 2xl:max-w-3xl"
+            : view === 'map' ? 'absolute z-1040' : 'relative z-static'}
+          `}>
+          {/* Left side: filters + optional search bar */}
+          <div className='flex flex-col gap-2'>
+            {/* show search field if filters not open */}
+            {(isMobile && !showFilters) &&
+              <form onSubmit={handleSearch}>
+                <SearchBar
+                  value={cityInput}
+                  setValue={(e) => setCityInput(e.target.value)} />
+              </form>
+            }
+            {/* Active filters */}
+            <div className='flex gap-2 flex-wrap'>
+              {query.city &&
+                <FilterTag
+                  text={query.city}
+                  onClose={() => {
+                    setCityInput('')
+                    updateCity('')
+                  }} />
+              }
+              {query.date !== "all" &&
+                <FilterTag
+                  text={getDateLabel(query.date)}
+                  onClose={() => updateDate("all")} />
+              }
+              {query.categories.map((category) => (
+                <FilterTag
+                  key={category}
+                  text={category}
+                  onClose={() => removeCategory(category)}
+                />
+              ))}
+              {/* reset filters button */}
+              {(query.date !== "all" || query.categories.length > 0 || query.city) && (
+                <FilterTag
+                  text='Återställ filter'
+                  onClose={() => resetFilters()}
+                />
+              )}
+            </div>
+          </div>
 
-              {/* Toggle buttons */}
-              <div className={`flex ${view === 'map' ? 'flex-col' : ''} items-end gap-1 sm:gap-2`}>
-                {view === 'map' &&
-                  <Button
-                    type="button"
-                    text={
-                      isSmallMobile
-                        ? ''
-                        : geoStatus === 'requesting'
-                          ? 'Hämtar…'
-                          : 'Min plats'
-                    }
-                    icon={LocateFixed}
-                    active={true}
-                    ariaLabel="Använd min plats"
-                    disabled={geoStatus === 'requesting'}
-                    onClick={handleRequestLocation}
-                  />
+          {/* Right side: Toggle buttons */}
+          <div className={`flex ${view === 'map' ? 'flex-col' : ''} items-end gap-1 sm:gap-2`}>
+            {(!isMobile || view === 'map') &&
+              <Button
+                type="button"
+                text={
+                  isSmallMobile
+                    ? ''
+                    : geoStatus === 'requesting'
+                      ? 'Hämtar…'
+                      : 'Min plats'
                 }
+                icon={LocateFixed}
+                active={true}
+                ariaLabel="Använd min plats"
+                disabled={geoStatus === 'requesting'}
+                onClick={handleRequestLocation}
+              />
+            }
+            {isMobile && (
+              <>
                 <Button
                   type='button'
                   text={isSmallMobile ? '' : 'Sökfilter'}
@@ -260,197 +305,44 @@ const Search = () => {
                   ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
                   onClick={toggleView}
                 />
-              </div>
-            </div>
+              </>
+            )}
           </div>
-        )}
-
-        {/* Search filters */}
-        <aside className={`absolute lg:relative top-0 left-0 z-1050 h-full w-full max-w-sm p-4 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
-          {isMobile &&
-            <X
-              strokeWidth={3}
-              onClick={toggleShowFilters}
-              className='absolute right-5 cursor-pointer hover:text-accent'
-            />
-          }
-          <SearchFilters
-            cityInput={cityInput}
-            setCityInput={setCityInput}
-            onSearch={handleSearch} />
-        </aside>
+        </div>
+        {/* </div>
+    </div> */}
 
         {/* Map */}
-        {(view === 'map' || view === 'desktop') &&
+        {
+          (view === 'map' || view === 'desktop') &&
           <MapView
             loppisList={loppisList}
             center={effectiveCenter}
             onRequestLocation={handleRequestLocation}
             hasUserLocation={!!location}
-
           />
         }
 
         {/* List */}
-        {(view === 'list' || view === 'desktop') &&
-          <ListView
-            loppisList={loppisList}
-          />
+        {
+          (view === 'list' || view === 'desktop') &&
+            error ? (
+            <div className="p-6 text-center text-gray-500">
+              {error}
+            </div>
+          ) : (
+            <ListView
+              loppisList={loppisList}
+            />
+          )
         }
 
-      </div>
+      </div >
 
 
       {/* TODO: add "Nära mig" or "min position" button to search nearby*/}
 
-
-
-      {/* OLD LAYOUT - REMOVE WHEN NEW IS FINISHED */}
-      {/* {isMobile ? (
-        // Mobile: toggle between map and list view
-        <>
-          <div className={`${view === 'map' ? 'absolute z-1050' : 'relative z-auto'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
-            <div div className='flex flex-col gap-2'>
-              <div className='flex justify-between gap-2'>
-
-                {!showFilters &&
-                  <form onSubmit={handleSearch}>
-                    <Input
-                      label='Område'
-                      type='text'
-                      value={query.city}
-                      onChange={(e) => setQuery(prev => ({ ...prev, city: e.target.value }))}
-                      showLabel={false}
-                      required={false}
-                      placeholder='Sök område...'
-                    />
-                  </form>
-                }
-                <div className='flex flex-col items-center gap-1 mr-2'>
-                  <Button
-                    type="button"
-                    text={
-                      isSmallMobile
-                        ? ''
-                        : geoStatus === 'requesting'
-                          ? 'Hämtar…'
-                          : 'Min plats'
-                    }
-                    icon={LocateFixed}
-                    active={true}
-                    ariaLabel="Använd min plats"
-                    disabled={geoStatus === 'requesting'}
-                    onClick={handleRequestLocation}
-                  />
-                  <Button
-                    type='button'
-                    text={isSmallMobile ? '' : 'Sökfilter'}
-                    icon={Funnel}
-                    active={true}
-                    ariaLabel='Visa sökfilter'
-                    onClick={toggleShowFilters}
-                  />
-                  <Button
-                    type='button'
-                    text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
-                    icon={view === 'map' ? List : Map}
-                    active={true}
-                    ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
-                    onClick={toggleView}
-                  />
-                </div>
-              </div>
-
-              <div className='flex gap-2 flex-wrap'>
-                {query.dates.id !== "all"
-                  ? <FilterTag
-                    text={query.dates.label}
-                    onClose={() => setQuery(prev => ({ ...prev, dates: { id: "all", label: "Visa alla" } }))} />
-                  : <></>
-                }
-                {query.categories?.map((category) => {
-                  return (
-                    <FilterTag
-                      key={`filter-${category}`}
-                      text={category}
-                      onClose={() => setQuery((prev => ({ ...prev, categories: prev.categories.filter((cat) => cat !== category) })))} />)
-                })}
-              </div>
-            </div>
-
-            {showFilters &&
-              <aside className={`fixed top-0 left-0 z-1050 w-full max-w-sm h-full px-4 py-22 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
-                <X
-                  strokeWidth={3}
-                  onClick={toggleShowFilters}
-                  className='absolute right-5 hover:text-accent'
-                />
-                <SearchFilters
-                  query={query}
-                  setQuery={setQuery}
-                  onSearch={handleSearch}
-                />
-              </aside>
-            }
-
-          </div>
-
-          {view === 'map' &&
-            <MapView
-              loppisList={loppisList}
-              center={effectiveCenter}
-              onRequestLocation={handleRequestLocation}
-              hasUserLocation={!!location}
-
-            />}
-          {view === 'list' &&
-            <ListView
-              loppisList={loppisList}
-            />}
-
-        </>
-      ) : (
-        // Desktop: views side-by-side
-        <div className='grid h-full grid-cols-[2fr_6fr_4fr]'>
-          <aside className='h-full p-4 bg-white border-r border-border shadow-sm'>
-            <div>
-              <Button
-                type="button"
-                text={geoStatus === 'requesting' ? 'Hämtar…' : 'Använd min plats'}
-                icon={LocateFixed}
-                active={true}
-                ariaLabel="Använd min plats"
-                disabled={geoStatus === 'requesting'}
-                onClick={handleRequestLocation}
-              />
-            </div>
-            <SearchFilters
-              query={query}
-              setQuery={setQuery}
-              onSearch={handleSearch} />
-          </aside>
-          <MapView
-            loppisList={loppisList}
-            center={effectiveCenter}
-            onRequestLocation={handleRequestLocation}
-            hasUserLocation={!!location}
-          />
-          <ListView
-            loppisList={loppisList}
-          />
-        </div>
-      )} */}
-
-
-      {/* Antalet loppisar på den sökningen? */}
-      {/* {loppisList.length > 0 ? (
-          <LoppisList loppisList={loppisList} />
-        ) : (
-          <p>Inga loppisar hittades</p>
-        )} */}
-
-
-    </main>
+    </main >
   )
 }
 

@@ -23,7 +23,7 @@ const PhotoDropzone = ({
   const [files, setFiles] = useState([])        // File-objekt (nya)
   const [existingUrls, setExistingUrls] = useState([]) // Redan sparade URL:er (edit-läge)
 
-   // Init från props (t.ex. redigera-formulär)
+  // Init från props (t.ex. redigera-formulär)
   useEffect(() => {
     const initFiles = []
     const initUrls = []
@@ -141,7 +141,7 @@ const PhotoDropzone = ({
                   <span className="px-2 py-0.5 text-xs rounded-full bg-black/70 text-white">Omslag</span>
                 ) : null}
               </div>
-              <div className="absolute right-2 bottom-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+              <div className="absolute right-2 bottom-2 flex gap-2">
                 <button
                   type="button"
                   onClick={() => makeCover(idx, true)}

@@ -1,30 +1,51 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { X } from 'lucide-react'
 import LoginForm from "../components/LoginForm"
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
+import ErrorBanner from "../components/ErrorBanner"
 
 const LoginModal = ({ onClose }) => {
-  const loginMessage = useModalStore(state => state.loginMessage)
-  const { login, isLoading, error, clearError } = useAuthStore()
+  // Modal-meddelande
+  const loginMessage = useModalStore(s => s.loginMessage)
+
+  // Auth store (välj fält separat)
+  const login = useAuthStore(s => s.login)
+  const isLoading = useAuthStore(s => s.isLoading)
+  const authError = useAuthStore(s => s.error)
+  const clearAuthError = useAuthStore(s => s.clearError)
+
+  const [localError, setLocalError] = useState(null)
 
   // clear error when component mounts
   useEffect(() => {
-    clearError()
+    setLocalError(null)
+    clearAuthError?.()
   }, [])
 
+
   const handleLogin = async (email, password) => {
+
+    setLocalError(null)
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!email) return setLocalError('Ange din e-postadress.')
+    if (!emailRe.test(email)) return setLocalError('Ogiltig e-postadress.')
+    if (!password) return setLocalError('Ange ditt lösenord.')
+    // if (password.length < 6) return setLocalError('Lösenordet måste vara minst 6 tecken.')
+
     try {
       // call login function from auth store
       await login({ email, password })
       console.log('[UI] login done. store state:', useAuthStore.getState())
       // close modal
       onClose()
-    } catch (err) {
-      console.error('Login error:', err)
+    } catch (e) {
+      setLocalError('Fel e-post eller lösenord.')
     }
   }
+
+  const displayErrorText = localError || authError || null
 
   return (
     <div
@@ -38,9 +59,10 @@ const LoginModal = ({ onClose }) => {
         onClick={onClose}
       />
       {/* Modal box */}
-      <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl py-5 px-10  w-full max-w-md z-10">
+      <div className="relative flex flex-col gap-6 bg-white rounded-xl shadow-xl py-5 px-10 w-full max-w-md z-10">
         {/* Modal title */}
         <h2>Logga in</h2>
+
         {/* Close button */}
         <button
           onClick={onClose}
@@ -48,17 +70,21 @@ const LoginModal = ({ onClose }) => {
         >
           <X />
         </button>
+
         {/* Show optional message */}
         {loginMessage && (
-          <div className="my-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
+          <div className="my-2 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
             {loginMessage}
           </div>
         )}
-        {/* Show error message if login fails */}
-        {error && (
-          <div className="text-red-500 text-sm mt-2">
-            {error}
-          </div>
+
+        {displayErrorText && (
+          <ErrorBanner onClose={() => {
+            setLocalError(null)
+            clearAuthError?.()
+          }}>
+            {displayErrorText}
+          </ErrorBanner>
         )}
 
         {/* Login form */}

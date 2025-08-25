@@ -79,7 +79,7 @@ const LoppisCard = ({
   }
 
   return (
-    <article className='bg-white flex flex-col gap-2 rounded-xl'>
+    <article className='bg-white flex flex-col rounded-xl'>
       <div className='w-full aspect-[4/3]overflow-hidden rounded-xl flex'>
         <img
           src={IMG.card(id)}
@@ -120,7 +120,7 @@ const LoppisCard = ({
       </div>
 
 
-      <div className='absolute top-2 right-2 flex items-center gap-2'>
+      <div className='absolute top-2 right-2 flex gap-2'>
         {/* MAP: visa kryss som stänger popup */}
         {variant === 'map' && (
           <button
@@ -132,7 +132,7 @@ const LoppisCard = ({
             }}
             className='p-1.5 rounded-md hover:bg-gray-50'
           >
-            <CircleX size={20} />
+            <CircleX size={25} />
           </button>
         )}
 

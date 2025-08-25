@@ -5,7 +5,7 @@ import FilterOption from "../components/FilterOption"
 import { getLoppisCategories } from '../services/loppisApi'
 
 const SearchFilters = ({ query, setQuery, onSearch }) => {
-  const [categoryOptions, setCategoryOptions] = useState([])
+  const [categoryOptions, setCategoryOptions] = useState()
   const dateOptions = [
     { id: 'all', label: 'Visa alla' },
     { id: 'today', label: 'Idag' },
@@ -100,7 +100,7 @@ const SearchFilters = ({ query, setQuery, onSearch }) => {
         <fieldset className='space-y-2 md:space-y-3'>
           <legend className='font-medium'>Kategorier</legend>
           <div className='flex flex-wrap gap-1'>
-            {categoryOptions.map((option) => {
+            {categoryOptions?.map((option) => {
               const selected = query.categories.includes(option)
               return (
                 <FilterOption

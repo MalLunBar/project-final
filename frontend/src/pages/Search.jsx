@@ -6,6 +6,7 @@ import useGeoStore from '../stores/useGeoStore'
 import SearchFilters from "../sections/SearchFilters"
 import ListView from "../sections/ListView"
 import MapView from "../sections/MapView"
+import SearchBar from '../components/SearchBar'
 import Input from "../components/Input"
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
@@ -15,9 +16,13 @@ import { geocodeCity } from '../services/geocodingApi'
 
 const Search = () => {
   const [params] = useSearchParams()
+  const [view, setView] = useState("map") //"map" or "list" for mobile, or "desktop"
+  const [showFilters, setShowFilters] = useState(false) // hide search filters by default
+
+
   const { user, token } = useAuthStore()
-  const [view, setView] = useState("map") //"map" or "list" for mobile, or "desktop" 
-  const [showFilters, setShowFilters] = useState(false)
+
+
   const [loppisList, setLoppisList] = useState([])
   const [query, setQuery] = useState({
     city: params.get('city') || '',
@@ -44,7 +49,7 @@ const Search = () => {
   const geoError = useGeoStore(s => s.error)
   const requestLocation = useGeoStore(s => s.requestLocation)
 
-  // Set layout on render
+  // set layout on initial laod or when screen size changes
   useEffect(() => {
     if (isMobile) {
       // moblie - hide search filters and set view to map
@@ -55,7 +60,7 @@ const Search = () => {
       setShowFilters(true)
       setView('desktop')
     }
-  }, [isMobile]) // re-run when screen size changes
+  }, [isMobile])
 
   // fetch loppis list on initial laod or when searchParams change
   useEffect(() => {
@@ -91,7 +96,14 @@ const Search = () => {
     if (query.dates.id !== 'all') {
       params.append('date', query.dates.id)
     }
-    query.categories.forEach(cat => params.append('category', cat))
+    if (query.categories) {
+      query.categories.forEach(cat => {
+        if (cat !== null) {
+          params.append('category', cat)
+        }
+      })
+    }
+
     setSearchParams(params.toString())
     try {
       // if city is entered - fly to that location on map
@@ -140,26 +152,42 @@ const Search = () => {
 
         {/* Mobile control panel */}
         {isMobile && (
-          <div className={`${view === 'map' ? 'absolute z-1050' : 'relative z-auto'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
-            <div div className='flex flex-col gap-2'>
-              <div className='flex justify-between gap-2'>
+          <div className={`${view === 'map' ? 'absolute z-1050' : 'relative z-static'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
+            <div div className='flex justify-between items-start gap-2'>
+              {/* Search bar and active filters */}
+              <div className='flex flex-col gap-2'>
 
                 {/* show search field if filters not open */}
-                {/* TODO: Add a magnifying icon in search field*/}
                 {!showFilters &&
                   <form onSubmit={handleSearch}>
-                    <Input
-                      label='Område'
-                      type='text'
+                    <SearchBar
                       value={query.city}
-                      onChange={(e) => setQuery(prev => ({ ...prev, city: e.target.value }))}
-                      showLabel={false}
-                      required={false}
-                      placeholder='Sök område...'
-                    />
+                      setValue={(e) => setQuery((prev => ({ ...prev, city: e.target.value })))} />
                   </form>
                 }
-                <div className='flex flex-col items-center gap-1 mr-2'>
+                {/* Display selected filters */}
+                <div className='flex gap-2 flex-wrap'>
+                  {query.dates.id !== "all" &&
+                    <FilterTag
+                      text={query.dates.label}
+                      onClose={() => setQuery(prev => ({ ...prev, dates: { id: "all", label: "Visa alla" } }))} />
+                  }
+                  {query.categories?.map((category) => {
+                    if (category !== null) {
+                      return (
+                        <FilterTag
+                          key={`filter-${category}`}
+                          text={category}
+                          onClose={() => setQuery((prev => ({ ...prev, categories: prev.categories.filter((cat) => cat !== category) })))} />
+                      )
+                    }
+                  })}
+                </div>
+              </div>
+
+              {/* Toggle buttons */}
+              <div className={`flex ${view === 'map' ? 'flex-col' : ''} items-end gap-1 sm:gap-2`}>
+                {view === 'map' &&
                   <Button
                     type="button"
                     text={
@@ -175,58 +203,25 @@ const Search = () => {
                     disabled={geoStatus === 'requesting'}
                     onClick={handleRequestLocation}
                   />
-                  <Button
-                    type='button'
-                    text={isSmallMobile ? '' : 'Sökfilter'}
-                    icon={Funnel}
-                    active={true}
-                    ariaLabel='Visa sökfilter'
-                    onClick={toggleShowFilters}
-                  />
-                  <Button
-                    type='button'
-                    text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
-                    icon={view === 'map' ? List : Map}
-                    active={true}
-                    ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
-                    onClick={toggleView}
-                  />
-                </div>
-              </div>
-
-              {/* Display selected filters */}
-              <div className='flex gap-2 flex-wrap'>
-                {query.dates.id !== "all"
-                  ? <FilterTag
-                    text={query.dates.label}
-                    onClose={() => setQuery(prev => ({ ...prev, dates: { id: "all", label: "Visa alla" } }))} />
-                  : <></>
                 }
-                {query.categories?.map((category) => {
-                  return (
-                    <FilterTag
-                      key={`filter-${category}`}
-                      text={category}
-                      onClose={() => setQuery((prev => ({ ...prev, categories: prev.categories.filter((cat) => cat !== category) })))} />)
-                })}
+                <Button
+                  type='button'
+                  text={isSmallMobile ? '' : 'Sökfilter'}
+                  icon={Funnel}
+                  active={true}
+                  ariaLabel='Visa sökfilter'
+                  onClick={toggleShowFilters}
+                />
+                <Button
+                  type='button'
+                  text={isSmallMobile ? '' : (view === 'map' ? 'Lista' : 'Karta')}
+                  icon={view === 'map' ? List : Map}
+                  active={true}
+                  ariaLabel={view === 'map' ? 'Visa loppisar i lista' : 'Visa loppisar på karta'}
+                  onClick={toggleView}
+                />
               </div>
             </div>
-
-            {showFilters &&
-              <aside className={`fixed top-0 left-0 z-1050 w-full max-w-sm h-full px-4 py-22 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
-                <X
-                  strokeWidth={3}
-                  onClick={toggleShowFilters}
-                  className='absolute right-5 hover:text-accent'
-                />
-                <SearchFilters
-                  query={query}
-                  setQuery={setQuery}
-                  onSearch={handleSearch}
-                />
-              </aside>
-            }
-
           </div>
         )}
 
@@ -270,17 +265,14 @@ const Search = () => {
 
 
 
-
-
-      {isMobile ? (
+      {/* OLD LAYOUT - REMOVE WHEN NEW IS FINISHED */}
+      {/* {isMobile ? (
         // Mobile: toggle between map and list view
         <>
           <div className={`${view === 'map' ? 'absolute z-1050' : 'relative z-auto'} w-full py-2 px-0.5 min-[340px]:px-2 sm:p-5 `}>
             <div div className='flex flex-col gap-2'>
               <div className='flex justify-between gap-2'>
 
-                {/* show search field if filters not open */}
-                {/* TODO: Add a magnifying icon in search field*/}
                 {!showFilters &&
                   <form onSubmit={handleSearch}>
                     <Input
@@ -329,7 +321,6 @@ const Search = () => {
                 </div>
               </div>
 
-              {/* Display selected filters */}
               <div className='flex gap-2 flex-wrap'>
                 {query.dates.id !== "all"
                   ? <FilterTag
@@ -364,7 +355,6 @@ const Search = () => {
 
           </div>
 
-          {/* conditionally render map or list view */}
           {view === 'map' &&
             <MapView
               loppisList={loppisList}
@@ -377,8 +367,6 @@ const Search = () => {
             <ListView
               loppisList={loppisList}
             />}
-
-          {/* optional - toggle updates URL: /search?view=map */}
 
         </>
       ) : (
@@ -411,7 +399,8 @@ const Search = () => {
             loppisList={loppisList}
           />
         </div>
-      )}
+      )} */}
+
 
       {/* Antalet loppisar på den sökningen? */}
       {/* {loppisList.length > 0 ? (

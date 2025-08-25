@@ -15,21 +15,19 @@ import { getLoppisList } from '../services/loppisApi'
 import { geocodeCity } from '../services/geocodingApi'
 
 const Search = () => {
-  const [params] = useSearchParams()
   const [view, setView] = useState("map") //"map" or "list" for mobile, or "desktop"
   const [showFilters, setShowFilters] = useState(false) // hide search filters by default
 
-
-  const { user, token } = useAuthStore()
-
+  const [searchParams, setSearchParams] = useSearchParams() // get searchParams from React Router’s useSearchParams
 
   const [loppisList, setLoppisList] = useState([])
+
   const [query, setQuery] = useState({
-    city: params.get('city') || '',
+    city: searchParams.get('city') || '',
     dates: { id: "all", label: "Visa alla" },
-    categories: [params.get('category')] || [],
+    categories: searchParams.getAll('category') || [],
   })
-  const [searchParams, setSearchParams] = useState()
+
 
   const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]) // default Stockholm
   // Vem ska styra kartans center? 'city' eller 'user'
@@ -40,7 +38,6 @@ const Search = () => {
 
   const isSmallMobile = useMediaQuery({ query: '(max-width: 480px)' })
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
-  const isLaptop = useMediaQuery({ query: '(max-width: 1279px)' })
 
 
   // Geo store
@@ -49,7 +46,7 @@ const Search = () => {
   const geoError = useGeoStore(s => s.error)
   const requestLocation = useGeoStore(s => s.requestLocation)
 
-  // set layout on initial laod or when screen size changes
+  // set layout on initial load or when screen size changes
   useEffect(() => {
     if (isMobile) {
       // moblie - hide search filters and set view to map
@@ -68,7 +65,8 @@ const Search = () => {
       setLoading(true)
       setError(null)
       try {
-        const data = await getLoppisList(searchParams)
+        const data = await getLoppisList(searchParams.toString())
+        console.log('fetching with params: ', searchParams.toString())
         setLoppisList(data.data || [])
         console.log('Fetched loppis data: ', data.data)
       } catch (err) {
@@ -80,35 +78,27 @@ const Search = () => {
       }
     }
     fetchLoppisList()
+    // update map center
+    updateMapCenter(query.city.trim())
   }, [searchParams])
 
-  // search 
-  const handleSearch = async (e) => {
-    e.preventDefault()
-    setShowFilters(false)
-    setIsSearching(true)
-    setError(null)
-    // update searchParams from query
+  // build search param string from query state
+  const buildSearchParams = (query) => {
     const params = new URLSearchParams()
-    if (query.city) {
-      params.append('city', query.city)
+    if (query.city) params.append('city', query.city)
+    if (query.dates.id !== 'all') params.append('date', query.dates.id)
+    if (query.categories?.length) {
+      query.categories.forEach(cat => params.append('category', cat))
     }
-    if (query.dates.id !== 'all') {
-      params.append('date', query.dates.id)
-    }
-    if (query.categories) {
-      query.categories.forEach(cat => {
-        if (cat !== null) {
-          params.append('category', cat)
-        }
-      })
-    }
+    return params
+  }
 
-    setSearchParams(params.toString())
+  // update map center on map from query
+  const updateMapCenter = async (city) => {
     try {
+      setIsSearching(true)
       // if city is entered - fly to that location on map
-      if (!query.city.trim()) return
-      const { lat, lon } = await geocodeCity(query.city.trim())
+      const { lat, lon } = await geocodeCity(city)
       setMapCenter([parseFloat(lat), parseFloat(lon)])        // triggers MapView.flyTo via props
       setCenterBy('city')
     } catch (err) {
@@ -116,6 +106,33 @@ const Search = () => {
     } finally {
       setIsSearching(false)
     }
+  }
+
+  // handle form search 
+  const handleSearch = (e) => {
+    e.preventDefault()
+    setShowFilters(false)
+    // update searchParams from query
+    setSearchParams(buildSearchParams(query))
+  }
+
+  // remove active category filter
+  const removeCategory = (category) => {
+    const newParams = new URLSearchParams(searchParams)
+    const categories = newParams.getAll("category").filter((cat) => cat !== category)
+    // clear old categories
+    newParams.delete("category")
+    // re-add remaining
+    categories.forEach((cat) => newParams.append("category", cat))
+    // update searchsearchParams from query → updates the URL → triggers useEffect → fetch
+    setSearchParams(newParams)
+  }
+
+  // Remove active dates filter
+  const clearDate = () => {
+    const newParams = new URLSearchParams(searchParams)
+    newParams.delete("date")
+    setSearchParams(newParams)
   }
 
   // toggle view for mobile
@@ -167,21 +184,18 @@ const Search = () => {
                 }
                 {/* Display selected filters */}
                 <div className='flex gap-2 flex-wrap'>
-                  {query.dates.id !== "all" &&
+                  {searchParams.get("date") &&
                     <FilterTag
                       text={query.dates.label}
-                      onClose={() => setQuery(prev => ({ ...prev, dates: { id: "all", label: "Visa alla" } }))} />
+                      onClose={clearDate} />
                   }
-                  {query.categories?.map((category) => {
-                    if (category !== null) {
-                      return (
-                        <FilterTag
-                          key={`filter-${category}`}
-                          text={category}
-                          onClose={() => setQuery((prev => ({ ...prev, categories: prev.categories.filter((cat) => cat !== category) })))} />
-                      )
-                    }
-                  })}
+                  {searchParams.getAll("category").map((category) => (
+                    <FilterTag
+                      key={`filter-${category}`}
+                      text={category}
+                      onClose={() => removeCategory(category)}
+                    />
+                  ))}
                 </div>
               </div>
 

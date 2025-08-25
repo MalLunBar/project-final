@@ -1,4 +1,4 @@
-// src/components/LoppisForm.jsx
+
 import { useState, useEffect, useMemo } from 'react'
 import { ChevronDown, ChevronUp, Camera, Trash2 } from 'lucide-react'
 import Input from './Input'
@@ -77,6 +77,10 @@ const LoppisForm = ({
   const [coordinates, setCoordinates] = useState(init.coordinates)
   const [photos, setPhotos] = useState([])
 
+
+  // 🔁 Media från PhotoDropzone (en ENDA lista + removed)
+  const [media, setMedia] = useState({ items: [], removedExistingPublicIds: [] })
+
   // re-init om initialValues ändras
   useEffect(() => {
     const next = toInitialState(initialValues)
@@ -136,6 +140,22 @@ const LoppisForm = ({
     }
   }
 
+
+  // 🧠 Omslag först, med publicIds
+  const orderedPublicIds = useMemo(() => {
+    const ids = Array.isArray(initialValues?.images) ? initialValues.images : []
+    const cover = initialValues?.coverImage
+    return cover && ids.includes(cover) ? [cover, ...ids.filter(id => id !== cover)] : ids
+  }, [initKey])
+
+  // 🚀 Gör riktiga Cloudinary-URL:er + behåll publicId för varje bild
+  const initialFilesForDropzone = useMemo(
+    () => orderedPublicIds.map(pid => ({ url: IMG.thumb(pid), publicId: pid })),
+    [orderedPublicIds]
+  )
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
@@ -153,16 +173,31 @@ const LoppisForm = ({
         },
         categories: formData.categories,
         description: formData.description,
-        // imageUrl: formData.imageUrl, // lägg till när uppladdning är klar
       }
 
-      // Bygg multipart form data
+      const order = []
+      const newFiles = []
+      let newIdx = 0
+      for (const it of media.items) {
+        if (it.kind === 'existing') {
+          order.push({ type: 'existing', publicId: it.publicId })
+        } else {
+          order.push({ type: 'new', index: newIdx })
+          newFiles.push(it.file)
+          newIdx++
+        }
+      }
+
       const fd = new FormData()
-      fd.append('data', JSON.stringify(payload))
-      // Viktigt: bevara ordningen så att första bilden = omslag
-      photos.forEach((file, i) => {
-        fd.append('images', file) // backend: upload.array('images')
-      })
+      fd.append('data', JSON.stringify({
+        ...payload,
+        order,                                // exakt ordning (existing via publicId, new via index)
+        removedExistingPublicIds: media.removedExistingPublicIds,
+        coverIndex: 0                         // index 0 i 'order' är omslag
+      }))
+
+      // Lägg till nya filer i exakt den ordning användaren har
+      for (const f of newFiles) fd.append('images', f)
 
       await onSubmit?.(fd)
     } finally {
@@ -201,10 +236,10 @@ const LoppisForm = ({
           <div className='flex py-8 w-full border-2 border-border rounded-xl flex-col items-center justify-center gap-4'>
             <PhotoDropzone
               key={initKey}
-              initialFiles={initialPreviewUrls}
+              initialFiles={initialFilesForDropzone}
               maxFiles={6}
               maxSizeMB={5}
-              onFilesChange={setPhotos}
+              onChange={setMedia}  /* <-- viktig! */
             />
           </div>
         </fieldset>

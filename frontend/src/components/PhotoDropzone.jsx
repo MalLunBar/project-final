@@ -3,64 +3,83 @@ import { useDropzone } from 'react-dropzone'
 import { ImagePlus, Trash2, Star, StarOff } from 'lucide-react'
 
 /**
- * Props:
- * - initialFiles?: File[] | string[] (valfritt: redan uppladdade URL:er eller File-objekt)
- * - maxFiles?: number (default 6)
- * - maxSizeMB?: number (default 5)
- * - onFilesChange(files: File[]): void  // lyft upp valda filer till föräldern
- *
- * Note: Vi visar förhandsvisning med URL.createObjectURL för File och med URL direkt för strängar.
- * Cover-bilden är alltid index 0. "Gör omslag" flyttar vald bild till index 0.
+ * initialFiles: (File[] | string[])  // blandning går bra
+ * onChange?: ({ items, removedExistingUrls }) => void
+ *   - items: Array<{ kind: 'existing' | 'new', url?: string, file?: File }>
+ *   - removedExistingUrls: string[]
  */
+
+
+// helpers/cloudinary.js (eller högst upp i PhotoDropzone.jsx)
+const extractPublicId = (url) => {
+  try {
+    const u = new URL(url)
+    // Ex: /image/upload/c_fill,w_300/v16912345/folder/name_abc.jpg
+    const path = u.pathname
+    const i = path.indexOf('/upload/')
+    if (i === -1) return null
+    let rest = path.slice(i + '/upload/'.length) // c_fill.../v169.../folder/name.jpg
+    const vMatch = rest.match(/\/v\d+\//)        // hoppa förbi transformationer till version
+    if (vMatch) rest = rest.slice(vMatch.index + vMatch[0].length) // folder/name.jpg
+    return rest.replace(/\.[a-z0-9]+$/i, '')     // ta bort .jpg/.png
+  } catch { return null }
+}
 
 const PhotoDropzone = ({
   initialFiles = [],
   maxFiles = 6,
   maxSizeMB = 5,
-  onFilesChange,
+  onChange,
 }) => {
 
-  const [files, setFiles] = useState([])        // File-objekt (nya)
-  const [existingUrls, setExistingUrls] = useState([]) // Redan sparade URL:er (edit-läge)
+  const [items, setItems] = useState([]) // [{kind:'existing'|'new', url?, file?}]
+  const [removedExistingPublicIds, setRemovedExistingPublicIds] = useState([])
 
-  // Init från props (t.ex. redigera-formulär)
+  // initiera från props
+
   useEffect(() => {
-    const initFiles = []
-    const initUrls = []
+    const init = []
     for (const f of initialFiles) {
-      if (typeof f === 'string') initUrls.push(f)
-      else if (f instanceof File) initFiles.push(f)
+      if (typeof f === 'string') {
+        init.push({ kind: 'existing', url: f, publicId: extractPublicId(f) })
+      } else if (f && typeof f === 'object') {
+        // Tillåt { url, publicId } från backend
+        if ('url' in f || 'publicId' in f) {
+          init.push({ kind: 'existing', url: f.url, publicId: f.publicId ?? extractPublicId(f.url) })
+        } else if (f instanceof File) {
+          init.push({ kind: 'new', file: f })
+        }
+      }
     }
-    setFiles(initFiles)
-    setExistingUrls(initUrls)
+    setItems(init)
+    setRemovedExistingPublicIds([])
   }, [initialFiles])
 
-  // Tell parent whenever files change
+  // rapportera uppåt
   useEffect(() => {
-    onFilesChange?.(files)
-  }, [files, onFilesChange])
+    onChange?.({ items, removedExistingPublicIds })
+  }, [items, removedExistingPublicIds, onChange])
 
   const maxSizeBytes = maxSizeMB * 1024 * 1024
   const accept = useMemo(() => ({
     'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.gif']
   }), [])
 
-  const onDrop = useCallback((accepted, fileRejections) => {
-    // Basic validering info i console (kan byggas ut till UI)
-    fileRejections.forEach(r => {
-      r.errors.forEach(err => {
-        console.warn(`Rejected ${r.file.name}: ${err.code} ${err.message}`)
-      })
-    })
+
+
+  const onDrop = useCallback((accepted, rejects) => {
+    rejects.forEach(r => r.errors.forEach(err => {
+      console.warn(`Rejected ${r.file.name}: ${err.code} ${err.message}`)
+    }))
     if (accepted.length === 0) return
 
-    setFiles(prev => {
-      const next = [...prev, ...accepted]
-      // Begränsa totalen (inkl existerande URL:er)
-      const limit = Math.max(0, maxFiles - existingUrls.length)
-      return next.slice(0, limit)
+    setItems(prev => {
+      const remainingSlots = Math.max(0, maxFiles - prev.length)
+      const nextNew = accepted.slice(0, remainingSlots).map(f => ({ kind: 'new', file: f }))
+      return [...prev, ...nextNew]
     })
-  }, [existingUrls.length, maxFiles])
+  }, [maxFiles])
+
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -69,43 +88,31 @@ const PhotoDropzone = ({
     multiple: true
   })
 
-  // Städa upp object URLs
-  useEffect(() => {
-    const localUrls = files.map(f => URL.createObjectURL(f))
-    return () => {
-      localUrls.forEach(u => URL.revokeObjectURL(u))
-    }
-  }, [files])
-
-  // Helpers
-  const makeCover = (idx, isExisting = false) => {
-    if (isExisting) {
-      setExistingUrls(prev => {
-        const clone = [...prev]
-        const [item] = clone.splice(idx, 1)
-        clone.unshift(item)
-        return clone
-      })
-    } else {
-      setFiles(prev => {
-        const clone = [...prev]
-        const [item] = clone.splice(idx, 1)
-        clone.unshift(item)
-        return clone
-      })
-    }
+  // helpers
+  const makeCover = (idx) => {
+    setItems(prev => {
+      if (idx <= 0 || idx >= prev.length) return prev
+      const copy = [...prev]
+      const [moved] = copy.splice(idx, 1)
+      copy.unshift(moved)
+      return copy
+    })
   }
 
-  const removeFile = (idx, isExisting = false) => {
-    if (isExisting) {
-      setExistingUrls(prev => prev.filter((_, i) => i !== idx))
-    } else {
-      setFiles(prev => prev.filter((_, i) => i !== idx))
+  const removeAt = (idx) => {
+  setItems(prev => {
+    const copy = [...prev]
+    const [removed] = copy.splice(idx, 1)
+    if (removed?.kind === 'existing' && removed.publicId) {
+      setRemovedExistingPublicIds(prevIds => [...prevIds, removed.publicId])
     }
-  }
+    return copy
+  })
+}
 
   // Render
-  const hasAny = existingUrls.length + files.length > 0
+  const hasAny = items.length > 0
+
   return (
     <div className="flex flex-col gap-3">
       <div
@@ -128,67 +135,39 @@ const PhotoDropzone = ({
 
       {hasAny && (
         <ul className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {existingUrls.map((url, idx) => (
-            <li key={`existing-${url}-${idx}`} className="relative group">
-              <img
-                src={url}
-                alt={`foto-${idx}`}
-                className="w-full h-40 object-cover rounded-xl"
-              />
-              {/* Badges & actions */}
-              <div className="absolute left-2 top-2">
-                {idx === 0 ? (
-                  <span className="px-2 py-0.5 text-xs rounded-full bg-black/70 text-white">Omslag</span>
-                ) : null}
-              </div>
-              <div className="absolute right-2 bottom-2 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => makeCover(idx, true)}
-                  className="p-2 rounded-full bg-white shadow"
-                  title="Gör till omslag"
-                >
-                  {idx === 0 ? <Star className="w-4 h-4" /> : <StarOff className="w-4 h-4" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeFile(idx, true)}
-                  className="p-2 rounded-full bg-white shadow"
-                  title="Ta bort"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </li>
-          ))}
-
-          {files.map((f, idx) => {
-            const url = URL.createObjectURL(f)
+          {items.map((it, idx) => {
+            const isCover = idx === 0
+            // skapa lokal preview-url för nya filer
+            const preview = it.kind === 'new' ? URL.createObjectURL(it.file) : it.url
             return (
-              <li key={`new-${f.name}-${idx}`} className="relative group">
+              <li key={`${it.kind}-${it.url || it.file?.name}-${idx}`} className="relative group">
                 <img
-                  src={url}
-                  alt={f.name}
+                  src={preview}
+                  alt={`foto-${idx}`}
                   className="w-full h-40 object-cover rounded-xl"
-                  onLoad={() => URL.revokeObjectURL(url)} // frilägg direkt efter render
+                  onLoad={() => { if (it.kind === 'new') URL.revokeObjectURL(preview) }}
                 />
+                {/* badge */}
                 <div className="absolute left-2 top-2">
-                  {idx === 0 && existingUrls.length === 0 ? (
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-black/70 text-white">Omslag</span>
-                  ) : null}
+                  {isCover && (
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-black/70 text-white">
+                      Omslag
+                    </span>
+                  )}
                 </div>
-                <div className="absolute right-2 bottom-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                {/* actions - alltid synliga */}
+                <div className="absolute right-2 bottom-2 flex gap-2">
                   <button
                     type="button"
-                    onClick={() => makeCover(idx, false)}
+                    onClick={() => makeCover(idx)}
                     className="p-2 rounded-full bg-white shadow"
                     title="Gör till omslag"
                   >
-                    {(idx === 0 && existingUrls.length === 0) ? <Star className="w-4 h-4" /> : <StarOff className="w-4 h-4" />}
+                    {isCover ? <Star className="w-4 h-4" /> : <StarOff className="w-4 h-4" />}
                   </button>
                   <button
                     type="button"
-                    onClick={() => removeFile(idx, false)}
+                    onClick={() => removeAt(idx)}
                     className="p-2 rounded-full bg-white shadow"
                     title="Ta bort"
                   >

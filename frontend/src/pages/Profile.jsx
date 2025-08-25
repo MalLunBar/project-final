@@ -58,66 +58,68 @@ const Profile = () => {
   }
 
   return (
-    <main className="bg-[url(./lines.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen min-h-screen p-4">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <img
-          src="default-profile.png" // Placeholder image, replace with actual user image
-          alt="Profilbild"
-          className="w-16 h-16 rounded-full border border-gray-300 object-cover"
-        />
-        <p className="text-2xl font-bold">namn</p> {/* Replace with user name */}
-      </div>
-      {/* Quick action */}
-      <div className='flex items-center justify-end mt-4 mb-6'>
-        <Link
-          to="/add"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
-        >
-          <CirclePlus className="w-4 h-4" />
-          Lägg till loppis
-        </Link>
-      </div>
-
-      {/* Divider */}
-      <hr className="my-6 border-t border-gray-500" />
-
-
-      {/* Buttons */}
-      <section
-        className="mt-6 flex flex-wrap gap-4"
-        aria-label="Profilval"
-      >
-        <CardLink
-          to="/profile/loppisar"
-          icon={Gem}
-          label="Mina loppisar"
-        />
-        <CardLink
-          to="/profile/favoriter"
-          icon={Heart}
-          label="Mina favoriter" />
-
-        <div>
-          {/* test av logga in funktion */}
-          {user ? (
-            <>
-
-              <Button
-                text='Logga ut'
-                onClick={logout}
-              />
-            </>
-          ) : (
-            <>
-
-              <Button
-                text='Logga in'
-                onClick={() => openLoginModal()}
-              />
-            </>
-          )}
+    <main className='flex flex-col gap-4 mx-auto max-w-2xl'>
+      <section className="bg-[url(./leaves.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen min-h-screen p-4">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <img
+            src="default-profile.png" // Placeholder image, replace with actual user image
+            alt="Profilbild"
+            className="w-16 h-16 rounded-full border border-gray-300 object-cover"
+          />
+          <p className="text-2xl font-bold">{user.firstName}</p> {/* Replace with user name */}
         </div>
+        {/* Quick action */}
+        <div className='flex items-center justify-end mt-4 mb-6'>
+          <Link
+            to="/add"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          >
+            <CirclePlus className="w-4 h-4" />
+            Lägg till loppis
+          </Link>
+        </div>
+
+        {/* Divider */}
+        <hr className="my-6 border-t border-gray-500" />
+
+
+        {/* Buttons */}
+        <section
+          className="mt-6 flex flex-wrap gap-4"
+          aria-label="Profilval"
+        >
+          <CardLink
+            to="/profile/loppisar"
+            icon={Gem}
+            label="Mina loppisar"
+          />
+          <CardLink
+            to="/profile/favoriter"
+            icon={Heart}
+            label="Mina favoriter" />
+
+          <div className='flex flex-1 justify-end'>
+            {/* test av logga in funktion */}
+            {user ? (
+              <>
+
+                <Button
+                  text='Logga ut'
+                  onClick={logout}
+                />
+              </>
+            ) : (
+              <>
+
+                <Button
+                  text='Logga in'
+                  onClick={() => openLoginModal()}
+                />
+              </>
+            )}
+          </div>
+        </section>
       </section>
     </main>
   )

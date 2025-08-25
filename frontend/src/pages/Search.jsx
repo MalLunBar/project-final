@@ -203,7 +203,6 @@ const Search = () => {
   return (
     <main className='h-screen max-h-[calc(100vh-64px)]'>
       <div className='h-full relative lg:grid grid-cols-[2fr_6fr_4fr]'>
-        {/* TODO: ändra grid fractions för laptop/desktop */}
 
         {/* Search filters */}
         <aside className={`absolute lg:relative top-0 left-0 z-1050 h-full w-full max-w-sm p-4 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -310,8 +309,6 @@ const Search = () => {
             )}
           </div>
         </div>
-        {/* </div>
-    </div> */}
 
         {/* Map */}
         {
@@ -339,9 +336,6 @@ const Search = () => {
         }
 
       </div >
-
-
-      {/* TODO: add "Nära mig" or "min position" button to search nearby*/}
 
     </main >
   )

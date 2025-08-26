@@ -3,7 +3,7 @@ const Button = ({ text, icon: Icon, type, onClick, active, ariaLabel }) => {
 
   const colorStyles =              // this can me changed later
     type === 'submit' || active
-      ? 'bg-accent font-semibold'
+      ? 'bg-accent'
       : 'bg-white border-2 border-accent'
 
   const sizeStyles =           // fixed circle size if no text (only icon)

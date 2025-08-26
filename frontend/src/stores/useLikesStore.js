@@ -43,7 +43,9 @@ const useLikesStore = create((set, get) => ({
           : likedLoppisIds.filter(id => id !== loppisId) // rollback like
       })
     }
-  }
+  },
+
+  clearLikes: () => set({ likedLoppisData: [], likedLoppisIds: [] }),
 }))
 
 export default useLikesStore

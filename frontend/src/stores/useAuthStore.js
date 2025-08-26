@@ -59,6 +59,9 @@ const useAuthStore = create(
         logout: () => {
           set({ user: null, token: null })
           localStorage.removeItem('token')
+          // clear liked loppis list when logging out
+          const { clearLikes } = useLikesStore.getState()
+          clearLikes()
         },
 
         clearError: () => set({ error: null })

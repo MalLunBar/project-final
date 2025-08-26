@@ -14,18 +14,25 @@ import useLikesStore from '../stores/useLikesStore'
 import useAuthStore from '../stores/useAuthStore'
 import { getLoppisById } from '../services/loppisApi'
 import useModalStore from '../stores/useModalStore'
+import useGeoStore, { distanceKm } from '../stores/useGeoStore'
 
 const LoppisInfo = () => {
   const { loppisId } = useParams()
   const { user, token } = useAuthStore()
   const { likedLoppisIds, toggleLike } = useLikesStore()
   const { openLoginModal } = useModalStore()
+  const { location } = useGeoStore()
   const [loppis, setLoppis] = useState({})
-  const [directionsUrl, setDirectionsUrl] = useState('https://www.google.com/maps/')
+  const [loppisCoords, setLoppisCoords] = useState({}) // {lat: , lng: }
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const isLiked = likedLoppisIds.includes(loppisId)
   const navigate = useNavigate()
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${loppisCoords.lat},${loppisCoords.lng}`
+
+  // If the user has granted location - calculate distance to loppis
+  const distance =
+    location && distanceKm({ lat: location.lat, lng: location.lng }, loppisCoords)
 
   useEffect(() => {
     const fetchLoppisData = async () => {
@@ -35,7 +42,7 @@ const LoppisInfo = () => {
         const data = await getLoppisById(loppisId)
         setLoppis(data)
         const coordinates = data.location.coordinates.coordinates // [lon, lat]
-        setDirectionsUrl(`https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}`)
+        setLoppisCoords({ lat: coordinates[1], lng: coordinates[0] })
       } catch (err) {
         // --------------------TODO: handle error appropriately
         console.error('Failed to fetch loppis data:', err)
@@ -79,7 +86,6 @@ const LoppisInfo = () => {
   // Galleri-tumnaglar (om fler bilder finns)
   const gallery = (loppis.images || []).slice(1)
 
-
   const addressLine = `${loppis.location?.address?.street}, ${loppis.location?.address?.city}`
 
   const dateToString = (date) => {
@@ -102,7 +108,6 @@ const LoppisInfo = () => {
 
           <LikeButton onLike={handleLike} isLiked={isLiked} />
         </div>
-
 
         {/* Bilder */}
         <div className='flex flex-col md:flex-row gap-2'>
@@ -145,10 +150,17 @@ const LoppisInfo = () => {
               <h1 className="text-2xl font-semibold">{loppis.title}</h1>
               <p className="text-sm text-muted-foreground">{loppis.location?.address?.city}</p>
             </div>
-            <div className="flex items-center gap-1 mt-1">
-              <Navigation size={18} fill="#FF8242" stroke="#FF8242" />
-              <p>2 km bort</p>
-            </div>
+            {/* If user has granted location - show distance to loppis */}
+            {distance && (
+              <div className="flex items-center gap-1 mt-1">
+                <Navigation size={18} fill="#FF8242" stroke="#FF8242" />
+                <p>
+                  {distance < 1
+                    ? `${Math.round(distance * 1000)} m bort`
+                    : `${distance.toFixed(1)} km bort`}
+                </p>
+              </div>
+            )}
           </div>
           {/* Kategorier */}
           <div className="flex flex-wrap gap-y-1">
@@ -168,18 +180,21 @@ const LoppisInfo = () => {
           {/* info */}
           <div className='flex flex-col gap-6 lg:gap-8'>
             {/* Beskrivning */}
-            <div className='space-y-1'>
-              <h2 className='font-semibold'>Om denna loppis</h2>
-              <p>{loppis.description}</p>
-            </div>
+            {loppis.description && (
+              <div className='space-y-1'>
+                <h2 className='font-semibold'>Om denna loppis</h2>
+                <p>{loppis.description}</p>
+              </div>
+            )}
 
             {/* Detaljer */}
             <div className="space-y-3">
               <h2 className='font-semibold'>Detaljer</h2>
               {/* Öppettider */}
               <div className="space-y-2">
-                {loppis.dates.map(date =>
+                {loppis.dates.map((date, idx) =>
                   <Details
+                    key={`date-${idx}`}
                     icon={Clock}
                     text={dateToString(date)}
                   />)}
@@ -205,7 +220,7 @@ const LoppisInfo = () => {
         <hr className='border-t border-gray-400' />
 
         {/* Links */}
-        <div className='flex justify-center flex-wrap gap-x-6 gap-y-2 my-4'>
+        <div className='flex justify-center flex-wrap gap-x-4 gap-y-2 md:gap-y-4 my-4'>
           {/* Länk till vägbeskrivning */}
           <a
             href={directionsUrl}
@@ -215,8 +230,8 @@ const LoppisInfo = () => {
             <Map size={20} />
             <p>Vägbeskrivning</p>
           </a>
-          <Button icon={Heart} text='Spara i mina favoriter' />
-          <Button icon={CalendarDays} text='Lägg till i min kalender' />
+          <Button icon={Heart} text='Spara loppis' onClick={handleLike} active={true} />
+          <Button icon={CalendarDays} text='Lägg till i kalender' />
         </div>
 
       </section>

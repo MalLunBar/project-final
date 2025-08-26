@@ -18,6 +18,23 @@
   @apply bg-white rounded-lg shadow-lg p-0 m-0;
 }
 
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ta bort lilla triangeln (tip) */
+.leaflet-popup-tip-container {
+  display: none !important;
+}
+
+/* Se till att ditt innehåll inte får extra margin */
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+
 
 
 @theme {

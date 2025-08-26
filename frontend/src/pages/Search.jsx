@@ -201,7 +201,7 @@ const Search = () => {
 
 
   return (
-    <main className='h-screen max-h-[calc(100vh-64px)]'>
+    <main className='h-screen max-h-[calc(100vh-64px) md:max-h-[calc(100vh-72px)]'>
       <div className='h-full relative lg:grid grid-cols-[2fr_6fr_4fr]'>
 
         {/* Search filters */}
@@ -323,17 +323,17 @@ const Search = () => {
 
         {/* List */}
         {
-          (view === 'list' || view === 'desktop') &&
-            error ? (
-            <div className="p-6 text-center text-gray-500">
-              {error}
-            </div>
-          ) : (
-            <ListView
-              loppisList={loppisList}
-            />
-          )
+          ((view === 'list' || view === 'desktop') && !error) && <ListView
+            loppisList={loppisList}
+          />
         }
+
+        {/* Error message */}
+        {((view === 'list' || view === 'desktop') && error) && (
+          <div className="p-6 text-center text-gray-500">
+            {error}
+          </div>
+        )}
 
       </div >
 

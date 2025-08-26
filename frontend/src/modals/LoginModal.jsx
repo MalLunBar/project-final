@@ -38,9 +38,9 @@ const LoginModal = ({ onClose }) => {
         onClick={onClose}
       />
       {/* Modal box */}
-      <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl py-5 px-10  w-full max-w-md z-10">
+      <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl p-10 w-full max-w-md z-10">
         {/* Modal title */}
-        <h2>Logga in</h2>
+        <h2 className='text-xl font-semibold'>Logga in</h2>
         {/* Close button */}
         <button
           onClick={onClose}
@@ -50,7 +50,7 @@ const LoginModal = ({ onClose }) => {
         </button>
         {/* Show optional message */}
         {loginMessage && (
-          <div className="my-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
+          <div className="-my-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
             {loginMessage}
           </div>
         )}
@@ -65,7 +65,7 @@ const LoginModal = ({ onClose }) => {
         <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
 
         {/* Link to signup page */}
-        <span className='flex self-center text-sm text-gray-600'>
+        <span className='flex self-center gap-2 text-sm text-gray-600'>
           <p>Har du inget konto? </p>
           <Link
             to='/signup'

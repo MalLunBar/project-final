@@ -58,7 +58,8 @@ const Profile = () => {
   }
 
   return (
-    <main className="bg-[url(./lines.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen min-h-screen p-4">
+    <main className="bg-[url(./lines.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen h-screen max-h-[calc(100vh-64px)] md:max-h-[calc(100vh-72px)] p-4 md:p-8">
+
       {/* Header */}
       <div className="flex items-center gap-4">
         <img
@@ -66,8 +67,9 @@ const Profile = () => {
           alt="Profilbild"
           className="w-16 h-16 rounded-full border border-gray-300 object-cover"
         />
-        <p className="text-2xl font-bold">namn</p> {/* Replace with user name */}
+        <p className="text-2xl font-bold">{user.firstName}</p>
       </div>
+
       {/* Quick action */}
       <div className='flex items-center justify-end mt-4 mb-6'>
         <Link
@@ -81,7 +83,6 @@ const Profile = () => {
 
       {/* Divider */}
       <hr className="my-6 border-t border-gray-500" />
-
 
       {/* Buttons */}
       <section

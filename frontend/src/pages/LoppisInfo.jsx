@@ -185,7 +185,7 @@ const LoppisInfo = () => {
         {/* Info och plats */}
         <div className='flex flex-col md:flex-row justify-between gap-6 lg:gap-8 md:gap-x-12'>
           {/* info */}
-          <div className='flex flex-col gap-6 lg:gap-8'>
+          <div className='flex flex-1 flex-col gap-6 lg:gap-8'>
             {/* Beskrivning */}
             {loppis.description && (
               <div className='space-y-1'>

@@ -80,18 +80,17 @@ const MyLoppis = () => {
 
   return (
     <section>
-      <h3>Mina Loppisar</h3>
 
       {error && <p className="text-red-500">{error}</p>}
       {!error && loppisList?.length > 0 && (
         <LoppisList
           loppisList={loppisList}
           variant="profile"
+          allowEditing
           onEditCard={openEdit}
           onDeleteCard={(l) => setConfirmLoppis(l)}
           deletingId={deletingId}
         />
-
       )}
 
       <ConfirmDialog

@@ -1,8 +1,8 @@
 
-import React from 'react'
+
 
 export const TeamCard = ({ name, role, bio, img }) => (
-  <div className="flex flex-col items-center text-center rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm w-full sm:w-[280px]">
+  <div className="flex flex-col items-center text-center rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl w-full sm:w-[280px]">
     <div className="w-24 h-24 rounded-full bg-zinc-100 overflow-hidden mb-3">
       {img ? (
         <img src={img} alt={name} className="w-full h-full object-cover" />

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { useParams } from 'react-router-dom'
-import { Clock, MapPinned, Navigation, CalendarDays, Map } from 'lucide-react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { ChevronLeft, Clock, MapPinned, Navigation, CalendarDays, Map } from 'lucide-react'
 import Tag from '../components/Tag'
 import Button from '../components/Button'
 import Details from '../components/Details'
@@ -15,12 +15,13 @@ import { getLoppisById } from '../services/loppisApi'
 
 const LoppisInfo = () => {
   const { loppisId } = useParams()
-  const { token } = useAuthStore()
+  const { user, token } = useAuthStore()
   const { likedLoppisIds, toggleLike } = useLikesStore()
   const [loppis, setLoppis] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const isLiked = likedLoppisIds.includes(loppisId)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchLoppisData = async () => {
@@ -64,11 +65,20 @@ const LoppisInfo = () => {
     : 'Inga datum angivna'
 
   return (
-    <section className='p-4 max-w-3xl'>
+    <main className='p-4 max-w-3xl'>
 
-      {/* TODO: Tillbaka-knapp */}
+      {/* Back button and like button */}
+      <div className='flex items-center justify-between'>
+        <button
+          onClick={() => navigate(-1)} // goes back one step in history
+          className="inline-flex items-center gap-1 text-sm cursor-pointer hover:underline"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Tillbaka
+        </button>
 
-      <LikeButton onLike={() => toggleLike(loppis._id, token)} isLiked={isLiked} />
+        <LikeButton onLike={() => toggleLike(loppis._id, user.id, token)} isLiked={isLiked} />
+      </div>
 
       {/* HERO-BILD (NYTT) */}
 
@@ -149,7 +159,7 @@ const LoppisInfo = () => {
         <Button icon={Map} text='Vägbeskrivning' />
         <Button icon={CalendarDays} text='Lägg till i kalender' />
       </div>
-    </section>
+    </main>
   )
 }
 

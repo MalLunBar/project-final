@@ -1,23 +1,13 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Button from '../components/Button'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import HeroSearch from '../sections/HeroSearch'
 import PopularCarousel from '../sections/PopularCarousel'
 import CategoryGrid from '../sections/CategoryGrid'
+import Upcoming from '../sections/Upcoming'
 
 const Home = () => {
   const { user } = useAuthStore()
   const { openLoginModal } = useModalStore()
-  const navigate = useNavigate()
-
-
-  // TODO: fetch upcoming loppis
-  const upcomingExamples = [
-    { id: 1, title: "Stor Sommarloppis", date: "Lör 24 Aug", city: "Stockholm" },
-    { id: 2, title: "Vintage Loppis", date: "Sön 25 Aug", city: "Göteborg" },
-  ]
 
   const handleAdd = () => {
     if (!user) {
@@ -39,32 +29,8 @@ const Home = () => {
       {/* Categories grid quick links → leads to filtered search */}
       <CategoryGrid />
 
-      {/* Upcoming Loppis */}
-      <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">
-        <h2 className="text-xl font-semibold mb-4">Kommande loppisar</h2>
-        <div className="space-y-3">
-          {upcomingExamples.map((event) => (
-            <div
-              key={event.id}
-              className="p-4 bg-white rounded-2xl shadow flex justify-between items-center"
-            >
-              <div>
-                <h3 className="font-semibold">{event.title}</h3>
-                <p className="text-sm text-gray-600">
-                  {event.date} • {event.city}
-                </p>
-              </div>
-              <button
-                onClick={() => navigate(`/loppis/${event.id}`)}
-                className="text-accent font-semibold cursor-pointer"
-              >
-                Visa →
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
-
+      {/* Upcoming Loppisar*/}
+      <Upcoming />
 
       {/* CTA - Add your own loppis */}
       <section className="w-full max-w-xl mt-14 bg-light p-10 rounded-2xl text-center shadow-lg">
@@ -77,7 +43,6 @@ const Home = () => {
           Skapa Loppis
         </button>
       </section>
-
 
     </main>
   )

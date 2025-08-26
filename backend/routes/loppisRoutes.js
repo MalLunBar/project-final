@@ -136,6 +136,52 @@ router.get("/popular", async (req, res) => {
   }
 })
 
+// get upcoming loppis (most likes)
+router.get("/upcoming", async (req, res) => {
+  // returns the next 5 upcoming loppis
+  const limit = 5
+  try {
+    const today = new Date()
+    const upcomingLoppis = await Loppis.aggregate([
+      // flatten dates array
+      { $unwind: "$dates" },
+      // only keep future dates
+      { $match: { "dates.date": { $gte: today } } },
+      // sort by date ascending
+      { $sort: { "dates.date": 1 } },
+      // group back by loppis, keep the first (=earliest) date
+      {
+        $group: {
+          _id: "$_id",
+          title: { $first: "$title" },
+          location: { $first: "$location" },
+          nextDate: { $first: "$dates" } // earliest future date
+        }
+      },
+      // finally sort loppisar by their next date
+      { $sort: { "nextDate.date": 1 } }
+    ]).limit(limit)
+
+    if (upcomingLoppis.length === 0) {
+      return res.status(404).json({
+        success: false,
+        response: [],
+        message: "No Loppis found on that query. Try another one."
+      })
+    }
+    res.status(200).json({
+      success: true,
+      response: upcomingLoppis
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      response: error,
+      message: "Failed to fetch popular Loppis."
+    })
+  }
+})
+
 //get all the category from enums in Loppis model
 router.get("/categories", async (req, res) => {
 

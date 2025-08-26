@@ -63,12 +63,19 @@ const LoppisInfo = () => {
     }
   }
 
-  const handleLike = () => {
+  const handleLike = (nav = false) => {
     if (!user || !token) {
       openLoginModal('Du måste vara inloggad för att gilla en loppis!')
       return
     }
-    toggleLike(loppis._id, user.id, token)
+    if (nav) {
+      if (!isLiked) {
+        toggleLike(loppis._id, user.id, token)
+      }
+      navigate('/profile/favoriter')
+    } else {
+      toggleLike(loppis._id, user.id, token)
+    }
   }
 
   // -------------------------TODO: add loading component
@@ -106,7 +113,7 @@ const LoppisInfo = () => {
             Tillbaka
           </button>
 
-          <LikeButton onLike={handleLike} isLiked={isLiked} />
+          <LikeButton onLike={() => handleLike(false)} isLiked={isLiked} />
         </div>
 
         {/* Bilder */}
@@ -230,7 +237,7 @@ const LoppisInfo = () => {
             <Map size={20} />
             <p>Vägbeskrivning</p>
           </a>
-          <Button icon={Heart} text='Spara loppis' onClick={handleLike} active={true} />
+          <Button icon={Heart} text='Spara loppis' onClick={() => handleLike(true)} active={true} />
           <Button icon={CalendarDays} text='Lägg till i kalender' />
         </div>
 

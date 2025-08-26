@@ -79,8 +79,8 @@ const LoppisCard = ({
   }
 
   return (
-    <article className='bg-white flex flex-col rounded-xl'>
-      <div className='w-full aspect-[4/3]overflow-hidden rounded-xl flex'>
+    <article className='bg-white flex flex-col rounded-2xl shadow-xl'>
+      <div className='w-full aspect-[4/3]overflow-hidden rounded-2xl flex'>
         <img
           src={IMG.card(id)}
           srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
@@ -92,7 +92,7 @@ const LoppisCard = ({
 
       <div className='flex justify-between items-start px-4 pb-4'>
 
-        <div className='flex flex-col gap-2'>
+        <div className='flex flex-col gap-2 pl-2'>
           <div className='flex items-start justify-between gap-2'>
             <Link to={`/loppis/${loppis._id}`}>
               <h3 className='font-semibold text-base'>{loppis.title}</h3>

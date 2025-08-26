@@ -79,8 +79,8 @@ const MyLoppis = () => {
   }
 
   return (
-    <section>
-      <h3>Mina Loppisar</h3>
+    <main className="bg-blue-100">
+
 
       {error && <p className="text-red-500">{error}</p>}
       {!error && loppisList?.length > 0 && (
@@ -119,7 +119,7 @@ const MyLoppis = () => {
         onClose={closeEdit}
         onSaved={applySaved}
       />
-    </section>
+    </main>
   )
 }
 

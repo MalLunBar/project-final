@@ -15,13 +15,13 @@ const Divider = () => (
 
 const AboutUs = () => {
   const team = [
-    { name: 'Malin', role: 'Frontendutvecklare & Grundare', bio: 'Brinner för enkel UX och återbruk.', img: '' },
+    { name: 'Malin', role: 'Uttvecklare & Grundare', bio: 'Brinner för enkel UX och återbruk.', img: '' },
     { name: 'Mimmi', role: 'Utvecklare & Grundare', bio: 'Har en PhD i kemi och ett öga för detaljer.', img: '' },
   ]
 
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-zinc-50">
+    <main className="min-h-screen bg-gradient-to-b bg-[#f5efe5]">
       <HeroSection heroImage={HeroImage} />
       <Divider />
       <StorySection />

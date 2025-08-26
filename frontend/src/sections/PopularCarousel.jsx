@@ -8,7 +8,7 @@ import { getPopularLoppis } from '../services/loppisApi'
 const PopularCarousel = () => {
   const [loppisList, setLoppisList] = useState([])
 
-  // TODO: fetch popular loppis
+  // fetch popular loppis
   useEffect(() => {
     const fetchloppisList = async () => {
       // setLoading(true)
@@ -42,11 +42,15 @@ const PopularCarousel = () => {
       "(min-width: 1024px)": {
         slides: { perView: 3, spacing: 20 },
       },
-    },
-    autoplay: {
-      delay: 3000,
-    },
+    }
   })
+
+  // recalculate slider after loppisList is fetched
+  useEffect(() => {
+    if (slider.current) {
+      slider.current.update()
+    }
+  }, [loppisList, slider])
 
   return (
     <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">

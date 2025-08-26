@@ -20,18 +20,15 @@ const MyFavorites = () => {
 
   return (
     <section>
-      <h3>Mina Favoriter</h3>
       {error && <p className="text-red-500">{error}</p>}
-      <div className='flex flex-col gap-4'>
+      <div className="flex flex-col gap-4">
         {!error && likedLoppisData?.length > 0 && (
-          <LoppisList
-            loppisList={likedLoppisData}
-          />
+          <LoppisList loppisList={likedLoppisData} />
         )}
-
-        {!error && likedLoppisData?.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
+        {!error && likedLoppisData?.length === 0 && (
+          <p>{emptyMsg || "Du har inga loppisar än."}</p>
+        )}
       </div>
-
     </section>
   )
 }

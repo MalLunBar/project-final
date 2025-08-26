@@ -79,8 +79,7 @@ const MyLoppis = () => {
   }
 
   return (
-    <main className="bg-blue-100">
-
+    <section>
 
       {error && <p className="text-red-500">{error}</p>}
       {!error && loppisList?.length > 0 && (
@@ -91,7 +90,6 @@ const MyLoppis = () => {
           onDeleteCard={(l) => setConfirmLoppis(l)}
           deletingId={deletingId}
         />
-
       )}
 
       <ConfirmDialog
@@ -119,7 +117,7 @@ const MyLoppis = () => {
         onClose={closeEdit}
         onSaved={applySaved}
       />
-    </main>
+    </section>
   )
 }
 

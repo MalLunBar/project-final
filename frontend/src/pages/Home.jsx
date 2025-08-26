@@ -28,7 +28,7 @@ const Home = () => {
   }
 
   return (
-    <main className='flex flex-col items-center w-full gap-4'>
+    <main className='flex flex-col items-center w-full pb-16 gap-4'>
 
       {/* Hero section with search bar → quick entry point to search*/}
       <HeroSearch />

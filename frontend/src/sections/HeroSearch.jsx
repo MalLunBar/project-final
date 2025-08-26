@@ -19,7 +19,7 @@ const HeroSearch = () => {
         className='w-full flex justify-center mt-6'
         onSubmit={handleSearch}
       >
-        <SearchBar value={city} setValue={setCity} />
+        <SearchBar value={city} setValue={(e) => setCity(e.target.value)} />
         {/* TODO: Visa loppisar nära mig */}
         {/* Knapp - Visa loppisar nära mig */}
         {/* Gör en current location fetch */}

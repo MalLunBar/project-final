@@ -58,7 +58,7 @@ const Profile = () => {
   }
 
   return (
-    <main className='flex flex-col gap-4 mx-auto max-w-2xl'>
+    <main className='flex flex-col gap-4 mx-auto max-w-2xl h-screen max-h-[calc(100vh-64px)] md:max-h-[calc(100vh-72px)]'>
       <section className="bg-[url(./leaves.jpg)] bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen min-h-screen p-4">
         {/* Header */}
         <div className="flex items-center gap-4">

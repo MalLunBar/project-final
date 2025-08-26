@@ -47,14 +47,14 @@ const TopNav = () => {
   ]
 
   return (
-    <header className="sticky top-0 w-full left-0 z-1100 bg-white border-b border-border shadow-sm">
+    <header className="sticky top-0 w-full left-0 z-1100 h-16 md:h-18 flex items-center bg-white border-b border-border shadow-sm">
       <nav
-        className="p-3 lg:p-4"
+        className="w-full px-3 lg:px-4"
         aria-label="Main"
       >
 
         {/* Mobile Navigation */}
-        <div className='lg:hidden'>
+        <div className='w-full lg:hidden'>
           {isOpen &&
             <div
               className='fixed right-0 top-0 w-[60%] max-w-70 h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
@@ -121,10 +121,8 @@ const TopNav = () => {
           </div>
         </div>
 
-
-
         {/* Desktop Navigation */}
-        <div className='hidden lg:flex items-center justify-between px-5'>
+        <div className='hidden lg:flex items-center justify-between '>
           <MenuLogo />
           <Menu type='desktop'>
             {menuItems.map(item => (
@@ -144,11 +142,6 @@ const TopNav = () => {
             </li>
           </Menu>
         </div>
-
-
-
-
-
 
       </nav>
     </header>

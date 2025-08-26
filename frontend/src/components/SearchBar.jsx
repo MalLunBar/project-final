@@ -7,7 +7,7 @@ const SearchBar = ({ value, setValue }) => {
         type="text"
         placeholder="Sök stad eller område..."
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={setValue}
         className='flex-grow bg-transparent focus:outline-none text-base md:text-lg'
       />
       <button

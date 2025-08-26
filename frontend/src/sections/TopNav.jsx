@@ -25,7 +25,7 @@ const TopNav = () => {
   ]
 
   return (
-    <header className="sticky top-0 w-full left-0 z-1100 bg-white border-b border-border shadow-sm">
+    <header className="sticky top-0 w-full left-0 z-1100 h-16 flex items-center bg-white border-b border-border shadow-sm">
       <nav
         className="p-3 lg:p-4"
         aria-label="Main"
@@ -65,11 +65,11 @@ const TopNav = () => {
                 text="Skapa"
                 requiresAuth />
 
-            {/* Search */}
-            <NavItem
-              icon={Search}
-              linkTo='/search'
-              text="Sök" />
+              {/* Search */}
+              <NavItem
+                icon={Search}
+                linkTo='/search'
+                text="Sök" />
 
               {/* profile */}
               <NavItem

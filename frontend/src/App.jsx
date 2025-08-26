@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './pages/Layout'
 import Home from './pages/Home'
 import Search from './pages/Search'
 import LoppisInfo from './pages/LoppisInfo'
@@ -12,35 +13,32 @@ import useModalStore from './stores/useModalStore'
 import ProtectedPage from './pages/ProtectedPage'
 
 export const App = () => {
-  const { loginModalOpen, closeLoginModal } = useModalStore()
-
   return (
     <BrowserRouter>
-      <TopNav />
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/search' element={<Search />} />
-        <Route path='/loppis/:loppisId' element={<LoppisInfo />} />
-        <Route
-          path='/profile'
-          element={
-            <ProtectedPage>
-              <Profile />
-            </ProtectedPage>
-          } />
-        <Route path="/profile/:tab" element={<Profile />} />
-        <Route path='/signup' element={<SignUp />} />
-        <Route
-          path='/add'
-          element={
-            <ProtectedPage>
-              <AddLoppis />
-            </ProtectedPage>
-          } />
-        <Route path='*' element={<NotFound />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path='/search' element={<Search />} />
+          <Route path='/loppis/:loppisId' element={<LoppisInfo />} />
+          <Route
+            path='/profile'
+            element={
+              <ProtectedPage>
+                <Profile />
+              </ProtectedPage>
+            } />
+          <Route path="/profile/:tab" element={<Profile />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route
+            path='/add'
+            element={
+              <ProtectedPage>
+                <AddLoppis />
+              </ProtectedPage>
+            } />
+          <Route path='*' element={<NotFound />} />
+        </Route>
       </Routes>
-      {loginModalOpen && <LoginModal onClose={closeLoginModal} />}
-      {/* <BottomNav /> */}
     </BrowserRouter>
   )
 }

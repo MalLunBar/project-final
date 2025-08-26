@@ -57,6 +57,7 @@ const Profile = () => {
         bgUrl={bgUrl}
         showBack
         onBack={() => navigate("/profile")}
+        
       >
         {current.render()}
       </ProfileLayout>

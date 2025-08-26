@@ -86,6 +86,7 @@ const MyLoppis = () => {
         <LoppisList
           loppisList={loppisList}
           variant="profile"
+          allowEditing
           onEditCard={openEdit}
           onDeleteCard={(l) => setConfirmLoppis(l)}
           deletingId={deletingId}

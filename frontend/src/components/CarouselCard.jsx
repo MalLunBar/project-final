@@ -1,10 +1,7 @@
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { MapPinned, Clock, CircleX } from 'lucide-react'
-import Tag from './Tag'
 import LikeButton from './LikeButton'
-import Details from './Details'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import { IMG } from '../utils/imageVariants'
@@ -45,7 +42,9 @@ const CarouselCard = ({ loppis }) => {
         <LikeButton className='absolute right-2 top-2' onLike={likeLoppis} isLiked={isLiked} />
       </div>
       <div className='p-2 text-center' >
-        <h3 className="font-medium">{loppis.title}</h3>
+        <Link to={`/loppis/${loppis._id}`}>
+          <h3 className="font-medium">{loppis.title}</h3>
+        </Link>
         <p className="text-gray-600 text-sm">{loppis.location.address.city} • {dateString}</p>
       </div>
     </article>

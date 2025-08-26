@@ -183,7 +183,7 @@ const LoppisInfo = () => {
         <hr className='-my-1 border-t border-gray-400' />
 
         {/* Info och plats */}
-        <div className='flex flex-col md:flex-row justify-between gap-6 lg:gap-8 lg:gap-x-12'>
+        <div className='flex flex-col md:flex-row justify-between gap-6 lg:gap-8 md:gap-x-12'>
           {/* info */}
           <div className='flex flex-col gap-6 lg:gap-8'>
             {/* Beskrivning */}
@@ -216,7 +216,7 @@ const LoppisInfo = () => {
             </div>
           </div>
           {/* Plats */}
-          <div className='space-y-1 md:w-1/2 lg:w-1/3'>
+          <div className='space-y-1 md:w-1/3'>
             <h2 className='font-semibold'>Plats</h2>
             {/* Karta med pin */}
             <SmallMap coordinates={[loppis.location.coordinates.coordinates[1], loppis.location.coordinates.coordinates[0]]} />

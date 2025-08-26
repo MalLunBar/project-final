@@ -73,7 +73,6 @@ const PopularCarousel = () => {
         </button>
 
       </div>
-      {/* TODO: ändra till loppisCard */}
     </section>
   )
 }

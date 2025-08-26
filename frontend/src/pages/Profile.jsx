@@ -57,11 +57,16 @@ const Profile = () => {
         bgUrl={bgUrl}
         showBack
         onBack={() => navigate("/profile")}
-        
+
       >
         {current.render()}
       </ProfileLayout>
     )
+  }
+
+  const handleLogout = () => {
+    navigate('/')
+    logout()
   }
 
   return (
@@ -91,11 +96,7 @@ const Profile = () => {
         <CardLink to="/profile/loppisar" icon={Gem} label="Mina loppisar" />
         <CardLink to="/profile/favoriter" icon={Heart} label="Mina favoriter" />
         <div className="flex flex-1 justify-end">
-          {user ? (
-            <Button text="Logga ut" onClick={logout} />
-          ) : (
-            <Button text="Logga in" onClick={() => openLoginModal()} />
-          )}
+          <Button text="Logga ut" onClick={handleLogout} />
         </div>
       </section>
     </ProfileLayout>

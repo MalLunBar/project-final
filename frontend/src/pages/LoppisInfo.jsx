@@ -15,6 +15,7 @@ import useAuthStore from '../stores/useAuthStore'
 import { getLoppisById } from '../services/loppisApi'
 import useModalStore from '../stores/useModalStore'
 import useGeoStore, { distanceKm } from '../stores/useGeoStore'
+import background from "../assets/botanical.jpg"
 
 const LoppisInfo = () => {
   const { loppisId } = useParams()
@@ -100,7 +101,8 @@ const LoppisInfo = () => {
   }
 
   return (
-    <main className='flex min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-[url(../botanical.jpg)] bg-center bg-no-repeat bg-cover md:py-8'>
+    <main className='flex min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover md:py-8'
+      style={{ backgroundImage: `url(${background})` }}>
       <section className='flex flex-col gap-6 lg:gap-8 w-full md:w-7/8 lg:w-5/6 max-w-5xl bg-white md:rounded-3xl shadow-xl mx-auto my-auto p-4 pb-8 md:px-10 md:pt-8 lg:px-14 lg:pb-10 xl:px-20'>
 
         {/* Back button and like button */}

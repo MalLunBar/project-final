@@ -11,7 +11,7 @@ const NotFound = () => {
 
 
   return (
-    <main className="min-h-[80vh] w-full grid place-items-center px-4 py-16 bg-zinc-50">
+    <main className="h-screen max-h-[calc(100vh-64px) md:max-h-[calc(100vh-72px)] w-full grid place-items-center px-4 py-16 bg-zinc-50">
       <section className="max-w-2xl w-full text-center">
         <div className="inline-block rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600">
           404 - Sidan kunde inte hittas

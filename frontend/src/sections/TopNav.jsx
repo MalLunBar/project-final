@@ -30,7 +30,7 @@ const TopNav = () => {
       logout()
       navigate('/')        // tillbaka till startsidan efter logout
     } else {
-      openLoginModal('Logga in för att fortsätta')
+      openLoginModal()
     }
     setIsOpen(false)        // stäng mobilenyn om den är öppen
   }
@@ -133,10 +133,10 @@ const TopNav = () => {
             ))}
 
             {/* NYTT: Dynamiskt Login/Logout på desktop */}
-            <li className='pb-4'>
+            <li>
               <button
                 type="button"
-                className='font-medium text-gray-700 px-2 hover:bg-hover rounded block w-full text-left'
+                className='font-medium text-gray-700 p-2 hover:bg-hover rounded block w-full text-left cursor-pointer'
                 onClick={(e) => {
                   e.stopPropagation()   // så klicket inte bubblar till panelens onClick
                   handleAuthItem()      // din befintliga login/logout-hanterare

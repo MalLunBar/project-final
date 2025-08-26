@@ -47,11 +47,11 @@ const SignUp = () => {
 
   return (
     <main
-      className="w-full min-h-screen bg-center bg-no-repeat bg-cover flex items-center px-2 py-6"
+      className="w-full min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover flex items-center px-2 py-6"
       style={{ backgroundImage: `url(${image})` }}>
       <section
-        className="flex flex-col gap-4 mx-auto max-w-2xl px-2 py-4 rounded-xl shadow-2xl bg-white/90"
-        >
+        className="flex flex-col gap-4 mx-auto max-w-2xl px-2 py-4 md:p-12 rounded-xl shadow-2xl bg-white/90"
+      >
         <div>
           <h2 className="text-xl font-semibold">Registrera dig</h2>
         </div>

@@ -65,14 +65,12 @@ const Search = () => {
       setError(null)
       try {
         const data = await getLoppisList(searchParams.toString())
-        console.log('fetching with params: ', searchParams.toString())
         const results = data.data || []
         if (results.length === 0) {
           setError("Inga loppisar hittades för den här sökningen")
           setLoppisList([])
         }
         setLoppisList(results)
-        console.log('Fetched loppis data: ', data.data)
       } catch (err) {
         console.error('Failed to fetch loppis data:', err)
         setError(err.message || 'Kunde inte hämta loppisdata')

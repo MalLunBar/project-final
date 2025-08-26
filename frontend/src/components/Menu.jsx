@@ -1,6 +1,6 @@
 const Menu = ({ type, children }) => {
   return (
-    <ul className={`flex flex-col gap-5 ${type === 'mobile' ? 'py-4 divide-y divide-border' : `${type === 'desktop' ? 'flex-row py-2' : ''}`}`}>
+    <ul className={`flex flex-col gap-5 ${type === 'mobile' ? 'py-4 divide-y divide-border' : `${type === 'desktop' ? 'flex-row items-center py-2' : ''}`}`}>
       {children}
     </ul>
   )

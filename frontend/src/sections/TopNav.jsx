@@ -69,16 +69,17 @@ const TopNav = () => {
                 ))}
 
                 <li className='pb-4'>
-                  {/* Använder MenuItem för samma look, men klick hanteras här */}
-                  <div onClick={(e) => {
-                    e.stopPropagation()
-                    handleAuthItem()
-                  }}>
-                    <MenuItem
-                      text={isLoggedIn ? 'LOGGA UT' : 'LOGGA IN'}
-                      linkTo={isLoggedIn ? '/' : '#'}
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    className='font-medium text-gray-700 px-2 hover:bg-hover rounded block w-full text-left'
+                    onClick={(e) => {
+                      e.stopPropagation()   // så klicket inte bubblar till panelens onClick
+                      handleAuthItem()      // din befintliga login/logout-hanterare
+                    }}
+                    aria-label={isLoggedIn ? 'Logga ut' : 'Logga in'}
+                  >
+                    {isLoggedIn ? 'LOGGA UT' : 'LOGGA IN'}
+                  </button>
                 </li>
               </Menu>
 
@@ -132,13 +133,18 @@ const TopNav = () => {
             ))}
 
             {/* NYTT: Dynamiskt Login/Logout på desktop */}
-            <li>
-              <div onClick={handleAuthItem}>
-                <MenuItem
-                  text={isLoggedIn ? 'LOGGA UT' : 'LOGGA IN'}
-                  linkTo={isLoggedIn ? '/' : '#'}
-                />
-              </div>
+            <li className='pb-4'>
+              <button
+                type="button"
+                className='font-medium text-gray-700 px-2 hover:bg-hover rounded block w-full text-left'
+                onClick={(e) => {
+                  e.stopPropagation()   // så klicket inte bubblar till panelens onClick
+                  handleAuthItem()      // din befintliga login/logout-hanterare
+                }}
+                aria-label={isLoggedIn ? 'Logga ut' : 'Logga in'}
+              >
+                {isLoggedIn ? 'LOGGA UT' : 'LOGGA IN'}
+              </button>
             </li>
           </Menu>
         </div>

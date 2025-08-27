@@ -1,9 +1,11 @@
 // const API_URL = 'http://localhost:8080/users' // local development URL
-const API_URL = 'https://runthornet-api.onrender.com/users' 
+// const API_URL = 'https://runthornet-api.onrender.com/users'
+const API_URL = import.meta.env.VITE_API_URL
+const url = `${API_URL}/users`
 
 // API call to register a new user
 export const registerUser = async (userData) => {
-  const response = await fetch(`${API_URL}/register`, {
+  const response = await fetch(`${url}/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData)
@@ -18,7 +20,7 @@ export const registerUser = async (userData) => {
 
 // API call to login a user
 export const loginUser = async (credentials) => {
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${url}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials)

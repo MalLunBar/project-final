@@ -1,9 +1,11 @@
 // const API_URL = 'http://localhost:8080/api/geocode' // local development URL
-const API_URL = 'https://runthornet-api.onrender.com/api/geocode' 
+// const API_URL = 'https://runthornet-api.onrender.com/api/geocode' 
+const API_URL = import.meta.env.VITE_API_URL
+const url = `${API_URL}/api/geocode`
 
 
 export const geocodeCity = async (city) => {
-  const response = await fetch(`${API_URL}?q=${encodeURIComponent(city)}`)
+  const response = await fetch(`${url}?q=${encodeURIComponent(city)}`)
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to geocode city')
@@ -16,7 +18,7 @@ export const geocodeCity = async (city) => {
 }
 
 export const reverseGeocode = async (lat, lon) => {
-  const response = await fetch(`${API_URL}/reverse?lat=${lat}&lon=${lon}`)
+  const response = await fetch(`${url}/reverse?lat=${lat}&lon=${lon}`)
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to reverse geocode coordinates')

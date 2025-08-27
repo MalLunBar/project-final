@@ -1,9 +1,11 @@
 // const API_URL = 'http://localhost:8080/users' // local development URL
-const API_URL = 'https://runthornet-api.onrender.com/users' 
+// const API_URL = 'https://runthornet-api.onrender.com/users'
+const API_URL = import.meta.env.VITE_API_URL
+const url = `${API_URL}/users`
 
 // fetch user profile
 export const getUserProfile = async (id, token) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${url}/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': token,
@@ -23,7 +25,7 @@ export const getUserProfile = async (id, token) => {
 
 // fetch list loppis created by user
 export const getUserLoppis = async (id, token) => {
-  const response = await fetch(`${API_URL}/${id}/loppis`, {
+  const response = await fetch(`${url}/${id}/loppis`, {
     method: 'GET',
     headers: {
       'Authorization': token,
@@ -40,7 +42,7 @@ export const getUserLoppis = async (id, token) => {
 
 // fetch list loppis liked by user
 export const getUserLikes = async (id, token) => {
-  const response = await fetch(`${API_URL}/${id}/likes`, {
+  const response = await fetch(`${url}/${id}/likes`, {
     method: 'GET',
     headers: {
       'Authorization': token,

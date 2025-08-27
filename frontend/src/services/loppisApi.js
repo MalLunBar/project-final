@@ -1,5 +1,7 @@
 // const API_URL = 'http://localhost:8080/loppis' // local development URL
-const API_URL = 'https://runthornet-api.onrender.com/loppis' 
+// const API_URL = 'https://runthornet-api.onrender.com/loppis' 
+const API_URL = import.meta.env.VITE_API_URL
+const url = `${API_URL}/loppis`
 
 // Valfri hjälpare om du vill bygga FormData någon annanstans
 export const buildLoppisFormData = (dataObj, files = []) => {
@@ -27,7 +29,7 @@ const makeRequest = (url, method, payload, token) => {
 // fetch loppis list with optional filters
 export const getLoppisList = async (params) => {
   const query = !params ? '' : `?${params}`
-  const response = await fetch(`${API_URL}${query}`)
+  const response = await fetch(`${url}${query}`)
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to fetch loppis data')
@@ -38,7 +40,7 @@ export const getLoppisList = async (params) => {
 
 // fetch a list with popular loppis (most likes)
 export const getPopularLoppis = async () => {
-  const response = await fetch(`${API_URL}/popular`)
+  const response = await fetch(`${url}/popular`)
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to fetch loppis data')
@@ -49,7 +51,7 @@ export const getPopularLoppis = async () => {
 
 // fetch a list with upcoming loppis (next 3 coming loppis)
 export const getUpcomingLoppis = async () => {
-  const response = await fetch(`${API_URL}/upcoming`)
+  const response = await fetch(`${url}/upcoming`)
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to fetch loppis data')
@@ -60,7 +62,7 @@ export const getUpcomingLoppis = async () => {
 
 // fetch single loppis by ID
 export const getLoppisById = async (id) => {
-  const response = await fetch(`${API_URL}/${id}`)
+  const response = await fetch(`${url}/${id}`)
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to fetch loppis data')
@@ -71,7 +73,7 @@ export const getLoppisById = async (id) => {
 
 // CREATE (accepterar FormData eller JSON — du använder FormData)
 export const createLoppis = async (dataOrFormData, token) => {
-  const response = await makeRequest(API_URL, 'POST', dataOrFormData, token)
+  const response = await makeRequest(url, 'POST', dataOrFormData, token)
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
     throw new Error(errorData?.message || 'Failed to create new loppis')
@@ -82,7 +84,7 @@ export const createLoppis = async (dataOrFormData, token) => {
 
 // UPDATE (accepterar FormData eller JSON — du skickar FormData från LoppisForm)
 export const updateLoppis = async (id, dataOrFormData, token) => {
-  const response = await makeRequest(`${API_URL}/${id}`, 'PATCH', dataOrFormData, token)
+  const response = await makeRequest(`${url}/${id}`, 'PATCH', dataOrFormData, token)
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
     throw new Error(errorData?.message || 'Failed to edit loppis')
@@ -93,7 +95,7 @@ export const updateLoppis = async (id, dataOrFormData, token) => {
 
 // delete a loppis by ID
 export const deleteLoppis = async (id, token) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${url}/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: token,
@@ -110,7 +112,7 @@ export const deleteLoppis = async (id, token) => {
 
 // like/unlike loppis
 export const toggleLikeLoppis = async (id, token) => {
-  const response = await fetch(`${API_URL}/${id}/like`, {
+  const response = await fetch(`${url}/${id}/like`, {
     method: 'PATCH',
     headers: {
       Authorization: token,
@@ -127,7 +129,7 @@ export const toggleLikeLoppis = async (id, token) => {
 
 // get a list of loppis categories
 export const getLoppisCategories = async () => {
-  const response = await fetch(`${API_URL}/categories`)
+  const response = await fetch(`${url}/categories`)
   if (!response.ok) {
     const errorData = await response.json()
     throw new Error(errorData?.message || 'Failed to fetch loppis categories')

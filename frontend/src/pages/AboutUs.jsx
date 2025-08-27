@@ -7,18 +7,13 @@ import TeamSection from '../sections/Team'
 import FaqSection from '../sections/Faq'
 import CtaSection from '../sections/Cta'
 import HeroImage from '../assets/monstera-1.jpg'
-
-
-const Divider = () => (
-  <div className="h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
-)
+import Divider from '../components/Divider'
 
 const AboutUs = () => {
   const team = [
     { name: 'Malin', role: 'Uttvecklare & Grundare', bio: 'Brinner för enkel UX och återbruk.', img: '' },
     { name: 'Mimmi', role: 'Utvecklare & Grundare', bio: 'Har en PhD i kemi och ett öga för detaljer.', img: '' },
   ]
-
 
   return (
     <main className="min-h-screen bg-gradient-to-b bg-[#f5efe5]">

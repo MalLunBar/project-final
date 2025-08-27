@@ -1,6 +1,7 @@
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import HeroSearch from '../sections/HeroSearch'
+import Divider from '../components/Divider'
 import PopularCarousel from '../sections/PopularCarousel'
 import CategoryGrid from '../sections/CategoryGrid'
 import Upcoming from '../sections/Upcoming'
@@ -18,7 +19,7 @@ const Home = () => {
   }
 
   return (
-    <main className='flex flex-col items-center w-full pb-16 gap-4'>
+    <main className='min-h-screen bg-gradient-to-b bg-[#f5efe5]'>
 
       {/* Hero section with search bar → quick entry point to search*/}
       <HeroSearch />

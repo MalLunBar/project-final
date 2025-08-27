@@ -1,5 +1,5 @@
-const Button = ({ text, icon: Icon, type, onClick, active, ariaLabel }) => {
-  const baseStyles = 'flex justify-center items-center gap-2 rounded-full shadow-md hover:shadow-lg transition cursor-pointer'
+const Button = ({ text, icon: Icon, type, onClick, active, ariaLabel, classNames }) => {
+  const baseStyles = 'flex justify-center items-center gap-2 rounded-full shadow-md hover:shadow-lg font-medium transition cursor-pointer'
 
   const colorStyles =              // this can me changed later
     type === 'submit' || active
@@ -13,7 +13,7 @@ const Button = ({ text, icon: Icon, type, onClick, active, ariaLabel }) => {
 
   return (
     <button
-      className={`${baseStyles} ${sizeStyles} ${colorStyles}`}
+      className={`${baseStyles} ${sizeStyles} ${colorStyles} ${classNames}`}
       type={type}
       onClick={onClick}
       aria-label={ariaLabel || text}

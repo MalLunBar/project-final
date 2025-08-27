@@ -3,7 +3,11 @@ import { Search } from 'lucide-react'
 const SearchBar = ({ value, setValue }) => {
   return (
     <div className="flex items-center bg-white border border-border rounded-3xl px-4 py-2 shadow-md w-full max-w-lg">
+      <label htmlFor="search-input" className='sr-only'>
+        Sök stad eller område
+      </label>
       <input
+        id='search-input'
         type="text"
         placeholder="Sök stad eller område..."
         value={value}

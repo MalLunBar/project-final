@@ -12,7 +12,7 @@ const LikeButton = ({ isLiked, onLike, className = '' }) => {
       className={`${className} cursor-pointer`}
       aria-label={isLiked ? "Unlike" : "Like"}
     >
-      <Heart color='#F88B53' strokeWidth={stroke} fill={fill} />
+      <Heart color='#fca742' strokeWidth={stroke} fill={fill} />
     </button>
   )
 }

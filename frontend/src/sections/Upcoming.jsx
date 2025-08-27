@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
+import { ArrowRight } from 'lucide-react'
 import { getUpcomingLoppis } from '../services/loppisApi'
 
 const Upcoming = () => {
   const [loppisList, setLoppisList] = useState([])
-  const navigate = useNavigate()
 
   // fetch upcoming loppis list
   useEffect(() => {
@@ -36,24 +36,28 @@ const Upcoming = () => {
   return (
     <section className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
       <h2 className="text-2xl font-bold">Kommande loppisar</h2>
-      <div className="space-y-3">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         {loppisList.map((loppis) => (
           <div
             key={loppis._id}
-            className="p-4 bg-white rounded-2xl shadow flex justify-between items-center"
+            className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm flex justify-between items-center"
           >
             <div>
-              <h3 className="font-semibold">{loppis.title}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="text-lg font-semibold">{loppis.title}</h3>
+              <p className="text-zinc-600">
                 {dateToString(loppis.nextDate.date)} • {loppis.location.address.city}
               </p>
             </div>
-            <button
-              onClick={() => navigate(`/loppis/${loppis._id}`)}
-              className="text-accent font-semibold cursor-pointer"
+            <Link
+              to={`/loppis/${loppis._id}`}
+              className="group inline-flex items-center gap-1 hover:underline underline-offset-2 text-[#495D3C] font-semibold cursor-pointer"
             >
-              Visa →
-            </button>
+              Visa
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </Link>
           </div>
         ))}
       </div>

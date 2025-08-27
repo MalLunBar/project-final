@@ -7,7 +7,7 @@ import useModalStore from '../stores/useModalStore'
 import { IMG } from '../utils/imageVariants'
 import useLikesStore from '../stores/useLikesStore'
 
-const CarouselCard = ({ loppis }) => {
+const CarouselCard = ({ loppis, index, total }) => {
   const { user, token } = useAuthStore()
   const { openLoginModal } = useModalStore()
   const { likedLoppisIds, toggleLike } = useLikesStore()
@@ -30,22 +30,25 @@ const CarouselCard = ({ loppis }) => {
   }
 
   return (
-    <article className="keen-slider__slide flex flex-col items-center justify-center bg-white rounded-xl shadow">
-      <div className='relative w-full h-full'>
-        <img
-          src={IMG.card(id)}
-          srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
-          alt={loppis.title}
-          className='w-full h-full object-cover object-center'
-          loading='lazy'
-        />
+    <article
+      aria-label={`Slide ${index + 1} of  ${total}`}
+      className="keen-slider__slide flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm"
+    >
+      <div className='relative w-full aspect-[4/3]'>
+        <Link to={`/loppis/${loppis._id}`}>
+          <img
+            src={IMG.card(id)}
+            srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
+            alt={loppis.title}
+            className='w-full h-full object-cover transition-transform duration-300 hover:scale-105'
+            loading='lazy'
+          />
+        </Link>
         <LikeButton className='absolute right-2 top-2' onLike={likeLoppis} isLiked={isLiked} />
       </div>
-      <div className='p-2 text-center' >
-        <Link to={`/loppis/${loppis._id}`}>
-          <h3 className="font-medium">{loppis.title}</h3>
-        </Link>
-        <p className="text-gray-600 text-sm">{loppis.location.address.city} • {dateString}</p>
+      <div className='p-3 text-center' >
+        <h3 className="font-medium text-lg hover:underline underline-offset-2">{loppis.title}</h3>
+        <p className="text-zinc-700 text-sm">{loppis.location.address.city} • {dateString}</p>
       </div>
     </article>
   )

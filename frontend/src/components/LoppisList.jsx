@@ -33,15 +33,13 @@ const LoppisList = ({
       {variant === 'profile' && allowEditing && hasCards && (
         <div className='flex self-end mb-1'>
 
-          <button
+          <Button
             onClick={() => setIsEditing(v => !v)}
-            className='inline-flex items-center gap-2 px-3 py-2 border rounded-lg bg-white hover:bg-gray-50'
-            aria-label={isEditing ? 'Avsluta redigering' : 'Redigera lista'}
-            title={isEditing ? 'Klart' : 'Redigera'}
-          >
-            <PencilLine className='w-4 h-4' />
-            <span className='text-sm'>{isEditing ? 'Klart' : 'Redigera'}</span>
-          </button>
+            icon={PencilLine}
+            ariaLabel="Redigera"
+            type="button"
+            text="Redigera"
+          />
         </div>
       )}
 
@@ -73,13 +71,8 @@ const LoppisList = ({
               >
                 <div className="flex flex-col justify-center items-center gap-2 h-full">
                   {/* Penna ovanför */}
-                  <Button
-                    onClick={() => onEditCard?.(loppis)}
-                    icon={PencilLine}
-                    ariaLabel="Redigera"
-                    type="button"
-                  />
-{/*                   
+
+
                   <button
                     onClick={() => onEditCard?.(loppis)}
                     className="p-2 rounded-3xl bg-white opacity-75 hover:opacity-90 focus:outline-none"
@@ -89,7 +82,7 @@ const LoppisList = ({
                     <PencilLine
                       size={30}
                     />
-                  </button> */}
+                  </button>
 
                   {/* Soptunna under */}
                   <button

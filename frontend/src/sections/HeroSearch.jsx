@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
-import heroÌmage from '../assets/monstera.jpg'
+import heroImage from '../assets/monstera.jpg'
 
 const HeroSearch = () => {
   const [city, setCity] = useState('')
@@ -15,11 +15,14 @@ const HeroSearch = () => {
 
   return (
     <section
-      className='w-full bg-center bg-no-repeat bg-cover py-22 px-4 text-center'
-      style={{ backgroundImage: `url(${heroÌmage})` }}>
-      <h1 className='text-white text-3xl font-semibold mb-8'>Hitta en loppis nära dig</h1>
+      className='bg-center bg-no-repeat bg-cover py-22 sm:py-30 px-2 sm:px-4 text-center'
+      style={{ backgroundImage: `url(${heroImage})` }}
+    >
+      <h1 className='mb-8 md:mb-14 text-white text-3xl sm:text-4xl md:text-5xl font-bold'>
+        Hitta loppis nära dig
+      </h1>
       <form
-        className='w-full flex justify-center mt-6'
+        className='flex justify-center mt-6 px-4'
         onSubmit={handleSearch}
       >
         <SearchBar value={city} setValue={(e) => setCity(e.target.value)} />

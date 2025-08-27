@@ -20,19 +20,17 @@ const Home = () => {
 
   return (
     <main className='min-h-screen bg-gradient-to-b bg-[#f5efe5]'>
-
       {/* Hero section with search bar → quick entry point to search*/}
       <HeroSearch />
-
       {/* Carousel section with popular loppis*/}
       <PopularCarousel />
-
+      <Divider />
       {/* Categories grid quick links → leads to filtered search */}
       <CategoryGrid />
-
+      <Divider />
       {/* Upcoming Loppisar*/}
       <Upcoming />
-
+      <Divider />
       {/* CTA - Add your own loppis */}
       <section className="w-full max-w-xl mt-14 bg-light p-10 rounded-2xl text-center shadow-lg">
         <h2 className="text-2xl font-semibold mb-3">Har du saker att sälja?</h2>

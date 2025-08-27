@@ -53,8 +53,8 @@ const PopularCarousel = () => {
   }, [loppisList, slider])
 
   return (
-    <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">
-      <h2 className="text-xl font-semibold mb-4">Populära Loppisar</h2>
+    <section className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
+      <h2 className="text-2xl font-bold">Populära Loppisar</h2>
       <div className="relative w-full ">
         {/* slider */}
         <div ref={sliderRef} className="keen-slider overflow-hidden py-1">

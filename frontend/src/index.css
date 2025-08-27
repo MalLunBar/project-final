@@ -67,6 +67,13 @@
   /* darker green */
   --color-text: #799466;
 
+  /*----------------------------------------------*/
+
+  --color-button: #1ca742; 
+  --color-button-hover: #df7d08;
+  --color-button-text: #2d2d2d;
+  --color-button-text-hover: #010101;
+
 
 }
 

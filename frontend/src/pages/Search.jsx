@@ -199,7 +199,7 @@ const Search = () => {
 
 
   return (
-    <main className='h-screen max-h-[calc(100vh-64px) md:max-h-[calc(100vh-72px)]'>
+    <main className='h-[calc(100vh-64px)] md:h-[calc(100vh-72px)]'>
       <div className='h-full relative lg:grid grid-cols-[2fr_6fr_4fr]'>
 
         {/* Search filters */}

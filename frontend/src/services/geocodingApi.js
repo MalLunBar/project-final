@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:8080/api/geocode' // local development URL
+// const API_URL = 'http://localhost:8080/api/geocode' // local development URL
+const API_URL = 'https://runthornet-api.onrender.com/api/geocode' 
+
 
 export const geocodeCity = async (city) => {
   const response = await fetch(`${API_URL}?q=${encodeURIComponent(city)}`)

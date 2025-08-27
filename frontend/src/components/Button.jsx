@@ -4,7 +4,7 @@ const Button = ({ text, icon: Icon, type, onClick, active, ariaLabel }) => {
   const colorStyles =              // this can me changed later
     type === 'submit' || active
       ? 'bg-button text-button-text hover:bg-button-hover hover:text-button-text-hover'
-      : 'bg-white border-2 border-button text-button hover:bg-button-hover hover:text-button-text-hover'
+      : 'bg-white border-2 border-button text-button-text hover:bg-button-hover hover:text-button-text-hover'
 
   const sizeStyles =           // fixed circle size if no text (only icon)
     !text

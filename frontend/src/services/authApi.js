@@ -1,5 +1,5 @@
-const API_URL = 'http://localhost:8080/users' // local development URL
-// borde URL vara .../auth istället? 
+// const API_URL = 'http://localhost:8080/users' // local development URL
+const API_URL = 'https://runthornet-api.onrender.com/users' 
 
 // API call to register a new user
 export const registerUser = async (userData) => {

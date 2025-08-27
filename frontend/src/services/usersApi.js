@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:8080/users' // local development URL
+// const API_URL = 'http://localhost:8080/users' // local development URL
+const API_URL = 'https://runthornet-api.onrender.com/users' 
 
 // fetch user profile
 export const getUserProfile = async (id, token) => {

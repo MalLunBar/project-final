@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:8080/loppis' // local development URL
+// const API_URL = 'http://localhost:8080/loppis' // local development URL
+const API_URL = 'https://runthornet-api.onrender.com/loppis' 
 
 // Valfri hjälpare om du vill bygga FormData någon annanstans
 export const buildLoppisFormData = (dataObj, files = []) => {

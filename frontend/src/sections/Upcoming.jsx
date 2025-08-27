@@ -34,8 +34,8 @@ const Upcoming = () => {
   }
 
   return (
-    <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">
-      <h2 className="text-xl font-semibold mb-4">Kommande loppisar</h2>
+    <section className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
+      <h2 className="text-2xl font-bold">Kommande loppisar</h2>
       <div className="space-y-3">
         {loppisList.map((loppis) => (
           <div

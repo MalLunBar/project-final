@@ -18,8 +18,8 @@ const CategoryGrid = () => {
   ]
 
   return (
-    <section className="w-full max-w-3xl mt-10 px-4 sm:px-8">
-      <h2 className="text-xl font-semibold mb-4">Sök efter kategori</h2>
+    <section className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
+      <h2 className="text-2xl font-bold">Sök efter kategori</h2>
       <div
         className="grid grid-cols-2 sm:grid-cols-4 gap-4"
       >

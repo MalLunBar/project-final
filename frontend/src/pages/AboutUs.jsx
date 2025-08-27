@@ -8,6 +8,7 @@ import FaqSection from '../sections/Faq'
 import CtaSection from '../sections/Cta'
 import HeroImage from '../assets/monstera-1.jpg'
 import Divider from '../components/Divider'
+import Footer from '../sections/Footer'
 
 const AboutUs = () => {
   const team = [
@@ -32,9 +33,7 @@ const AboutUs = () => {
       <FaqSection />
       <Divider />
       <CtaSection />
-      <footer className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
-        <p className="text-xs text-zinc-500">© {new Date().getFullYear()} Runt hörnet</p>
-      </footer>
+      <Footer footerText={`© ${new Date().getFullYear()} Runt hörnet`} />
     </main>
   )
 }

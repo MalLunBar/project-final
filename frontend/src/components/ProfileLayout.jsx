@@ -6,20 +6,19 @@ const ProfileLayout = ({
   bgUrl,
   showBack = false,
   onBack,
-  constrain = true,             // <— NYTT (default: inramad)
   children,
 }) => {
-  const frameClasses = constrain
-    ? "mx-auto sm:min-w-lg md:min-w-xl lg:min-w-3xl xl:min-w-4xl"
-    : ""
 
   return (
-    <main className="flex flex-col items-center w-screen min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)]">
+    <main
+      className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover "
+      style={{ backgroundImage: `url(${bgUrl})` }}>
+
       <section
-        className={`bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] p-4 sm:p-6 md:p-8 lg:p-12 ${frameClasses}`}
-        style={{ backgroundImage: `url(${bgUrl})` }}
+        className='mx-auto max-w-9xl px-6 py-8 md:py-12 md:px-8 md:mx-12'
+
       >
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto">
           {showBack && (
             <button
               onClick={onBack}

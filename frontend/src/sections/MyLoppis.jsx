@@ -80,6 +80,7 @@ const MyLoppis = () => {
 
   return (
     <section>
+      <h2 className='sr-only'>Mina loppisar</h2>
 
       {error && <p className="text-red-500">{error}</p>}
       {!error && loppisList?.length > 0 && (

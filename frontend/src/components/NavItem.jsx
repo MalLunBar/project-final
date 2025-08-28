@@ -18,7 +18,7 @@ const NavItem = ({ icon: Icon, ariaLabel, linkTo, text, onClick, requiresAuth = 
   return (
     <Link
       to={linkTo}
-      className='flex flex-col items-center rounded-xl p-2 min-w-12 hover:bg-hover'
+      className='flex flex-col items-center rounded-md p-2 min-w-12 hover:bg-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-button'
       aria-label={ariaLabel}
       title={ariaLabel}
       onClick={handleClick}

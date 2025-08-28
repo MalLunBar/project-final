@@ -94,7 +94,7 @@ const TopNav = () => {
                   <li className='pb-4'>
                     <button
                       type="button"
-                      className='font-medium text-gray-700 px-2 hover:bg-hover rounded block w-full text-left'
+                      className='font-medium text-gray-700 p-2 hover:bg-hover rounded-md block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-button'
                       onClick={(e) => {
                         e.stopPropagation()   // så klicket inte bubblar till panelens onClick
                         handleAuthItem()      // din befintliga login/logout-hanterare
@@ -169,7 +169,7 @@ const TopNav = () => {
             <li>
               <button
                 type="button"
-                className='font-medium text-gray-700 p-2 hover:bg-hover rounded block w-full text-left cursor-pointer'
+                className='font-medium text-gray-700 p-2 hover:bg-hover rounded-md block w-full text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-button'
                 onClick={(e) => {
                   e.stopPropagation()   // så klicket inte bubblar till panelens onClick
                   handleAuthItem()      // din befintliga login/logout-hanterare

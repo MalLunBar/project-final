@@ -78,13 +78,6 @@ const LoginModal = ({ onClose }) => {
         <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl p-10 w-full max-w-md z-10">
           {/* Modal title */}
           <h2 className='text-xl font-semibold'>Logga in</h2>
-          {/* Close button */}
-          <button
-            onClick={handleClose}
-            className="absolute top-4 right-5 cursor-pointer text-gray-500 hover:text-black"
-          >
-            <X />
-          </button>
 
           {/* Show optional message */}
           {loginMessage && (
@@ -116,6 +109,14 @@ const LoginModal = ({ onClose }) => {
               Registrera dig här
             </Link>
           </span>
+
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute top-4 right-5 cursor-pointer text-gray-500 hover:text-black"
+          >
+            <X />
+          </button>
         </div>
       </FocusLock>
     </div>

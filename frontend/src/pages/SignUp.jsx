@@ -50,10 +50,10 @@ const SignUp = () => {
       className="w-full min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover flex items-center px-2 py-6"
       style={{ backgroundImage: `url(${image})` }}>
       <section
-        className="flex flex-col gap-4 mx-auto max-w-2xl px-2 py-4 md:p-12 rounded-xl shadow-2xl bg-white/90"
+        className="flex flex-col gap-4 md:gap-16 lg:gap-4 mx-auto max-w-2xl px-4 py-6 md:px-18 md:py-20 lg:px-20 lg:py-10 rounded-2xl shadow-2xl bg-white/90 backdrop-blur"
       >
         <div>
-          <h2 className="text-xl font-semibold">Registrera dig</h2>
+          <h1 className="text-xl font-bold">Registrera dig</h1>
         </div>
 
         {/* Ändra de som behöver vara rerquired senare */}

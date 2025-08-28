@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PencilLine, Trash2, Loader2 } from 'lucide-react'
+import { PencilLine, Trash2, Loader2, Check } from 'lucide-react'
 import LoppisCard from "./LoppisCard"
 import Button from './Button'
 
@@ -35,10 +35,12 @@ const LoppisList = ({
 
           <Button
             onClick={() => setIsEditing(v => !v)}
-            icon={PencilLine}
-            ariaLabel="Redigera"
+            icon={isEditing ? Check : PencilLine}
+            ariaLabel={isEditing ? 'Avsluta redigering' : 'Redigera lista'}
             type="button"
-            text="Redigera"
+            text={isEditing ? 'Klart' : 'Redigera'}
+            title={isEditing ? 'Klart' : 'Redigera'}
+            aria-pressed={isEditing}
           />
         </div>
       )}

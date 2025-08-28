@@ -11,6 +11,7 @@ import ProfileLayout from '../components/ProfileLayout'
 import bgDefault from "../assets/botanical-3.jpg"
 import bgFav from "../assets/drawing.jpg"
 import bgLoppis from "../assets/circle.jpg"
+import defaultImg from "../assets/default-profile.png"
 
 
 const Profile = () => {
@@ -71,13 +72,15 @@ const Profile = () => {
 
   return (
     <ProfileLayout title={null} bgUrl={bgUrl}>
-      <div className="flex items-center gap-4 mt-4">
+      <h1 className='font-bold text-2xl'>Profil</h1>
+
+      <div className="flex items-center gap-6 my-6">
         <img
-          src="default-profile.png"
+          src={defaultImg}
           alt="Profilbild"
           className="w-16 h-16 rounded-full border border-gray-300 object-cover"
         />
-        <p className="text-2xl font-bold">{user.firstName}</p>
+        <p className="text-xl font-semibold">{user.firstName}</p>
       </div>
 
       <div className="flex items-center justify-end mt-4 mb-6">
@@ -92,13 +95,18 @@ const Profile = () => {
 
       <hr className="my-6 border-t border-gray-500" />
 
-      <section className="mt-6 flex flex-wrap gap-4" aria-label="Profilval">
+      <div 
+        className="flex flex-col gap-10" 
+        aria-label="Profilval">
+        <div className="mt-6 flex flex-wrap gap-4">
         <CardLink to="/profile/loppisar" icon={Gem} label="Mina loppisar" />
         <CardLink to="/profile/favoriter" icon={Heart} label="Mina favoriter" />
+        </div>
+
         <div className="flex flex-1 justify-end">
           <Button text="Logga ut" onClick={handleLogout} />
         </div>
-      </section>
+      </div>
     </ProfileLayout>
   )
 }

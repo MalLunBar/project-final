@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/useAuthStore'
 import { createLoppis } from '../services/loppisApi'
 import LoppisForm from '../components/LoppisForm'
+import bgImage from '../assets/seeds-1.jpg'
 
 const AddLoppis = () => {
   const { user, token } = useAuthStore()
@@ -44,12 +45,15 @@ const AddLoppis = () => {
   }
 
   return (
-    <main className='py-6 px-4'>
+    <main
+      className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover"
+      style={{ backgroundImage: `url(${bgImage})` }}>
       <LoppisForm
         initialValues={blank}
         submitLabel='Lägg till loppis'
         title='Lägg till en loppis'
         onSubmit={addLoppis}
+        onCancel={() => navigate('/')}
       />
     </main>
   )

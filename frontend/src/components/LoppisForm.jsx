@@ -9,6 +9,8 @@ import { IMG } from '../utils/imageVariants'
 import { geocodeCity } from '../services/geocodingApi'
 import { getLoppisCategories } from '../services/loppisApi'
 
+
+
 const normalizeDateInput = (val) => {
   if (!val) return ''
   try {
@@ -64,6 +66,7 @@ const LoppisForm = ({
   const [categories, setCategories] = useState([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
 
   // Stabil "init-nyckel" baserad på innehållet (inte referensen)
   const initKey = useMemo(() => JSON.stringify(initialValues ?? {}), [initialValues])
@@ -224,160 +227,169 @@ const LoppisForm = ({
   )
 
   return (
-    <section className='flex flex-col gap-4 mx-auto max-w-2xl rounded-lg bg-white'>
-      <h2 className='text-xl font-semibold'>{title}</h2>
+    <section className='bg-white/90 backdrop-blur md:my-8 md:rounded-2xl xl:rounded-3xl mx-auto sm:max-w-sm md:max-w-xl lg:max-w-4xl xl:max-w-6xl xl:mt-20 px-4 sm:px-6 py-10 md:px-18 lg:px-8 lg:py-6 lg:my-4 xl:px-20 xl:py-10 shadow-lg'>
+      <h2 className='text-xl font-semibold mb-6'>{title}</h2>
 
       <form className='flex flex-col gap-4 divide-y divide-border' onSubmit={handleSubmit}>
 
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+          {/* VÄNSTER KOLUMN på large */}
+          <div className="flex-1 min-w-0 flex flex-col gap-4">
 
-        {/* Foto-dropzone */}
-        <fieldset className='flex p-2 flex-col gap-4 pb-6'>
-          <legend className='font-semibold text-lg pb-2'>Bilder</legend>
-          <div className='flex py-8 w-full border-2 border-border rounded-xl flex-col items-center justify-center gap-4'>
-            <PhotoDropzone
-              key={initKey}
-              initialFiles={initialFilesForDropzone}
-              maxFiles={6}
-              maxSizeMB={5}
-              onChange={setMedia}  /* <-- viktig! */
-            />
-          </div>
-        </fieldset>
-
-        {/* Beskrivning */}
-        <fieldset className='flex p-2 flex-col gap-4 pb-6'>
-          <legend className='font-semibold text-lg pb-2'>Beskrivning</legend>
-          <Input
-            label='Rubrik*'
-            type='text'
-            value={formData.title}
-            onChange={handleChange('title')}
-            showLabel={false}
-            required
-          />
-          <Input
-            label='Beskrivning'
-            type='textarea'
-            value={formData.description}
-            onChange={handleChange('description')}
-            showLabel={false}
-          />
-
-          {/* Kategorier */}
-          <div className='border border-border rounded-3xl py-2 px-4 w-full'>
-            <div className='flex justify-between items-center cursor-pointer' onClick={toggleDropdown}>
-              Välj kategori(er)
-              {isDropdownOpen ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
-            </div>
-            {isDropdownOpen && (
-              <div className='flex flex-col gap-2 mt-2'>
-                {categories?.map(category => {
-                  const id = `category-${category}`
-                  return (
-                    <div key={category} className='relative'>
-                      <input
-                        type='checkbox'
-                        id={id}
-                        value={category}
-                        checked={selectedCategories.includes(category)}
-                        onChange={handleCategoryChange}
-                        className='absolute opacity-0 peer'
-                      />
-                      <label
-                        htmlFor={id}
-                        className='block cursor-pointer px-4 py-2 rounded bg-accent-light peer-checked:bg-accent text-black peer-checked:text-white transition-colors'
-                      >
-                        {category}
-                      </label>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        </fieldset>
-
-        {/* Plats */}
-        <fieldset className='flex p-2 flex-col gap-4 pb-6'>
-          <legend className='font-semibold text-lg pb-2'>Plats</legend>
-          <Input label='Gatuadress*' type='text' value={formData.street} onChange={handleChange('street')} showLabel={false} required />
-          <Input label='Postnummer*' type='text' value={formData.postalCode} onChange={handleChange('postalCode')} showLabel={false} required />
-          <Input label='Stad*' type='text' value={formData.city} onChange={handleChange('city')} showLabel={false} required />
-          <Button text='Visa på karta' type='button' onClick={fetchCoordinates} />
-          {coordinates && <SmallMap coordinates={coordinates} />}
-        </fieldset>
-
-        {/* Datum & tider */}
-        <fieldset className='flex p-2 flex-col gap-4 pb-6'>
-          <legend className='font-semibold text-lg pb-2'>Datum & Tider</legend>
-
-          {dates.map((date, index) => (
-            <div key={index} className='flex gap-2 flex-col md:flex-row md:items-center'>
-              <Input
-                label='Datum'
-                type='date'
-                value={date.date}
-                onChange={(e) => {
-                  const nd = [...dates]; nd[index].date = e.target.value; setDates(nd)
-                }}
-                showLabel={false}
-                required
-              />
-              <Input
-                label='Starttid'
-                type='time'
-                value={date.startTime}
-                onChange={(e) => {
-                  const nd = [...dates]; nd[index].startTime = e.target.value; setDates(nd)
-                }}
-                showLabel={false}
-                required
-              />
-              <Input
-                label='Sluttid'
-                type='time'
-                value={date.endTime}
-                onChange={(e) => {
-                  const nd = [...dates]; nd[index].endTime = e.target.value; setDates(nd)
-                }}
-                showLabel={false}
-                required
-              />
-
-              {dates.length > 1 && (
-                <Button
-                  icon={Trash2}
-                  type='button'
-                  onClick={() => setDates(dates.filter((_, i) => i !== index))}
-                  ariaLabel='Ta bort datum'
+            {/* Foto-dropzone */}
+            <fieldset className='flex p-2 flex-col gap-4 pb-6'>
+              <legend className='font-semibold text-lg pb-2'>Bilder</legend>
+              <div className='flex py-8 w-full border-2 border-border rounded-xl flex-col items-center justify-center gap-4'>
+                <PhotoDropzone
+                  key={initKey}
+                  initialFiles={initialFilesForDropzone}
+                  maxFiles={6}
+                  maxSizeMB={5}
+                  onChange={setMedia}  /* <-- viktig! */
                 />
-              )}
-            </div>
-          ))}
+              </div>
+            </fieldset>
 
-          <Button
-            text='+ Nytt datum'
-            type='button'
-            onClick={() => setDates([...dates, { date: '', startTime: '', endTime: '' }])}
-          />
-        </fieldset>
+            {/* Beskrivning */}
+            <fieldset className='flex p-2 flex-col gap-4 pb-6'>
+              <legend className='font-semibold text-lg pb-2'>Beskrivning</legend>
+              <Input
+                label='Rubrik*'
+                type='text'
+                value={formData.title}
+                onChange={handleChange('title')}
+                showLabel={false}
+                required
+              />
+              <Input
+                label='Beskrivning'
+                type='textarea'
+                value={formData.description}
+                onChange={handleChange('description')}
+                showLabel={false}
+              />
+
+              {/* Kategorier */}
+              <div className='bg-white border border-border rounded-3xl py-2 px-4 max-w-60'>
+                <div className='flex justify-between items-center cursor-pointer' onClick={toggleDropdown}>
+                  Välj kategori(er)
+                  {isDropdownOpen ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
+                </div>
+                {isDropdownOpen && (
+                  <div className='flex flex-col gap-2 mt-2'>
+                    {categories?.map(category => {
+                      const id = `category-${category}`
+                      return (
+                        <div key={category} className='relative'>
+                          <input
+                            type='checkbox'
+                            id={id}
+                            value={category}
+                            checked={selectedCategories.includes(category)}
+                            onChange={handleCategoryChange}
+                            className='absolute opacity-0 peer'
+                          />
+                          <label
+                            htmlFor={id}
+                            className='block cursor-pointer px-4 py-2 rounded bg-accent-light peer-checked:bg-accent text-black peer-checked:text-white transition-colors'
+                          >
+                            {category}
+                          </label>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            </fieldset>
+          </div>
+          {/* HÖGER KOLUMN på large */}
+          <div className="flex-1 min-w-0 flex flex-col gap-4">
+            {/* Plats */}
+            <fieldset className='flex p-2 flex-col gap-4 pb-6'>
+              <legend className='font-semibold text-lg pb-2'>Plats</legend>
+              <Input label='Gatuadress*' type='text' value={formData.street} onChange={handleChange('street')} showLabel={false} required />
+              <Input label='Postnummer*' type='text' value={formData.postalCode} onChange={handleChange('postalCode')} showLabel={false} required />
+              <Input label='Stad*' type='text' value={formData.city} onChange={handleChange('city')} showLabel={false} required />
+              <Button text='Visa på karta' type='button' onClick={fetchCoordinates} />
+              {coordinates && <SmallMap coordinates={coordinates} />}
+            </fieldset>
+
+            {/* Datum & tider */}
+            <fieldset className='flex p-2 flex-col gap-4 pb-6'>
+              <legend className='font-semibold text-lg pb-2'>Datum & Tider</legend>
+
+              {dates.map((date, index) => (
+                <div key={index} className='flex gap-2 flex-col md:flex-row md:items-center lg:flex-col lg:items-start'>
+                  <Input
+                    label='Datum'
+                    type='date'
+                    value={date.date}
+                    onChange={(e) => {
+                      const nd = [...dates]; nd[index].date = e.target.value; setDates(nd)
+                    }}
+                    showLabel={false}
+                    required
+                  />
+                  <div className='lg:flex gap-2'>
+                    <Input
+                      label='Starttid'
+                      type='time'
+                      value={date.startTime}
+                      onChange={(e) => {
+                        const nd = [...dates]; nd[index].startTime = e.target.value; setDates(nd)
+                      }}
+                      showLabel={false}
+                      required
+                    />
+                    <Input
+                      label='Sluttid'
+                      type='time'
+                      value={date.endTime}
+                      onChange={(e) => {
+                        const nd = [...dates]; nd[index].endTime = e.target.value; setDates(nd)
+                      }}
+                      showLabel={false}
+                      required
+                    />
+                  </div>
+
+                  {dates.length > 1 && (
+                    <Button
+                      icon={Trash2}
+                      type='button'
+                      onClick={() => setDates(dates.filter((_, i) => i !== index))}
+                      ariaLabel='Ta bort datum'
+                    />
+                  )}
+                </div>
+              ))}
+
+              <Button
+                text='+ Nytt datum'
+                type='button'
+                onClick={() => setDates([...dates, { date: '', startTime: '', endTime: '' }])}
+              />
+            </fieldset>
+          </div>
+        </div>
 
         {/* Submit / Footer */}
-        <div className='flex items-center gap-2 pt-2'>
+        <div className='flex items-center lg:justify-center gap-2 pt-2'>
           <Button
             text={submitting ? 'Sparar…' : submitLabel}
             type='submit'
             ariaLabel={submitLabel}
             disabled={submitting}
           />
-          {onCancel && (
-            <Button
-              text='Avbryt'
-              type='button'
-              onClick={onCancel}
-              variant='secondary'
-            />
-          )}
+
+          <Button
+            text='Avbryt'
+            type='button'
+            onClick={onCancel}
+            variant='secondary'
+          />
+
         </div>
       </form>
     </section>

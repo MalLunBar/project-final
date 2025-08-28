@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/useAuthStore'
 import { createLoppis } from '../services/loppisApi'
 import LoppisForm from '../components/LoppisForm'
-import bgImage from '../assets/seeds-1.jpg'
+import bgImage from '../assets/botanical.jpg'
 
 const AddLoppis = () => {
   const { user, token } = useAuthStore()

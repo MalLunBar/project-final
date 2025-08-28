@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/useAuthStore'
 import Input from "../components/Input"
 import Button from "../components/Button"
-import image from '../assets/botanical.jpg'
+import image from '../assets/seeds-1.jpg'
 
 const SignUp = () => {
   const { register, isLoading, error, clearError } = useAuthStore()

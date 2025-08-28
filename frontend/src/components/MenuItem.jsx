@@ -18,7 +18,7 @@ const MenuItem = ({ text, linkTo, onClick, requiresAuth = false }) => {
 
   return (
     <NavLink
-      className='font-medium text-gray-700 p-2 hover:bg-hover rounded'
+      className='font-medium text-gray-700 p-2 hover:bg-hover rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-button'
       to={linkTo}
       onClick={handleClick}
     >

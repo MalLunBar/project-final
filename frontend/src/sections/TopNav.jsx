@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import FocusLock from "react-focus-lock"
 import { Squash as Hamburger } from 'hamburger-react'
 import { CircleUserRound, Moon, CirclePlus, Search } from 'lucide-react'
 import Menu from '../components/Menu'
@@ -35,19 +36,36 @@ const TopNav = () => {
     setIsOpen(false)        // stäng mobilenyn om den är öppen
   }
 
+  // useEffect to let user close mobile menu on Esc
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false)
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [isOpen])
+
 
   const menuItems = [
-    { id: 1, text: 'HEM', linkTo: '/' },
-    { id: 2, text: 'SÖK LOPPIS', linkTo: '/search' },
-    { id: 3, text: 'LÄGG TILL LOPPIS', linkTo: '/add', requiresAuth: true },
-    { id: 4, text: 'OM OSS', linkTo: '/about' },
-    { id: 5, text: 'KONTAKT', linkTo: '/contact' },
-    { id: 6, text: 'PROFIL', linkTo: '/profile', requiresAuth: true },
-
+    { id: 1, text: 'SÖK LOPPIS', linkTo: '/search' },
+    { id: 2, text: 'LÄGG TILL LOPPIS', linkTo: '/add', requiresAuth: true },
+    { id: 3, text: 'OM OSS', linkTo: '/about' },
+    { id: 4, text: 'KONTAKT', linkTo: '/contact' },
+    { id: 5, text: 'PROFIL', linkTo: '/profile', requiresAuth: true },
   ]
 
   return (
     <header className="sticky top-0 w-full left-0 z-1100 h-16 md:h-18 flex items-center bg-white border-b border-border shadow-sm">
+      {/* Skip link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only absolute top-2 left-2 bg-nav text-white p-4 rounded z-2000 cursor-pointer"
+      >
+        Hoppa till huvudinnehåll
+      </a>
+
       <nav
         className="w-full px-3 lg:px-4"
         aria-label="Main"
@@ -56,34 +74,39 @@ const TopNav = () => {
         {/* Mobile Navigation */}
         <div className='w-full lg:hidden'>
           {isOpen &&
-            <div
-              className='fixed right-0 top-0 w-[60%] max-w-70 h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
-              onClick={handleMenu}
-            >
+            <FocusLock returnFocus={true}>
+              <div
+                id="mobile-menu"
+                role="dialog"
+                aria-modal="true"
+                className='fixed right-0 top-0 w-[60%] max-w-70 h-full p-2 pt-20 bg-white border-r border-border shadow-sm  transition-transform duration-400 ease-in-out'
+                onClick={handleMenu}
+              >
 
-              <Menu type='mobile'>
-                {menuItems.map(item => (
-                  <li key={item.id} className='pb-4'>
-                    <MenuItem text={item.text} linkTo={item.linkTo} requiresAuth={item.requiresAuth} />
+                <Menu type='mobile'>
+                  {menuItems.map(item => (
+                    <li key={item.id} className='pb-4'>
+                      <MenuItem text={item.text} linkTo={item.linkTo} requiresAuth={item.requiresAuth} />
+                    </li>
+                  ))}
+
+                  <li className='pb-4'>
+                    <button
+                      type="button"
+                      className='font-medium text-gray-700 p-2 hover:bg-hover rounded-md block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-button'
+                      onClick={(e) => {
+                        e.stopPropagation()   // så klicket inte bubblar till panelens onClick
+                        handleAuthItem()      // din befintliga login/logout-hanterare
+                      }}
+                      aria-label={isLoggedIn ? 'Logga ut' : 'Logga in'}
+                    >
+                      {isLoggedIn ? 'LOGGA UT' : 'LOGGA IN'}
+                    </button>
                   </li>
-                ))}
+                </Menu>
 
-                <li className='pb-4'>
-                  <button
-                    type="button"
-                    className='font-medium text-gray-700 px-2 hover:bg-hover rounded block w-full text-left'
-                    onClick={(e) => {
-                      e.stopPropagation()   // så klicket inte bubblar till panelens onClick
-                      handleAuthItem()      // din befintliga login/logout-hanterare
-                    }}
-                    aria-label={isLoggedIn ? 'Logga ut' : 'Logga in'}
-                  >
-                    {isLoggedIn ? 'LOGGA UT' : 'LOGGA IN'}
-                  </button>
-                </li>
-              </Menu>
-
-            </div>
+              </div>
+            </FocusLock>
           }
 
           {/* Logo - only show when hamburger menu is closed? */}
@@ -113,11 +136,20 @@ const TopNav = () => {
                 requiresAuth />
             </div>
 
-            <Hamburger
-              className='mb-2'
-              toggled={isOpen}
-              size={30}
-              toggle={setIsOpen} label='Show menu' rounded />
+            <button
+              type="button"
+              aria-label={isOpen ? "Stäng meny" : "Öppna meny"}
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-button"
+            >
+              <Hamburger
+                toggled={isOpen}
+                size={30}
+                toggle={setIsOpen}
+                label='Menu'
+                rounded
+              />
+            </button>
 
           </div>
         </div>
@@ -136,7 +168,7 @@ const TopNav = () => {
             <li>
               <button
                 type="button"
-                className='font-medium text-gray-700 p-2 hover:bg-hover rounded block w-full text-left cursor-pointer'
+                className='font-medium text-gray-700 p-2 hover:bg-hover rounded-md block w-full text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-button'
                 onClick={(e) => {
                   e.stopPropagation()   // så klicket inte bubblar till panelens onClick
                   handleAuthItem()      // din befintliga login/logout-hanterare

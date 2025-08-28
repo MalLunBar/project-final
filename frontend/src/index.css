@@ -80,6 +80,8 @@
 }
 
 .active {
-  /* color: #799466; */
+  color: #4d633d;
   font-weight: 600;
+  border-bottom: 2px solid #4d633d;
+  border-radius: 0;
 }

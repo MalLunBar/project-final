@@ -47,6 +47,7 @@ const SignUp = () => {
 
   return (
     <main
+      id="main-content" tabIndex={-1}
       className="w-full min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover flex items-center px-2 py-6"
       style={{ backgroundImage: `url(${image})` }}>
       <section

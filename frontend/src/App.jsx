@@ -17,19 +17,20 @@ export const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path='/search' element={<Search />} />
-          <Route path='/loppis/:loppisId' element={<LoppisInfo />} />
+        <Route path="/" element={<Layout />} >
+          <Route index element={<Home />} title='Startsida' />
+          <Route path='/search' element={<Search />} title='Söksida' />
+          <Route path='/loppis/:loppisId' element={<LoppisInfo />} title='Loppissida' />
           <Route
             path='/profile'
             element={
               <ProtectedPage>
                 <Profile />
               </ProtectedPage>
-            } />
-          <Route 
-            path="/profile/:tab" 
+            }
+            title='Profilsida' />
+          <Route
+            path="/profile/:tab"
             element={
               <ProtectedPage>
                 <Profile />

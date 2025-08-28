@@ -10,7 +10,7 @@ const ProfileLayout = ({
 }) => {
 
   return (
-    <main
+    <main id="main-content" tabIndex={-1}
       className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover "
       style={{ backgroundImage: `url(${bgUrl})` }}>
 

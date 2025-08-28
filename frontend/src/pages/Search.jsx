@@ -142,7 +142,6 @@ const Search = () => {
   const updateMapCenter = async (city) => {
     try {
       setIsSearching(true)
-      // if city is entered - fly to that location on map
       const { lat, lon } = await geocodeCity(city)
       setMapCenter([parseFloat(lat), parseFloat(lon)])        // triggers MapView.flyTo via props
       setCenterBy('city')
@@ -159,7 +158,6 @@ const Search = () => {
     if (query.city) {
       // geocode new city
       updateMapCenter(query.city.trim())
-      setCenterBy('city')
     } else {
       if (centerBy !== "city") return // respect user override
       // reset to default

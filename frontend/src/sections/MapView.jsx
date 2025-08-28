@@ -83,8 +83,8 @@ const PopupCard = ({ loppis }) => {
 
 const MapView = ({
   loppisList,
-  center = [59.3293, 18.0686],
-  zoom = 11
+  center,
+  zoom
 }) => {
 
   // Create a Leaflet divIcon with Lucide SVG

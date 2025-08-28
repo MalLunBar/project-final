@@ -44,7 +44,7 @@ const AddLoppis = () => {
   }
 
   return (
-    <main className='py-6 px-4'>
+    <main id="main-content" tabIndex={-1} className='py-6 px-4'>
       <LoppisForm
         initialValues={blank}
         submitLabel='Lägg till loppis'

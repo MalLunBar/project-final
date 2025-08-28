@@ -48,6 +48,14 @@ const TopNav = () => {
 
   return (
     <header className="sticky top-0 w-full left-0 z-1100 h-16 md:h-18 flex items-center bg-white border-b border-border shadow-sm">
+      {/* Skip link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only absolute top-2 left-2 bg-nav text-white p-4 rounded z-2000 cursor-pointer"
+      >
+        Hoppa till huvudinnehåll
+      </a>
+
       <nav
         className="w-full px-3 lg:px-4"
         aria-label="Main"

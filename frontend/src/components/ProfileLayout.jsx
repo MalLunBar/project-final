@@ -14,7 +14,7 @@ const ProfileLayout = ({
     : ""
 
   return (
-    <main className="flex flex-col items-center w-screen min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)]">
+    <main id="main-content" tabIndex={-1} className="flex flex-col items-center w-screen min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)]">
       <section
         className={`bg-center bg-no-repeat bg-cover bg-white/0 bg-blend-screen min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] p-4 sm:p-6 md:p-8 lg:p-12 ${frameClasses}`}
         style={{ backgroundImage: `url(${bgUrl})` }}

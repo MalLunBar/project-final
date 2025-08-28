@@ -17,7 +17,7 @@ const AboutUs = () => {
   ]
 
   return (
-    <main className="min-h-screen bg-gradient-to-b bg-[#f5efe5]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-gradient-to-b bg-[#f5efe5]">
       <HeroSection heroImage={HeroImage} />
       <Divider />
       <StorySection />

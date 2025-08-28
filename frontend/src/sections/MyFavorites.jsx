@@ -20,6 +20,8 @@ const MyFavorites = () => {
 
   return (
     <section>
+      <h2 className='sr-only'>Mina favoriter</h2>
+
       {error && <p className="text-red-500">{error}</p>}
       <div className="flex flex-col gap-4">
         {!error && likedLoppisData?.length > 0 && (

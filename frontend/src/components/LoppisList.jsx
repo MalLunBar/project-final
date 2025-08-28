@@ -15,6 +15,8 @@ const LoppisList = ({
 
   const [isEditing, setIsEditing] = useState(false)
   const hasCards = Array.isArray(loppisList) && loppisList.length > 0
+  // används fför att knapparna inte ska vara fokuserbara när de är gömda
+  const isActionsVisible = variant === 'profile' && allowEditing && isEditing
 
   const listClass =
     variant === 'profile'
@@ -80,6 +82,8 @@ const LoppisList = ({
                     className="p-2 rounded-3xl bg-white opacity-75 hover:opacity-90 focus:outline-none"
                     aria-label="Redigera"
                     title="Redigera"
+                    disabled={!isActionsVisible || Boolean(deletingId)}
+                    tabIndex={isActionsVisible ? 0 : -1}
                   >
                     <PencilLine
                       size={30}
@@ -89,11 +93,12 @@ const LoppisList = ({
                   {/* Soptunna under */}
                   <button
                     onClick={() => onDeleteCard?.(loppis)}
-                    disabled={Boolean(deletingId)}             // disable ALLA när en är igång
                     aria-busy={deletingId === loppis._id}      // markera aktiv rad
                     className="p-2 rounded-3xl bg-white opacity-75 hover:opacity-90 focus:outline-none"
                     aria-label="Ta bort"
                     title="Ta bort"
+                    disabled={!isActionsVisible || Boolean(deletingId)}
+                    tabIndex={isActionsVisible ? 0 : -1}
                   >
 
                     {deletingId === loppis._id

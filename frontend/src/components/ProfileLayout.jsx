@@ -11,11 +11,11 @@ const ProfileLayout = ({
 
   return (
     <main
-      className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover"
+      className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover "
       style={{ backgroundImage: `url(${bgUrl})` }}>
 
       <section
-        className='mx-auto max-w-6xl px-4 sm:px-6 py-6'
+        className='mx-auto max-w-9xl px-6 py-8 md:py-12 md:px-8 md:mx-12'
 
       >
         <div className="mx-auto">

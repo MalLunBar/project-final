@@ -74,7 +74,7 @@ const Profile = () => {
     <ProfileLayout title={null} bgUrl={bgUrl}>
       <h1 className='font-bold text-2xl'>Profil</h1>
 
-      <div className="flex items-center gap-6 my-6">
+      <div className="flex items-center gap-6 md:gap-10 my-6">
         <img
           src={defaultImg}
           alt="Profilbild"
@@ -83,7 +83,7 @@ const Profile = () => {
         <p className="text-xl font-semibold">{user.firstName}</p>
       </div>
 
-      <div className="flex items-center justify-end mt-4 mb-6">
+      <div className="flex items-center justify-end my-6 md:my-10">
         <Link
           to="/add"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-button text-button-text shadow hover:bg-button-hover hover:to-button-text-hover"
@@ -93,12 +93,13 @@ const Profile = () => {
         </Link>
       </div>
 
-      <hr className="my-6 border-t border-gray-500" />
+      <hr className="my-6 md:my-10 border-t border-gray-500" />
 
+      
       <div 
-        className="flex flex-col gap-10" 
+        className="flex flex-col gap-8 md:gap-16" 
         aria-label="Profilval">
-        <div className="mt-6 flex flex-wrap gap-4">
+        <div className="mt-6 flex flex-wrap gap-4 md:gap-8 lg:gap-12 xl:gap-16">
         <CardLink to="/profile/loppisar" icon={Gem} label="Mina loppisar" />
         <CardLink to="/profile/favoriter" icon={Heart} label="Mina favoriter" />
         </div>

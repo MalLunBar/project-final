@@ -5,7 +5,8 @@ const LikeButton = ({ isLiked, onLike, className = '' }) => {
     <button
       type='button'
       onClick={onLike}
-      aria-label={isLiked ? "Unlike" : "Like"}
+      aria-label={isLiked ? "Ta bort från favoriter" : "Lägg till i favoriter"}
+      title={isLiked ? "Ta bort från favoriter" : "Lägg till i favoriter"}
       aria-pressed={isLiked}
       className={`
         ${className} 

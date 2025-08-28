@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
 import { useSearchParams } from "react-router-dom"
 import { Map, LocateFixed, List, Funnel, X } from "lucide-react"
+import FocusLock from "react-focus-lock"
 import useGeoStore from '../stores/useGeoStore'
 import SearchFilters from "../sections/SearchFilters"
 import ListView from "../sections/ListView"
@@ -9,6 +10,7 @@ import MapView from "../sections/MapView"
 import SearchBar from '../components/SearchBar'
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
+import NoResults from '../components/NoResults'
 import { getLoppisList } from '../services/loppisApi'
 import { geocodeCity } from '../services/geocodingApi'
 
@@ -201,25 +203,49 @@ const Search = () => {
   return (
     <main className='h-[calc(100vh-64px)] md:h-[calc(100vh-72px)]'>
       <div className='h-full relative lg:grid grid-cols-[2fr_6fr_4fr]'>
+        <h1 className="sr-only">Sök loppisar</h1>
 
         {/* Search filters */}
-        <aside className={`absolute lg:relative top-0 left-0 z-1050 h-full w-full max-w-sm p-4 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}>
-          {isMobile &&
-            <X
-              strokeWidth={3}
-              onClick={toggleShowFilters}
-              className='absolute right-5 cursor-pointer hover:text-accent'
+        <aside
+          id="filters-drawer"
+          role={isMobile ? "dialog" : undefined}
+          aria-modal={isMobile ? "true" : undefined}
+          aria-labelledby='filters-heading'
+          className={`absolute lg:relative top-0 left-0 z-1050 h-full w-full max-w-sm p-4 bg-white border-r border-border shadow-sm transition-transform duration-400 ${showFilters ? 'translate-x-0' : '-translate-x-full'}`}
+        >
+          {/* Mobile */}
+          {isMobile && showFilters && (
+            <FocusLock returnFocus>
+              <button
+                type="button"
+                onClick={toggleShowFilters}
+                className="absolute right-5 cursor-pointer hover:text-accent"
+                aria-label="Stäng filter"
+              >
+                <X strokeWidth={3} />
+              </button>
+
+              <SearchFilters
+                cityInput={cityInput}
+                setCityInput={setCityInput}
+                onSearch={handleSearch}
+              />
+            </FocusLock>
+          )}
+          {/* Desktop */}
+          {!isMobile &&
+            <SearchFilters
+              cityInput={cityInput}
+              setCityInput={setCityInput}
+              onSearch={handleSearch}
             />
           }
-          <SearchFilters
-            cityInput={cityInput}
-            setCityInput={setCityInput}
-            onSearch={handleSearch} />
+
         </aside>
 
         {/* Active filters + toggle buttons */}
         <div className={`
-          flex justify-between items-start py-2 gap-2 px-0.5 min-[340px]:px-2 sm:p-5 w-full
+          flex justify-between items-start gap-1 py-3 px-1 sm:p-5 w-full
           ${!isMobile ?
             "absolute top-0 left-[320px] z-1050 max-w-[430px] xl:max-w-xl 2xl:max-w-3xl"
             : view === 'map' ? 'absolute z-1040' : 'relative z-static'}
@@ -228,46 +254,46 @@ const Search = () => {
           <div className='flex flex-col gap-2'>
             {/* show search field if filters not open */}
             {(isMobile && !showFilters) &&
-              <form onSubmit={handleSearch}>
+              <form
+                onSubmit={handleSearch}
+              >
                 <SearchBar
                   value={cityInput}
                   setValue={(e) => setCityInput(e.target.value)} />
               </form>
             }
             {/* Active filters */}
-            <div className='flex gap-2 flex-wrap'>
+            <div role="group" aria-label="Active search filters" className='flex gap-2 flex-wrap'>
               {query.city &&
-                <FilterTag
-                  text={query.city}
-                  onClose={() => {
-                    setCityInput('')
-                    updateCity('')
-                  }} />
+                <FilterTag text={query.city} onClick={() => {
+                  setCityInput('')
+                  updateCity('')
+                }} />
               }
               {query.date !== "all" &&
                 <FilterTag
                   text={getDateLabel(query.date)}
-                  onClose={() => updateDate("all")} />
+                  onClick={() => updateDate("all")} />
               }
               {query.categories.map((category) => (
                 <FilterTag
                   key={category}
                   text={category}
-                  onClose={() => removeCategory(category)}
+                  onClick={() => removeCategory(category)}
                 />
               ))}
               {/* reset filters button */}
               {(query.date !== "all" || query.categories.length > 0 || query.city) && (
                 <FilterTag
                   text='Återställ filter'
-                  onClose={() => resetFilters()}
+                  onClick={() => resetFilters()}
                 />
               )}
             </div>
           </div>
 
           {/* Right side: Toggle buttons */}
-          <div className={`flex ${view === 'map' ? 'flex-col' : ''} items-end gap-1 sm:gap-2`}>
+          <div className={`flex flex-wrap ${view === 'map' ? 'flex-col' : ''} items-end gap-1 sm:gap-2`}>
             {(!isMobile || view === 'map') &&
               <Button
                 type="button"
@@ -294,6 +320,8 @@ const Search = () => {
                   active={true}
                   ariaLabel='Visa sökfilter'
                   onClick={toggleShowFilters}
+                  aria-expanded={showFilters}
+                  aria-controls="filters-drawer"
                 />
                 <Button
                   type='button'
@@ -311,12 +339,14 @@ const Search = () => {
         {/* Map */}
         {
           (view === 'map' || view === 'desktop') &&
-          <MapView
-            loppisList={loppisList}
-            center={effectiveCenter}
-            onRequestLocation={handleRequestLocation}
-            hasUserLocation={!!location}
-          />
+          <>
+            <MapView
+              loppisList={loppisList}
+              center={effectiveCenter}
+              onRequestLocation={handleRequestLocation}
+              hasUserLocation={!!location}
+            />
+          </>
         }
 
         {/* List */}
@@ -326,11 +356,9 @@ const Search = () => {
           />
         }
 
-        {/* Error message */}
+        {/* Error message - if empty list */}
         {((view === 'list' || view === 'desktop') && error) && (
-          <div className="p-6 text-center text-gray-500">
-            {error}
-          </div>
+          <NoResults title='Inga loppisar hittades' message={error} />
         )}
 
       </div >

@@ -7,7 +7,9 @@ const SmallMap = ({ coordinates }) => {
 
   // Create a Leaflet divIcon with Lucide SVG
   const markerIcon = L.divIcon({
-    html: ReactDOMServer.renderToString(<MapPin size={32} strokeWidth={1.5} fill='#fca742' />),
+    html: ReactDOMServer.renderToString(
+      <MapPin size={32} strokeWidth={1.5} fill='#fca742' />
+    ),
     className: "", // Remove default Leaflet styles
     iconSize: [32, 32],
     iconAnchor: [16, 16], // Adjust so the "point" is at the right place

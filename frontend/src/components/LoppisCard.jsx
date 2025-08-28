@@ -79,49 +79,9 @@ const LoppisCard = ({
   }
 
   return (
-    <article className='bg-white flex flex-col rounded-2xl shadow-xl'>
-      <div className='w-full aspect-[4/3]overflow-hidden rounded-2xl flex'>
-        <img
-          src={IMG.card(id)}
-          srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
-          alt={loppis.title}
-          className="w-full h-full object-cover object-center border-20 border-white rounded-2xl"
-          loading="lazy"
-        />
-      </div>
-
-      <div className='flex justify-between items-start px-4 pb-4'>
-
-        <div className='flex flex-col gap-2 pl-2'>
-          <div className='flex items-start justify-between gap-2'>
-            <Link to={`/loppis/${loppis._id}`}>
-              <h3 className='font-semibold text-base'>{loppis.title}</h3>
-            </Link>
-
-            <LikeButton onLike={likeLoppis} isLiked={isLiked} />
-          </div>
-          {/*if there are any categories, map them here*/}
-          <div className='flex flex-wrap'>
-            {loppis.categories.map((category, index) => (
-              <Tag
-                key={index}
-                text={category} />
-            ))}
-          </div>
-
-          <Details
-            icon={MapPinned}
-            text={address} />
-          <Details
-            icon={Clock}
-            text={dateString} />
-
-        </div>
-      </div>
-
-
-      <div className='absolute top-2 right-2 flex gap-2'>
-        {/* MAP: visa kryss som stänger popup */}
+    <article className='bg-white flex flex-col gap-3 justify-between p-5 rounded-2xl shadow-xl'>
+      {/* MAP: visa kryss som stänger popup */}
+      <div className='absolute top-2 right-2'>
         {variant === 'map' && (
           <button
             aria-label='Stäng'
@@ -130,11 +90,54 @@ const LoppisCard = ({
               e.stopPropagation()
               onClose?.()
             }}
-            className='p-1.5 rounded-md hover:bg-gray-50'
+            className='p-1.5 rounded-md cursor-pointer hover:bg-gray-50'
           >
-            <CircleX size={25} />
+            <CircleX size={25} fill={'white'} />
           </button>
         )}
+      </div>
+
+      <div className='w-full aspect-[4/3] overflow-hidden rounded-2xl bg-gray-100'>
+        {IMG.card(id) ? (
+          <img
+            src={IMG.card(id)}
+            srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
+            alt={`${loppis.title} cover image`}
+            className="w-full h-full object-cover object-center rounded-2xl"
+            loading="lazy"
+          />
+        ) : (
+          <div className='w-full h-full flex items-center justify-center text-gray-400'>
+            Ingen bild
+          </div>
+        )}
+      </div>
+
+
+      <div className='flex flex-col flex-1 justify-between w-full gap-2'>
+        <div className='flex items-start justify-between gap-2'>
+          <Link to={`/loppis/${loppis._id}`}>
+            <h3 className='font-semibold text-lg text-black hover:underline underline-offset-2'>{loppis.title}</h3>
+          </Link>
+
+          <LikeButton onLike={likeLoppis} isLiked={isLiked} />
+        </div>
+        {/*if there are any categories, map them here*/}
+        <div className='flex flex-wrap gap-y-1'>
+          {loppis.categories.map((category, index) => (
+            <Tag
+              key={index}
+              text={category} />
+          ))}
+        </div>
+        <div className='flex flex-col gap-1'>
+          <Details
+            icon={MapPinned}
+            text={address} />
+          <Details
+            icon={Clock}
+            text={dateString} />
+        </div>
 
       </div>
     </article>

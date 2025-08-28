@@ -68,11 +68,15 @@ const SearchFilters = ({ cityInput, setCityInput, onSearch }) => {
   }
 
   return (
-    <div
+    <section
       className='h-full w-full space-y-2 md:space-y-4'
-      aria-label='Search Filters'
     >
-      <h3 className='text-lg font-semibold'>Sökfilter</h3>
+      <h2
+        id='filters-heading'
+        className='text-xl font-semibold'
+      >
+        Sökfilter
+      </h2>
 
       <form
         className='flex flex-col gap-4 md:gap-6'
@@ -129,12 +133,11 @@ const SearchFilters = ({ cityInput, setCityInput, onSearch }) => {
         <Button
           text='Visa loppisar'
           type='submit'
-          ariaLabel='Sök efter loppis'
           onClick={onSearch}
         />
 
       </form>
-    </div>
+    </section>
   )
 }
 

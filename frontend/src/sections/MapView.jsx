@@ -71,11 +71,13 @@ function UserLocationLayer() {
 const PopupCard = ({ loppis }) => {
   const map = useMap()
   return (
-    <LoppisCard
-      loppis={loppis}
-      variant='map'
-      onClose={() => map.closePopup()}
-    />
+    <div role="dialog" aria-label="Loppis details" aria-live="polite">
+      <LoppisCard
+        loppis={loppis}
+        variant='map'
+        onClose={() => map.closePopup()}
+      />
+    </div>
   )
 }
 
@@ -87,7 +89,9 @@ const MapView = ({
 
   // Create a Leaflet divIcon with Lucide SVG
   const markerIcon = L.divIcon({
-    html: ReactDOMServer.renderToString(<MapPin size={32} fill='#FF8242' />),
+    html: ReactDOMServer.renderToString(
+      <MapPin size={32} strokeWidth={1.5} fill='#fca742' />
+    ),
     className: "", // Remove default Leaflet styles
     iconSize: [32, 32],
     iconAnchor: [16, 16], // Adjust so the "point" is at the right place
@@ -95,10 +99,14 @@ const MapView = ({
 
   return (
     <section className='h-full relative'>
+      <h2 className="sr-only">Sökresultat kartvy</h2>
       <MapContainer
         center={center}
         zoom={zoom}
         zoomControl={false} // stänger av default (som ligger uppe vänster)
+        role="region"
+        aria-label="Map showing loppis locations"
+        keyboard={false} // disables Leaflet's default keyboard navigation
         className='my-map h-full w-full'
       >
         <TileLayer
@@ -130,6 +138,9 @@ const MapView = ({
               position={[loppis.location.coordinates.coordinates[1], loppis.location.coordinates.coordinates[0]]}
               icon={markerIcon}
               title={loppis.title}
+              tabIndex={0}
+              aria-label={`${loppis.title} kartmarkör`}
+              keyboard={true} // allows marker to be focused
             >
               <Popup
                 className="my-popup"

@@ -116,13 +116,12 @@ const PopularCarousel = () => {
           className="flex justify-center mt-4 gap-2"
         >
           {loppisList.map((_, idx) => (
-            <button
+            <div
               key={idx}
               role="tab"
               aria-label={`Go to slide ${idx + 1}`}
               aria-current={currentSlide === idx ? "true" : undefined}
-              className={`w-2 h-2 rounded-full cursor-pointer ${currentSlide === idx ? "bg-button" : "bg-gray-300"}`}
-              onClick={() => slider.current?.moveToIdx(idx)}
+              className={`w-2 h-2 rounded-full ${currentSlide === idx ? "bg-button" : "bg-gray-300"}`}
             />
           ))}
         </div>

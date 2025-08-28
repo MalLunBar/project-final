@@ -7,7 +7,8 @@ const FilterOption = ({ type = 'checkbox', name, value, label, checked, onChange
                 ${checked
           ? "bg-light border-text"
           : "bg-white text-gray-700 border-border hover:bg-hover"
-        }`}
+        }
+        focus-within:[&:has(:focus-visible)]:ring-2 focus-within:[&:has(:focus-visible)]:ring-button focus-within:[&:has(:focus-visible)]:ring-offset-1`}
     >
       <input
         id={inputId}

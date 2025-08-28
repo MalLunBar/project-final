@@ -31,8 +31,12 @@ export const getLoppisList = async (params) => {
   const query = !params ? '' : `?${params}`
   const response = await fetch(`${url}${query}`)
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData?.message || 'Failed to fetch loppis data')
+    if (response.status === 404) {
+      throw new Error('Tyvärr, vi hittade inga loppisar som matchar din sökning. Testa att justera dina filter eller sök i en annan stad.')
+    } else {
+      const errorData = await response.json()
+      throw new Error(errorData?.message || 'Failed to fetch loppis data')
+    }
   }
   const data = await response.json()
   return data.response || { data: [], totalCount: 0, currentPage: 1, limit: 10 }

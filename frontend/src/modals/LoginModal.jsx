@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import FocusLock from "react-focus-lock"
 import { X } from 'lucide-react'
 import LoginForm from "../components/LoginForm"
 import useAuthStore from '../stores/useAuthStore'
@@ -10,6 +11,9 @@ const LoginModal = ({ onClose }) => {
   // Modal-meddelande
   const loginMessage = useModalStore(s => s.loginMessage)
 
+  // previously focused element before opening modal
+  const openerRef = useRef(null)
+
   // Auth store (välj fält separat)
   const login = useAuthStore(s => s.login)
   const isLoading = useAuthStore(s => s.isLoading)
@@ -18,11 +22,23 @@ const LoginModal = ({ onClose }) => {
 
   const [localError, setLocalError] = useState(null)
 
-  // clear error when component mounts
+  // clear error and move focus when component mounts
   useEffect(() => {
     setLocalError(null)
     clearAuthError?.()
+    // save the previously focused element before opening modal
+    openerRef.current = document.activeElement
+    // move focus to form
+    const focus = document.getElementById("login-form")
+    if (focus) {
+      focus.focus()
+    }
   }, [])
+
+  const handleClose = () => {
+    openerRef.current?.focus() // return focus to the button that opened the modal
+    onClose()
+  }
 
 
   const handleLogin = async (email, password) => {
@@ -38,7 +54,7 @@ const LoginModal = ({ onClose }) => {
       // call login function from auth store
       await login({ email, password })
       // close modal
-      onClose()
+      handleClose()
     } catch (e) {
       setLocalError('Fel e-post eller lösenord.')
     }
@@ -58,48 +74,50 @@ const LoginModal = ({ onClose }) => {
         onClick={onClose}
       />
       {/* Modal box */}
-      <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl p-10 w-full max-w-md z-10">
-        {/* Modal title */}
-        <h2 className='text-xl font-semibold'>Logga in</h2>
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-5 cursor-pointer text-gray-500 hover:text-black"
-        >
-          <X />
-        </button>
-
-        {/* Show optional message */}
-        {loginMessage && (
-          <div className="-my-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
-            {loginMessage}
-          </div>
-        )}
-
-        {displayErrorText && (
-          <ErrorBanner onClose={() => {
-            setLocalError(null)
-            clearAuthError?.()
-          }}>
-            {displayErrorText}
-          </ErrorBanner>
-        )}
-
-        {/* Login form */}
-        <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
-
-        {/* Link to signup page */}
-        <span className='flex self-center gap-2 text-sm text-gray-600'>
-          <p>Har du inget konto? </p>
-          <Link
-            to='/signup'
-            className='text-accent hover:underline'
-            onClick={onClose}
+      <FocusLock>
+        <div className="relative flex flex-col gap-10 bg-white rounded-xl shadow-xl p-10 w-full max-w-md z-10">
+          {/* Modal title */}
+          <h2 className='text-xl font-semibold'>Logga in</h2>
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute top-4 right-5 cursor-pointer text-gray-500 hover:text-black"
           >
-            Registrera dig här
-          </Link>
-        </span>
-      </div>
+            <X />
+          </button>
+
+          {/* Show optional message */}
+          {loginMessage && (
+            <div className="-my-4 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm">
+              {loginMessage}
+            </div>
+          )}
+
+          {displayErrorText && (
+            <ErrorBanner onClose={() => {
+              setLocalError(null)
+              clearAuthError?.()
+            }}>
+              {displayErrorText}
+            </ErrorBanner>
+          )}
+
+          {/* Login form */}
+          <LoginForm id="login-form" onSubmit={handleLogin} isLoading={isLoading} />
+
+          {/* Link to signup page */}
+          <span className='flex self-center gap-2 text-sm text-gray-600'>
+            <p>Har du inget konto? </p>
+            <Link
+              to='/signup'
+              className='text-accent hover:underline'
+              onClick={handleClose}
+            >
+              Registrera dig här
+            </Link>
+          </span>
+        </div>
+      </FocusLock>
     </div>
   )
 }

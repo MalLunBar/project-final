@@ -8,9 +8,6 @@ import SignUp from './pages/SignUp'
 import AddLoppis from './pages/AddLoppis'
 import NotFound from './pages/NotFound'
 import AboutUs from './pages/AboutUs'
-import TopNav from './sections/TopNav'
-import LoginModal from './modals/LoginModal'
-import useModalStore from './stores/useModalStore'
 import ProtectedPage from './pages/ProtectedPage'
 
 export const App = () => {

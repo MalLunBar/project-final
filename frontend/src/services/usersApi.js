@@ -1,5 +1,3 @@
-// const API_URL = 'http://localhost:8080/users' // local development URL
-// const API_URL = 'https://runthornet-api.onrender.com/users'
 const API_URL = import.meta.env.VITE_API_URL
 const url = `${API_URL}/users`
 

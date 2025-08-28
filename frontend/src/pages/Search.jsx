@@ -27,8 +27,10 @@ const Search = () => {
   const [loppisList, setLoppisList] = useState([])
 
   // map states
-  const [mapCenter, setMapCenter] = useState([59.3293, 18.0686]) // default Stockholm
-  // Vem ska styra kartans center? 'city' eller 'user'
+  const centerDefault = [58.5, 15.0] // mid Sweden
+  const zoomDefault = (6) // default show southern/mid Sweden
+  const [mapCenter, setMapCenter] = useState(centerDefault)
+  const [zoom, SetZoom] = useState(zoomDefault)
   const [centerBy, setCenterBy] = useState('city')
   // Geo store
   const location = useGeoStore(s => s.location)
@@ -140,10 +142,10 @@ const Search = () => {
   const updateMapCenter = async (city) => {
     try {
       setIsSearching(true)
-      // if city is entered - fly to that location on map
       const { lat, lon } = await geocodeCity(city)
       setMapCenter([parseFloat(lat), parseFloat(lon)])        // triggers MapView.flyTo via props
       setCenterBy('city')
+      SetZoom(12)
     } catch (err) {
       setError(err.message || "Kunde inte hitta platsen")
     } finally {
@@ -153,14 +155,14 @@ const Search = () => {
 
   // useEffect to update map center from search params
   useEffect(() => {
-    if (centerBy !== "city") return // respect user override
-
     if (query.city) {
       // geocode new city
       updateMapCenter(query.city.trim())
     } else {
-      // reset to default (Stockholm)
-      setMapCenter([59.3293, 18.0686])
+      if (centerBy !== "city") return // respect user override
+      // reset to default
+      setMapCenter(centerDefault)
+      SetZoom(zoomDefault)
     }
   }, [query.city, centerBy])
 
@@ -197,6 +199,7 @@ const Search = () => {
   const handleRequestLocation = async () => {
     await requestLocation()
     setCenterBy('user') // börja styra av användarens position
+    SetZoom(14)
   }
 
 
@@ -343,6 +346,7 @@ const Search = () => {
             <MapView
               loppisList={loppisList}
               center={effectiveCenter}
+              zoom={zoom}
               onRequestLocation={handleRequestLocation}
               hasUserLocation={!!location}
             />

@@ -227,7 +227,7 @@ const LoppisForm = ({
   )
 
   return (
-    <section className='bg-white/90 backdrop-blur md:my-8 md:rounded-2xl xl:rounded-3xl mx-auto sm:max-w-sm md:max-w-xl lg:max-w-4xl xl:max-w-6xl xl:mt-20 px-4 sm:px-6 py-10 md:px-18 lg:px-8 lg:py-6 lg:my-4 xl:px-20 xl:py-10 shadow-lg'>
+    <section className='bg-white/90 backdrop-blur my-4 md:my-8 rounded-2xl xl:rounded-3xl mx-auto md:max-w-xl lg:max-w-4xl xl:max-w-6xl xl:mt-20 px-4 sm:px-6 py-10 md:px-18 lg:px-8 lg:py-6 lg:my-4 xl:px-20 xl:py-10 shadow-lg'>
       <h2 className='text-xl font-semibold mb-6'>{title}</h2>
 
       <form className='flex flex-col gap-4 divide-y divide-border' onSubmit={handleSubmit}>
@@ -323,7 +323,7 @@ const LoppisForm = ({
               <legend className='font-semibold text-lg pb-2'>Datum & Tider</legend>
 
               {dates.map((date, index) => (
-                <div key={index} className='flex gap-2 flex-col md:flex-row md:items-center lg:flex-col lg:items-start'>
+                <div key={index} className='flex gap-2 flex-col md:flex-row md:items-start md:justify-between lg:flex-col lg:items-start'>
                   <Input
                     label='Datum'
                     type='date'
@@ -334,7 +334,7 @@ const LoppisForm = ({
                     showLabel={false}
                     required
                   />
-                  <div className='lg:flex gap-2'>
+                  <div className='flex flex-col gap-2 '>
                     <Input
                       label='Starttid'
                       type='time'

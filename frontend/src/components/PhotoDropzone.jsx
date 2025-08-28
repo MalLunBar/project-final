@@ -2,29 +2,26 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { ImagePlus, Trash2, Star, StarOff } from 'lucide-react'
 
-/**
- * initialFiles: (File[] | string[])  // blandning går bra
- * onChange?: ({ items, removedExistingUrls }) => void
- *   - items: Array<{ kind: 'existing' | 'new', url?: string, file?: File }>
- *   - removedExistingUrls: string[]
- */
 
 
-// helpers/cloudinary.js (eller högst upp i PhotoDropzone.jsx)
+// extrct publicId från Cloudinary-url
 const extractPublicId = (url) => {
   try {
     const u = new URL(url)
+     // parse URL into parts
     // Ex: /image/upload/c_fill,w_300/v16912345/folder/name_abc.jpg
-    const path = u.pathname
+    const path = u.pathname // get only the path part 
     const i = path.indexOf('/upload/')
     if (i === -1) return null
-    let rest = path.slice(i + '/upload/'.length) // c_fill.../v169.../folder/name.jpg
-    const vMatch = rest.match(/\/v\d+\//)        // hoppa förbi transformationer till version
-    if (vMatch) rest = rest.slice(vMatch.index + vMatch[0].length) // folder/name.jpg
-    return rest.replace(/\.[a-z0-9]+$/i, '')     // ta bort .jpg/.png
+    let rest = path.slice(i + '/upload/'.length) 
+    const vMatch = rest.match(/\/v\d+\//)       
+    if (vMatch) rest = rest.slice(vMatch.index + vMatch[0].length) 
+    return rest.replace(/\.[a-z0-9]+$/i, '')    
   } catch { return null }
 }
 
+// props:
+// initialFiles: array av url:er (strings) och/eller File-objekt
 const PhotoDropzone = ({
   initialFiles = [],
   maxFiles = 6,
@@ -32,22 +29,22 @@ const PhotoDropzone = ({
   onChange,
   inputId = 'file-input',
   ariaLabelledBy,
-  ariaLabel, // fallback om ingen labelledBy finns
+  ariaLabel, // fallback if ariaLabelledBy is missing
 
 }) => {
 
   const [items, setItems] = useState([]) // [{kind:'existing'|'new', url?, file?}]
   const [removedExistingPublicIds, setRemovedExistingPublicIds] = useState([])
 
-  // initiera från props
-
+  
+  // initiera items from initialFiles
   useEffect(() => {
     const init = []
     for (const f of initialFiles) {
       if (typeof f === 'string') {
         init.push({ kind: 'existing', url: f, publicId: extractPublicId(f) })
       } else if (f && typeof f === 'object') {
-        // Tillåt { url, publicId } från backend
+       
         if ('url' in f || 'publicId' in f) {
           init.push({ kind: 'existing', url: f.url, publicId: f.publicId ?? extractPublicId(f.url) })
         } else if (f instanceof File) {
@@ -59,7 +56,7 @@ const PhotoDropzone = ({
     setRemovedExistingPublicIds([])
   }, [initialFiles])
 
-  // rapportera uppåt
+  // notify parent on changes
   useEffect(() => {
     onChange?.({ items, removedExistingPublicIds })
   }, [items, removedExistingPublicIds, onChange])
@@ -70,7 +67,7 @@ const PhotoDropzone = ({
   }), [])
 
 
-
+  // dropzone hook
   const onDrop = useCallback((accepted, rejects) => {
     rejects.forEach(r => r.errors.forEach(err => {
       console.warn(`Rejected ${r.file.name}: ${err.code} ${err.message}`)
@@ -84,7 +81,7 @@ const PhotoDropzone = ({
     })
   }, [maxFiles])
 
-
+  // useDropzone hook
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept,
@@ -92,7 +89,7 @@ const PhotoDropzone = ({
     multiple: true
   })
 
-
+  // a11y props
   const rootProps = getRootProps({
     role: 'button',
     ...(ariaLabelledBy
@@ -101,6 +98,7 @@ const PhotoDropzone = ({
 
   })
 
+ // input props
   const inputProps = getInputProps({
     id: inputId,
     ...(ariaLabelledBy
@@ -110,7 +108,7 @@ const PhotoDropzone = ({
   })
 
 
-  // helpers
+  // helper to make an item the cover (first)
   const makeCover = (idx) => {
     setItems(prev => {
       if (idx <= 0 || idx >= prev.length) return prev
@@ -121,7 +119,7 @@ const PhotoDropzone = ({
     })
   }
 
-
+  // helper to remove an item at index
   const removeAt = (idx) => {
     setItems(prev => {
       const copy = [...prev]

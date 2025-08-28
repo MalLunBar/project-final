@@ -30,6 +30,10 @@ const PhotoDropzone = ({
   maxFiles = 6,
   maxSizeMB = 5,
   onChange,
+  inputId = 'file-input',
+  ariaLabelledBy,
+  ariaLabel, // fallback om ingen labelledBy finns
+
 }) => {
 
   const [items, setItems] = useState([]) // [{kind:'existing'|'new', url?, file?}]
@@ -88,6 +92,24 @@ const PhotoDropzone = ({
     multiple: true
   })
 
+
+  const rootProps = getRootProps({
+    role: 'button',
+    ...(ariaLabelledBy
+      ? { 'aria-labelledby': ariaLabelledBy }
+      : { 'aria-label': ariaLabel || 'Ladda upp bilder' }),
+
+  })
+
+  const inputProps = getInputProps({
+    id: inputId,
+    ...(ariaLabelledBy
+      ? { 'aria-labelledby': ariaLabelledBy }
+      : { 'aria-label': ariaLabel || 'Ladda upp bilder' }),
+
+  })
+
+
   // helpers
   const makeCover = (idx) => {
     setItems(prev => {
@@ -99,16 +121,17 @@ const PhotoDropzone = ({
     })
   }
 
+
   const removeAt = (idx) => {
-  setItems(prev => {
-    const copy = [...prev]
-    const [removed] = copy.splice(idx, 1)
-    if (removed?.kind === 'existing' && removed.publicId) {
-      setRemovedExistingPublicIds(prevIds => [...prevIds, removed.publicId])
-    }
-    return copy
-  })
-}
+    setItems(prev => {
+      const copy = [...prev]
+      const [removed] = copy.splice(idx, 1)
+      if (removed?.kind === 'existing' && removed.publicId) {
+        setRemovedExistingPublicIds(prevIds => [...prevIds, removed.publicId])
+      }
+      return copy
+    })
+  }
 
   // Render
   const hasAny = items.length > 0
@@ -116,16 +139,16 @@ const PhotoDropzone = ({
   return (
     <div className="flex flex-col gap-3">
       <div
-        {...getRootProps()}
+        {...rootProps}
         className={[
           'flex flex-col items-center justify-center gap-3 px-4 py-10 rounded-xl border-2 border-dashed transition',
           isDragActive ? 'border-accent bg-accent/10' : 'border-border bg-muted/30',
           'cursor-pointer'
         ].join(' ')}
       >
-        <input {...getInputProps()} />
-        <ImagePlus className="w-10 h-10 opacity-70" />
-        <div className="text-center">
+        <input {...inputProps} className="sr-only" />
+        <ImagePlus className="w-10 h-10 opacity-70" aria-hidden="true" />
+        <div className="text-center" aria-hidden="true">
           <p className="font-medium">Dra & släpp bilder här, eller klicka för att välja</p>
           <p className="text-sm text-muted-foreground">
             Max {maxFiles} bilder • Upp till {maxSizeMB}MB per bild

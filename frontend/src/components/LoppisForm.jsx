@@ -238,14 +238,17 @@ const LoppisForm = ({
 
             {/* Foto-dropzone */}
             <fieldset className='flex p-2 flex-col gap-4 pb-6'>
-              <legend className='font-semibold text-lg pb-2'>Bilder</legend>
+              <legend
+                className='font-semibold text-lg pb-2'
+                id="photos-legend">Bilder</legend>
               <div className='flex py-8 w-full border-2 border-border rounded-xl flex-col items-center justify-center gap-4'>
                 <PhotoDropzone
                   key={initKey}
                   initialFiles={initialFilesForDropzone}
                   maxFiles={6}
                   maxSizeMB={5}
-                  onChange={setMedia}  /* <-- viktig! */
+                  onChange={setMedia}
+                  ariaLabelledBy="photos-legend"
                 />
               </div>
             </fieldset>

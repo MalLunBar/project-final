@@ -74,6 +74,7 @@ const Profile = () => {
     <ProfileLayout title={null} bgUrl={bgUrl}>
       <h1 className='font-bold text-2xl'>Profil</h1>
 
+
       <div className="flex items-center gap-6 md:gap-10 my-6">
         <img
           src={defaultImg}
@@ -95,13 +96,14 @@ const Profile = () => {
 
       <hr className="my-6 md:my-10 border-t border-gray-500" />
 
-      
-      <div 
-        className="flex flex-col gap-8 md:gap-16" 
+
+      <div
+        className="flex flex-col gap-8 md:gap-16"
         aria-label="Profilval">
+        <h2 className='sr-only'>Profilval</h2>
         <div className="mt-6 flex flex-wrap gap-4 md:gap-8 lg:gap-12 xl:gap-16">
-        <CardLink to="/profile/loppisar" icon={Gem} label="Mina loppisar" />
-        <CardLink to="/profile/favoriter" icon={Heart} label="Mina favoriter" />
+          <CardLink to="/profile/loppisar" icon={Gem} label="Mina loppisar" />
+          <CardLink to="/profile/favoriter" icon={Heart} label="Mina favoriter" />
         </div>
 
         <div className="flex flex-1 justify-end">

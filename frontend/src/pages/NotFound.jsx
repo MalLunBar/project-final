@@ -9,6 +9,8 @@ const NotFound = () => {
   }, [])
 
 
+  const colorStyles = 'bg-white border-2 border-button text-button-text hover:bg-button-hover hover:text-button-text-hover rounded-4xl px-6 py-3 font-semibold shadow-md hover:shadow-xl'
+
 
   return (
     <main id="main-content" tabIndex={-1} className="h-[calc(100vh-64px)] md:h-[calc(100vh-72px)] w-full grid place-items-center px-4 py-16 bg-zinc-50">
@@ -29,21 +31,21 @@ const NotFound = () => {
         <div className="mt-10 flex flex-col items-center gap-4">
           <NavLink
             to="/"
-            className="inline-block rounded-full bg-white text-orange-500 font-semibold px-8 py-3 shadow hover:shadow-md hover:scale-[1.02] transition"
+            className={colorStyles}
           >
             Till startsidan
           </NavLink>
 
           <NavLink
             to="/search"
-            className="inline-block rounded-full bg-white text-orange-500 font-semibold px-8 py-3 shadow hover:shadow-md hover:scale-[1.02] transition"
+            className={colorStyles}
           >
             Upptäck på kartan
           </NavLink>
 
           <NavLink
             to="/add"
-            className="inline-block rounded-full bg-white text-orange-500 font-semibold px-8 py-3 shadow hover:shadow-md hover:scale-[1.02] transition"
+            className={colorStyles}
           >
             Skapa Loppis
           </NavLink>

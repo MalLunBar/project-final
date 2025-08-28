@@ -28,13 +28,13 @@ const HeroAbout = ({ heroImage, title = 'Runt hörnet - loppis nära dig', lead 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <Link
                 to="/search"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-orange-500 text-white shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                className="flex justify-center items-center gap-2 rounded-full shadow-md hover:shadow-lg font-medium transition py-2 px-4 cursor-pointer bg-button text-button-text hover:bg-button-hover hover:text-button-text-hover"
               >
 
                 Upptäck loppisar
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              
+
             </div>
           </div>
         </div>

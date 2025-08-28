@@ -1,6 +1,6 @@
 const Step = ({ n, children }) => (
   <div className="flex items-start gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
-    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-teal-700 text-white text-xs font-bold">{n}</div>
+    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-nav text-white text-xs font-bold">{n}</div>
     <p className="text-sm text-zinc-700">{children}</p>
   </div>
 )

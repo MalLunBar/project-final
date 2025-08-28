@@ -15,13 +15,13 @@ const Cta = () => {
           <div className="flex flex-wrap gap-3">
             <NavLink
               to="/map"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-orange-500 font-semibold px-8 py-3 shadow hover:shadow-md hover:scale-[1.02] transition"
+              className="flex justify-center items-center gap-2 rounded-full shadow-md hover:shadow-lg font-medium transition py-2 px-4 cursor-pointer bg-white border-2 border-button text-button-text hover:bg-button-hover hover:text-button-text-hover"
             >
               Hitta loppisar nära dig <ArrowRight className="w-4 h-4" />
             </NavLink>
             <NavLink
               to="/add"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-white text-orange-500 font-semibold px-8 py-3 shadow hover:shadow-md hover:scale-[1.02] transition"
+              className="flex justify-center items-center gap-2 rounded-full shadow-md hover:shadow-lg font-medium transition py-2 px-4 cursor-pointer bg-white border-2 border-button text-button-text hover:bg-button-hover hover:text-button-text-hover"
             >
               Skapa en annons
             </NavLink>

@@ -7,9 +7,10 @@ A full-stack web application where users can discover and create flea markets (�
 We wanted to make it easier for people to find and share local flea markets in a simple and user-friendly way. To achieve this, we built a responsive web app with the following approach:  
 
 - **Planning:** We started by breaking down the project into core features, user registration & login, map integration, creating new flea markets, and browsing events. We also created a design in figma and a flowchart.  
+
 - **Frontend:** Built with React, Tailwind CSS, React Router, Zustand, and Leaflet for interactive maps. We also used libraries for e.g. keen-slider, react focus lock and then lucide for icons.     
 
-- **Backend:** Node.js with Express, MongoDB (Atlas) for data storage, and Cloudinary for image handling. Also other libraries like multer to be able to handle formdata submittion with different file formats.  
+- **Backend:** Node.js with Express, MongoDB (Atlas) for data storage, Nominatim API for Open Source Street Map and Cloudinary for image handling. Also other libraries like multer to be able to handle formdata submittion with different file formats.  
 
 - **Techniques:** We focused on reusable components, clean state management with hooks, and a mobile-first design.  
 
@@ -21,7 +22,10 @@ With more time, we would like to:
 - Let users click “add to calendar” so their calendar app opens with the flea market details pre-filled.  
 - Improve the user experience with more transitions and animations.  
 - Implement a global error handler to manage larger issues such as network failures.  
-  
+
+# Credits
+
+- [Bianca Van Dijk](https://pixabay.com/users/biancavandijk-9606149/) – images from Pixabay
 
 ## View it live
 

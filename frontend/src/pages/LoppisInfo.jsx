@@ -104,7 +104,7 @@ const LoppisInfo = () => {
     <main className='min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover'
       style={{ backgroundImage: `url(${background})` }}>
       <section className='mx-auto max-w-6xl sm:px-6 sm:py-10'>
-        <div className='flex flex-col gap-6 lg:gap-8 bg-white sm:rounded-3xl shadow-xl border border-zinc-200 p-4 pb-8 md:px-10 md:pt-8 lg:px-14 lg:pb-10 xl:px-20'>
+        <div className='flex flex-col gap-6 lg:gap-8 bg-white sm:bg-white/90 backdrop-blur sm:rounded-3xl shadow-xl border border-zinc-200 p-4 pb-8 md:px-10 md:pt-8 lg:px-14 lg:pb-10 xl:px-20'>
           {/* Back button and like button */}
           <div className='flex items-center justify-between -mb-2'>
             <button

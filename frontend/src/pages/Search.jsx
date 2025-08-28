@@ -27,8 +27,10 @@ const Search = () => {
   const [loppisList, setLoppisList] = useState([])
 
   // map states
-  const [mapCenter, setMapCenter] = useState([59.5, 15.0]) // default mid Sweden
-  const [zoom, SetZoom] = useState(6.5) // default show southern/mid Sweden
+  const centerDefault = [58.5, 15.0] // mid Sweden
+  const zoomDefault = (6) // default show southern/mid Sweden
+  const [mapCenter, setMapCenter] = useState(centerDefault)
+  const [zoom, SetZoom] = useState(zoomDefault)
   const [centerBy, setCenterBy] = useState('city')
   // Geo store
   const location = useGeoStore(s => s.location)
@@ -161,8 +163,8 @@ const Search = () => {
     } else {
       if (centerBy !== "city") return // respect user override
       // reset to default
-      setMapCenter([59.0, 15.0])
-      SetZoom(6.5)
+      setMapCenter(centerDefault)
+      SetZoom(zoomDefault)
     }
   }, [query.city, centerBy])
 

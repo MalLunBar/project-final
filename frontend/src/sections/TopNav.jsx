@@ -49,12 +49,11 @@ const TopNav = () => {
 
 
   const menuItems = [
-    { id: 1, text: 'HEM', linkTo: '/' },
-    { id: 2, text: 'SÖK LOPPIS', linkTo: '/search' },
-    { id: 3, text: 'LÄGG TILL LOPPIS', linkTo: '/add', requiresAuth: true },
-    { id: 4, text: 'OM OSS', linkTo: '/about' },
-    { id: 5, text: 'KONTAKT', linkTo: '/contact' },
-    { id: 6, text: 'PROFIL', linkTo: '/profile', requiresAuth: true },
+    { id: 1, text: 'SÖK LOPPIS', linkTo: '/search' },
+    { id: 2, text: 'LÄGG TILL LOPPIS', linkTo: '/add', requiresAuth: true },
+    { id: 3, text: 'OM OSS', linkTo: '/about' },
+    { id: 4, text: 'KONTAKT', linkTo: '/contact' },
+    { id: 5, text: 'PROFIL', linkTo: '/profile', requiresAuth: true },
   ]
 
   return (

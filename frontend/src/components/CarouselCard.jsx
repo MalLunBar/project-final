@@ -36,13 +36,19 @@ const CarouselCard = ({ loppis, index, total }) => {
     >
       <div className='relative w-full aspect-[4/3]'>
         <Link to={`/loppis/${loppis._id}`}>
-          <img
-            src={IMG.card(id)}
-            srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
-            alt={loppis.title}
-            className='w-full h-full object-cover transition-transform duration-300 hover:scale-105'
-            loading='lazy'
-          />
+          {IMG.card(id) ? (
+            <img
+              src={IMG.card(id)}
+              srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
+              alt={loppis.title}
+              className='w-full h-full object-cover transition-transform duration-300 hover:scale-105'
+              loading='lazy'
+            />
+          ) : (
+            <div className='w-full h-full flex items-center justify-center bg-gray-100 text-gray-400'>
+              Ingen bild
+            </div>
+          )}
         </Link>
         <LikeButton className='absolute right-2 top-2' onLike={likeLoppis} isLiked={isLiked} />
       </div>

@@ -131,7 +131,9 @@ const LoppisInfo = () => {
                 loading="eager"
               />
             ) : (
-              <div className="w-full h-64 md:h-96 rounded-2xl bg-gray-200" />
+              <div className="w-full h-64 md:h-96 rounded-2xl flex items-center justify-center bg-gray-100 text-gray-400" >
+                Ingen bild
+              </div>
             )}
 
             {/* GALLERI (NYTT) */}

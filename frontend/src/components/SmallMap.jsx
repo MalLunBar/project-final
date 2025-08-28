@@ -7,7 +7,7 @@ const SmallMap = ({ coordinates }) => {
 
   // Create a Leaflet divIcon with Lucide SVG
   const markerIcon = L.divIcon({
-    html: ReactDOMServer.renderToString(<MapPin size={32} fill='#FF8242' />),
+    html: ReactDOMServer.renderToString(<MapPin size={32} strokeWidth={1.5} fill='#fca742' />),
     className: "", // Remove default Leaflet styles
     iconSize: [32, 32],
     iconAnchor: [16, 16], // Adjust so the "point" is at the right place
@@ -22,7 +22,11 @@ const SmallMap = ({ coordinates }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <Marker position={coordinates} icon={markerIcon} />
+      <Marker
+        position={coordinates}
+        icon={markerIcon}
+        title='Loppis location'
+      />
     </MapContainer>
   )
 }

@@ -101,146 +101,149 @@ const LoppisInfo = () => {
   }
 
   return (
-    <main className='flex min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover md:py-8'
+    <main className='min-h-[calc(100vh-64px) md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover'
       style={{ backgroundImage: `url(${background})` }}>
-      <section className='flex flex-col gap-6 lg:gap-8 w-full md:w-7/8 lg:w-5/6 max-w-5xl bg-white md:rounded-3xl shadow-xl mx-auto my-auto p-4 pb-8 md:px-10 md:pt-8 lg:px-14 lg:pb-10 xl:px-20'>
+      <section className='mx-auto max-w-6xl sm:px-6 sm:py-10'>
+        <div className='flex flex-col gap-6 lg:gap-8 bg-white sm:rounded-3xl shadow-xl border border-zinc-200 p-4 pb-8 md:px-10 md:pt-8 lg:px-14 lg:pb-10 xl:px-20'>
+          {/* Back button and like button */}
+          <div className='flex items-center justify-between -mb-2'>
+            <button
+              onClick={handleBack}
+              className="group inline-flex items-center gap-1 text-sm cursor-pointer hover:underline underline-offset-2"
+            >
+              <ChevronLeft size={14} className="transition-transform duration-200 group-hover:-translate-x-1" />
+              Tillbaka
+            </button>
 
-        {/* Back button and like button */}
-        <div className='flex items-center justify-between -mb-2'>
-          <button
-            onClick={handleBack}
-            className="inline-flex items-center gap-1 text-sm cursor-pointer hover:underline"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Tillbaka
-          </button>
+            <LikeButton onLike={() => handleLike(false)} isLiked={isLiked} />
+          </div>
 
-          <LikeButton onLike={() => handleLike(false)} isLiked={isLiked} />
-        </div>
+          {/* Bilder */}
+          <div className='flex flex-col md:flex-row gap-2'>
+            {/* HERO-BILD (NYTT) */}
+            {coverId ? (
+              <img
+                src={IMG.heroSm(coverId)}
+                srcSet={`${IMG.hero(coverId)} 1200w, ${IMG.heroLg(coverId)} 1600w`}
+                sizes="(max-width: 768px) 92vw, (max-width: 1024px) 85vw, 1200px"
+                alt={loppis.title}
+                className="w-full h-52 md:h-96 object-cover rounded-2xl"
+                loading="eager"
+              />
+            ) : (
+              <div className="w-full h-64 md:h-96 rounded-2xl bg-gray-200" />
+            )}
 
-        {/* Bilder */}
-        <div className='flex flex-col md:flex-row gap-2'>
-          {/* HERO-BILD (NYTT) */}
-          {coverId ? (
-            <img
-              src={IMG.heroSm(coverId)}
-              srcSet={`${IMG.hero(coverId)} 1200w, ${IMG.heroLg(coverId)} 1600w`}
-              sizes="(max-width: 768px) 92vw, (max-width: 1024px) 85vw, 1200px"
-              alt={loppis.title}
-              className="w-full h-52 md:h-96 object-cover rounded-2xl"
-              loading="eager"
-            />
-          ) : (
-            <div className="w-full h-64 md:h-96 rounded-2xl bg-gray-200" />
-          )}
-
-          {/* GALLERI (NYTT) */}
-          {gallery.length > 0 && (
-            <div className="flex md:flex-col md:w-1/3 flex-wrap gap-2">
-              {gallery.map((image, index) => (
-                <img
-                  key={index}
-                  src={IMG.thumb(image)}
-                  srcSet={`${IMG.thumb2x(image)} 480w`}
-                  sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 240px"
-                  alt={`Galleri bild ${index + 1}`}
-                  className="md:w-full h-24 md:h-1/3 object-cover rounded-lg"
-                  loading="lazy"
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Titel, plats och kategorier */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold">{loppis.title}</h1>
-              <p className="text-sm text-muted-foreground">{loppis.location?.address?.city}</p>
-            </div>
-            {/* If user has granted location - show distance to loppis */}
-            {distance && (
-              <div className="flex items-center gap-1 mt-1">
-                <Navigation size={18} fill="#FF8242" stroke="#FF8242" />
-                <p>
-                  {distance < 1
-                    ? `${Math.round(distance * 1000)} m bort`
-                    : `${distance.toFixed(1)} km bort`}
-                </p>
+            {/* GALLERI (NYTT) */}
+            {gallery.length > 0 && (
+              <div className="flex md:flex-col md:w-1/3 flex-wrap gap-2">
+                {gallery.map((image, index) => (
+                  <img
+                    key={index}
+                    src={IMG.thumb(image)}
+                    srcSet={`${IMG.thumb2x(image)} 480w`}
+                    sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 240px"
+                    alt={`Galleri bild ${index + 1}`}
+                    className="md:w-full h-24 md:h-1/3 object-cover rounded-lg"
+                    loading="lazy"
+                  />
+                ))}
               </div>
             )}
           </div>
-          {/* Kategorier */}
-          <div className="flex flex-wrap gap-y-1">
-            {loppis.categories?.map((category, index) => {
-              return <Tag
-                key={index}
-                text={category} />
-            })}
-          </div>
-        </div>
 
-        {/* divider */}
-        <hr className='-my-1 border-t border-gray-400' />
-
-        {/* Info och plats */}
-        <div className='flex flex-col md:flex-row justify-between gap-6 lg:gap-8 md:gap-x-12'>
-          {/* info */}
-          <div className='flex flex-1 flex-col gap-6 lg:gap-8'>
-            {/* Beskrivning */}
-            {loppis.description && (
-              <div className='space-y-1'>
-                <h2 className='font-semibold'>Om denna loppis</h2>
-                <p>{loppis.description}</p>
-              </div>
-            )}
-
-            {/* Detaljer */}
-            <div className="space-y-3">
-              <h2 className='font-semibold'>Detaljer</h2>
-              {/* Öppettider */}
-              <div className="space-y-2">
-                {loppis.dates.map((date, idx) =>
-                  <Details
-                    key={`date-${idx}`}
-                    icon={Clock}
-                    text={dateToString(date)}
-                  />)}
-              </div>
-              {/* Adress */}
+          {/* Titel, plats och kategorier */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-start justify-between">
               <div>
-                <Details
-                  icon={MapPinned}
-                  text={addressLine}
-                />
+                <h1 className="text-2xl font-bold">{loppis.title}</h1>
+                <p className="text-sm text-muted-foreground">{loppis.location?.address?.city}</p>
               </div>
+              {/* If user has granted location - show distance to loppis */}
+              {distance && (
+                <div className="flex gap-1 items-center">
+                  <Navigation size={18} fill="#fca742" stroke="#fca742" />
+                  <p>
+                    {distance < 1
+                      ? `${Math.round(distance * 1000)} m bort`
+                      : `${distance.toFixed(1)} km bort`}
+                  </p>
+                </div>
+              )}
+            </div>
+            {/* Kategorier */}
+            <div className="flex flex-wrap gap-y-1">
+              {loppis.categories?.map((category, index) => {
+                return <Tag
+                  key={index}
+                  text={category}
+                />
+              })}
             </div>
           </div>
-          {/* Plats */}
-          <div className='space-y-1 md:w-1/3'>
-            <h2 className='font-semibold'>Plats</h2>
-            {/* Karta med pin */}
-            <SmallMap coordinates={[loppis.location.coordinates.coordinates[1], loppis.location.coordinates.coordinates[0]]} />
+
+          {/* divider */}
+          <div className="h-px bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100" />
+
+          {/* Info och plats */}
+          <div className='flex flex-col md:flex-row justify-between gap-6 lg:gap-8 md:gap-x-12'>
+            {/* info */}
+            <div className='flex flex-1 flex-col gap-6 lg:gap-8'>
+              {/* Beskrivning */}
+              {loppis.description && (
+                <div className='space-y-1'>
+                  <h2 className='text-lg font-semibold'>Om denna loppis</h2>
+                  <p>{loppis.description}</p>
+                </div>
+              )}
+
+              {/* Detaljer */}
+              <div className="space-y-3">
+                <h2 className='text-lg font-semibold'>Detaljer</h2>
+                {/* Öppettider */}
+                <div className="space-y-2">
+                  {loppis.dates.map((date, idx) =>
+                    <Details
+                      key={`date-${idx}`}
+                      icon={Clock}
+                      text={dateToString(date)}
+                    />)}
+                </div>
+                {/* Adress */}
+                <div>
+                  <Details
+                    icon={MapPinned}
+                    text={addressLine}
+                  />
+                </div>
+              </div>
+            </div>
+            {/* Plats */}
+            <div className='space-y-1 md:w-1/3'>
+              <h2 className='text-lg font-semibold'>Plats</h2>
+              {/* Karta med pin */}
+              <SmallMap coordinates={[loppis.location.coordinates.coordinates[1], loppis.location.coordinates.coordinates[0]]} />
+            </div>
           </div>
-        </div>
 
-        {/* divider */}
-        <hr className='border-t border-gray-400' />
+          {/* divider */}
+          <div className="h-px bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100" />
 
-        {/* Links */}
-        <div className='flex justify-center flex-wrap gap-x-4 gap-y-2 md:gap-y-4 my-4'>
-          {/* Länk till vägbeskrivning */}
-          <a
-            href={directionsUrl}
-            target='_blank'
-            className='flex justify-center items-center gap-2 bg-accent py-2 px-4 rounded-full shadow-md hover:shadow-lg transition cursor-pointer'
-          >
-            <Map size={20} />
-            <p>Vägbeskrivning</p>
-          </a>
-          <Button icon={Heart} text='Spara loppis' onClick={() => handleLike(true)} active={true} />
-          <Button icon={CalendarDays} text='Lägg till i kalender' />
+          {/* Links */}
+          <div className='flex flex-wrap gap-x-4 gap-y-3 md:gap-y-4 my-2'>
+            {/* Länk till vägbeskrivning */}
+            <a
+              href={directionsUrl}
+              target='_blank'
+              className='flex justify-center items-center gap-2 bg-button hover:bg-button-hover py-2 px-4 rounded-full shadow-md hover:shadow-lg font-medium text-button-text hover:text-button-text-hover transition cursor-pointer'
+            >
+              <Map size={20} />
+              <p>Vägbeskrivning</p>
+            </a>
+            <Button icon={Heart} text='Spara loppis' onClick={() => handleLike(true)} active={true} />
+            <Button icon={CalendarDays} text='Lägg till i kalender' />
+          </div>
+
         </div>
 
       </section>

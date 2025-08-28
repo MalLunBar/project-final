@@ -3,6 +3,7 @@ import TopNav from '../sections/TopNav'
 import LoginModal from '../modals/LoginModal'
 import useModalStore from '../stores/useModalStore'
 import ScrollToTopAndFocus from '../components/ScrollToTopAndFocus'
+import AriaLiveRegion from '../components/AriaLiveRegion'
 
 const Layout = () => {
   const { loginModalOpen, closeLoginModal } = useModalStore()
@@ -10,6 +11,7 @@ const Layout = () => {
   return (
     <div className='flex flex-col min-h-screen'>
       <ScrollToTopAndFocus />
+      <AriaLiveRegion />
       <TopNav />
       <Outlet />
       {loginModalOpen && <LoginModal onClose={closeLoginModal} />}

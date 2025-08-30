@@ -12,7 +12,7 @@ const SearchBar = ({ value, setValue }) => {
         placeholder="Sök stad eller område..."
         value={value}
         onChange={setValue}
-        className='flex-grow bg-transparent focus:outline-none text-base md:text-lg'
+        className='flex-grow min-w-0 bg-transparent focus:outline-none text-base md:text-lg'
       />
       <button
         type='submit'

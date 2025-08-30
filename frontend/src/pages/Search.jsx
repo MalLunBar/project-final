@@ -248,13 +248,13 @@ const Search = () => {
 
         {/* Active filters + toggle buttons */}
         <div className={`
-          flex justify-between items-start gap-1 py-3 px-1 sm:p-5 w-full
+          flex justify-between items-start gap-2 py-3 px-1 sm:p-5 w-full
           ${!isMobile ?
             "absolute top-0 left-[320px] z-1050 max-w-[430px] xl:max-w-xl 2xl:max-w-3xl"
             : view === 'map' ? 'absolute z-1040' : 'relative z-static'}
           `}>
           {/* Left side: filters + optional search bar */}
-          <div className='flex flex-col gap-2'>
+          <div className='flex flex-col gap-2 flex-1 min-w-0 max-w-xs'>
             {/* show search field if filters not open */}
             {(isMobile && !showFilters) &&
               <form

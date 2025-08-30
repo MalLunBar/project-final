@@ -17,7 +17,6 @@ import defaultImg from "../assets/default-profile.png"
 const Profile = () => {
   const { user, logout, token } = useAuthStore()
   const { tab } = useParams()
-  const { openLoginModal } = useModalStore()
   const navigate = useNavigate()
 
 

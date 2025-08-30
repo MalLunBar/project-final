@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { LoaderCircle } from 'lucide-react'
 import LoppisList from "../components/LoppisList"
 import EditModal from "../modals/EditModal"
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -111,6 +112,8 @@ const MyLoppis = () => {
 
 
       {!error && loppisList?.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
+
+      {loading && <LoaderCircle className="animate-spin" size={30} />}
 
       {/* Edit-popup */}
       <EditModal

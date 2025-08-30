@@ -2,27 +2,28 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LoaderCircle } from 'lucide-react'
 import { getUpcomingLoppis } from '../services/loppisApi'
 
 const Upcoming = () => {
   const [loppisList, setLoppisList] = useState([])
+  const [loading, setLoading] = useState()
+  const [error, setError] = useState()
 
   // fetch upcoming loppis list
   useEffect(() => {
     const fetchloppisList = async () => {
-      // setLoading(true)
-      // setError(null)
-      // setEmptyMsg("")
+      setLoading(true)
+      setError(null)
       try {
         const data = await getUpcomingLoppis()
         setLoppisList(data)
       } catch (err) {
         // --------------------TODO: handle error appropriately
         console.error('Failed to fetch loppis data:', err)
-        // setError(err.message || 'Kunde inte hämta loppisdata')
+        setError(err.message || 'Kunde inte hämta loppisdata')
       } finally {
-        // setLoading(false)
+        setLoading(false)
       }
     }
 
@@ -60,6 +61,7 @@ const Upcoming = () => {
             </Link>
           </div>
         ))}
+        {loading && <LoaderCircle className="animate-spin" size={30} />}
       </div>
     </section>
   )

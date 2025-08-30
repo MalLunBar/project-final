@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ChevronLeft, Clock, MapPinned, Navigation, CalendarDays, Map, Heart } from 'lucide-react'
+import { ChevronLeft, Clock, MapPinned, Navigation, CalendarDays, Map, Heart, LoaderCircle } from 'lucide-react'
 import Tag from '../components/Tag'
 import Button from '../components/Button'
 import Details from '../components/Details'
@@ -79,14 +79,13 @@ const LoppisInfo = () => {
     }
   }
 
-  // -------------------------TODO: add loading component
   if (loading) {
-    return <p>Loading...</p>
+    return <LoaderCircle className="animate-spin" size={30} />
   }
-  // -------------------------TODO: add error component?
   if (error) {
     return <p className="text-red-500">{error}</p>
   }
+
 
   // --- Bild-URLs (NYTT) ---
   const coverId = loppis.coverImage ?? loppis.images?.[0] ?? null

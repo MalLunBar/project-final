@@ -204,7 +204,11 @@ const Search = () => {
 
 
   return (
-    <main id="main-content" tabIndex={-1} className='h-[calc(100vh-64px)] md:h-[calc(100vh-72px)]'>
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className='h-[calc(100vh-64px)] md:h-[calc(100vh-72px)] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]'
+    >
       <div className='h-full relative lg:grid grid-cols-[2fr_6fr_4fr]'>
         <h1 className="sr-only">Sök loppisar</h1>
 

@@ -57,7 +57,7 @@ const TopNav = () => {
   ]
 
   return (
-    <header className="sticky top-0 w-full left-0 z-1100 h-16 md:h-18 flex items-center bg-white border-b border-border shadow-sm">
+    <header className="sticky top-0 w-full left-0 z-1100 h-[var(--nav-height)] md:h-[var(--nav-height-md)] flex items-center bg-white border-b border-border shadow-sm">
       {/* Skip link */}
       <a
         href="#main-content"

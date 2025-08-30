@@ -35,6 +35,11 @@
   margin: 0 !important;
 }
 
+/* navbar height */
+:root {
+  --nav-height: 64px;
+  --nav-height-md: 72px;
+}
 
 
 @theme {

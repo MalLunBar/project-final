@@ -126,7 +126,11 @@ const PopularCarousel = () => {
             />
           ))}
         </div>
-        {loading && <LoaderCircle className="animate-spin" size={30} />}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <LoaderCircle className="animate-spin" size={30} />
+          </div>
+        )}
       </div>
     </section>
   )

@@ -37,7 +37,11 @@ const Upcoming = () => {
   return (
     <section className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
       <h2 className="text-2xl font-bold">Kommande loppisar</h2>
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div
+        className="mt-4 relative grid grid-cols-1 sm:grid-cols-2 gap-4"
+        aria-live="polite"
+        aria-busy={loading ? "true" : "false"}
+      >
         {loppisList.map((loppis) => (
           <div
             key={loppis._id}
@@ -61,7 +65,11 @@ const Upcoming = () => {
             </Link>
           </div>
         ))}
-        {loading && <LoaderCircle className="animate-spin" size={30} />}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <LoaderCircle className="animate-spin" size={30} />
+          </div>
+        )}
       </div>
     </section>
   )

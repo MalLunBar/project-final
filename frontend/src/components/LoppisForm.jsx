@@ -354,7 +354,7 @@ const LoppisForm = ({
                   key={index}
                   className='flex gap-2 items-center'
                 >
-                  <div className='flex-grow min-w-0 flex gap-2 flex-col sm:flex-row'>
+                  <div className='flex-grow min-w-0 flex gap-2'>
                     <Input
                       label='Datum'
                       type='date'
@@ -395,7 +395,7 @@ const LoppisForm = ({
                       type='button'
                       onClick={() => setDates(dates.filter((_, i) => i !== index))}
                       ariaLabel='Ta bort datum'
-                      classNames='shrink-0 sm:self-end mb-1'
+                      classNames='shrink-0 self-end mb-1'
                     />
                   )}
                 </div>

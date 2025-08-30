@@ -264,14 +264,21 @@ const LoppisForm = ({
                 showLabel={false}
                 required
               />
-              <Input
-                label='Beskrivning'
-                type='textarea'
-                value={formData.description}
-                onChange={handleChange('description')}
-                showLabel={false}
-              />
-
+              <div className="">
+                <label
+                  htmlFor='loppis-description'
+                  className='sr-only'>
+                  Beskrivning
+                </label>
+                <textarea
+                  className="w-full bg-white border border-border rounded-3xl py-2 px-4 focus:outline-none focus:ring-2 focus:ring-accent"
+                  rows="4"
+                  id='loppis-description'
+                  value={formData.description}
+                  onChange={handleChange('description')}
+                  placeholder='Beskrivning'
+                />
+              </div>
               {/* Kategorier */}
               <div className='bg-white border border-border rounded-3xl py-2 px-4 max-w-60'>
                 <div className='flex justify-between items-center cursor-pointer' onClick={toggleDropdown}>
@@ -319,22 +326,26 @@ const LoppisForm = ({
             </fieldset>
 
             {/* Datum & tider */}
-            <fieldset className='flex p-2 flex-col gap-4 pb-6'>
+            <fieldset className='flex-grow min-w-0 flex p-2 flex-col gap-4 pb-6'>
               <legend className='font-semibold text-lg pb-2'>Datum & Tider</legend>
 
               {dates.map((date, index) => (
-                <div key={index} className='flex gap-2 flex-col md:flex-row md:items-start md:justify-between lg:flex-col lg:items-start'>
-                  <Input
-                    label='Datum'
-                    type='date'
-                    value={date.date}
-                    onChange={(e) => {
-                      const nd = [...dates]; nd[index].date = e.target.value; setDates(nd)
-                    }}
-                    showLabel={false}
-                    required
-                  />
-                  <div className='flex flex-col gap-2 '>
+                <div
+                  key={index}
+                  className='flex gap-2 items-center'
+                >
+                  <div className='flex-grow min-w-0 flex gap-2 flex-col sm:flex-row'>
+                    <Input
+                      label='Datum'
+                      type='date'
+                      value={date.date}
+                      onChange={(e) => {
+                        const nd = [...dates]; nd[index].date = e.target.value; setDates(nd)
+                      }}
+                      showLabel={true}
+                      placeholder='Välj datum'
+                      required
+                    />
                     <Input
                       label='Starttid'
                       type='time'
@@ -342,7 +353,8 @@ const LoppisForm = ({
                       onChange={(e) => {
                         const nd = [...dates]; nd[index].startTime = e.target.value; setDates(nd)
                       }}
-                      showLabel={false}
+                      showLabel={true}
+                      placeholder='Välj tid'
                       required
                     />
                     <Input
@@ -352,17 +364,18 @@ const LoppisForm = ({
                       onChange={(e) => {
                         const nd = [...dates]; nd[index].endTime = e.target.value; setDates(nd)
                       }}
-                      showLabel={false}
+                      showLabel={true}
+                      placeholder='Välj tid'
                       required
                     />
                   </div>
-
                   {dates.length > 1 && (
                     <Button
                       icon={Trash2}
                       type='button'
                       onClick={() => setDates(dates.filter((_, i) => i !== index))}
                       ariaLabel='Ta bort datum'
+                      classNames='shrink-0 sm:self-end mb-1'
                     />
                   )}
                 </div>

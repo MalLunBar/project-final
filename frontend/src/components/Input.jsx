@@ -1,6 +1,9 @@
 const Input = ({ type, id, label, placeholder, value, onChange, required, showLabel }) => {
+  const showFakePlaceholder =
+    (type === "date" || type === "time") && !value
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex-grow min-w-0 flex flex-col gap-2 relative">
       <label
         htmlFor={id} className={`font-medium ${!showLabel ? 'sr-only' : ''}`}>
         {label}
@@ -13,9 +16,16 @@ const Input = ({ type, id, label, placeholder, value, onChange, required, showLa
         name={id}
         value={value}
         onChange={onChange}
-        placeholder={`${placeholder ? placeholder : label}`}
+        placeholder={placeholder ? placeholder : label}
         required={required}
       />
+
+      {/* Fake placeholder for date/time inputs on mobile and tablet */}
+      {showFakePlaceholder && (
+        <span className="absolute left-4 top-[70%] -translate-y-1/2 text-gray-400 pointer-events-none text-base md:hidden">
+          {placeholder}
+        </span>
+      )}
     </div>
   )
 }

@@ -40,7 +40,7 @@ const Upcoming = () => {
         {loppisList.map((loppis) => (
           <div
             key={loppis._id}
-            className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm flex justify-between items-center"
+            className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm flex justify-between items-center gap-2"
           >
             <div>
               <h3 className="text-lg font-semibold">{loppis.title}</h3>

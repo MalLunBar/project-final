@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { MapPinned, Clock, CircleX } from 'lucide-react'
+import { MapPinned, Clock, CircleX, Loader2 } from 'lucide-react'
 import Tag from './Tag'
 import LikeButton from './LikeButton'
 import Details from './Details'
@@ -10,6 +10,7 @@ import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import { IMG } from '../utils/imageVariants'
 import useLikesStore from '../stores/useLikesStore'
+import useLoppisUpdateStore from '../stores/useLoppisUpdateStore'
 
 // LoppisCard.jsx (bara relevanta delar)
 const S = {
@@ -57,6 +58,7 @@ const LoppisCard = ({
   const { user, token } = useAuthStore()
   const { openLoginModal } = useModalStore()
   const { likedLoppisIds, toggleLike } = useLikesStore()
+  const isUpdating = useLoppisUpdateStore((s) => s.updating[loppis._id])
 
   // Hämta publicId för omslagsbild:
   const id = loppis.coverImage ?? loppis.images?.[0] ?? null
@@ -97,7 +99,7 @@ const LoppisCard = ({
         )}
       </div>
 
-      <div className='w-full aspect-[4/3] overflow-hidden rounded-2xl bg-gray-100'>
+      <div className='relative w-full aspect-[4/3] overflow-hidden rounded-2xl bg-gray-100'>
         {IMG.card(id) ? (
           <img
             src={IMG.card(id)}
@@ -109,6 +111,12 @@ const LoppisCard = ({
         ) : (
           <div className='w-full h-full flex items-center justify-center text-gray-400'>
             Ingen bild
+          </div>
+        )}
+
+        {isUpdating && (
+          <div className="absolute inset-0 grid place-items-center bg-white/55 backdrop-blur-[1px]">
+            <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         )}
       </div>

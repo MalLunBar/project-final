@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useMemo } from 'react'
-import { ChevronDown, ChevronUp, Camera, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronUp, Camera, Trash2, Loader2 } from 'lucide-react'
 import Input from './Input'
 import Button from './Button'
 import SmallMap from './SmallMap'
@@ -242,12 +242,16 @@ const LoppisForm = ({
           {/* VÄNSTER KOLUMN på large */}
           <div className="flex-1 min-w-0 flex flex-col gap-4">
 
-            {/* Foto-dropzone */}
+            {/* photo-dropzone */}
             <fieldset className='flex p-2 flex-col gap-4 pb-6'>
               <legend
                 className='font-semibold text-lg pb-2'
                 id="photos-legend">Bilder</legend>
-              <div className='flex py-8 w-full border-2 border-border rounded-xl flex-col items-center justify-center gap-4'>
+              <div
+                className='relative flex py-8 w-full border-2 border-border rounded-xl flex-col items-center justify-center gap-4'
+                aria-busy={submitting ? 'true' : 'false'}
+                aria-live='polite'
+              >
                 <PhotoDropzone
                   key={initKey}
                   initialFiles={initialFilesForDropzone}
@@ -256,6 +260,12 @@ const LoppisForm = ({
                   onChange={setMedia}
                   ariaLabelledBy="photos-legend"
                 />
+
+                {submitting && (
+                  <div className="absolute inset-0 grid place-items-center bg-white/60 backdrop-blur-[2px] rounded-xl">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                )}
               </div>
             </fieldset>
 
@@ -417,6 +427,7 @@ const LoppisForm = ({
             type='submit'
             ariaLabel={submitLabel}
             disabled={submitting}
+            icon={submitting ? Loader2 : null}
           />
 
           <Button

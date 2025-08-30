@@ -79,7 +79,7 @@ const LoppisList = ({
 
                   <button
                     onClick={() => onEditCard?.(loppis)}
-                    className="p-2 rounded-3xl bg-white opacity-75 hover:opacity-90 focus:outline-none"
+                    className="p-2 rounded-3xl bg-white opacity-75 hover:opacity-90 focus:outline-none cursor-pointer"
                     aria-label="Redigera"
                     title="Redigera"
                     disabled={!isActionsVisible || Boolean(deletingId)}
@@ -94,7 +94,7 @@ const LoppisList = ({
                   <button
                     onClick={() => onDeleteCard?.(loppis)}
                     aria-busy={deletingId === loppis._id}      // markera aktiv rad
-                    className="p-2 rounded-3xl bg-white opacity-75 hover:opacity-90 focus:outline-none"
+                    className="p-2 rounded-3xl bg-white opacity-75 hover:opacity-90 focus:outline-none cursor-pointer"
                     aria-label="Ta bort"
                     title="Ta bort"
                     disabled={!isActionsVisible || Boolean(deletingId)}

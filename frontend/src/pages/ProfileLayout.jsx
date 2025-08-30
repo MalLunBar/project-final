@@ -24,7 +24,7 @@ const ProfileLayout = ({
           {showBack && (
             <button
               onClick={onBack}
-              className="inline-flex items-center gap-1 text-sm mb-4 hover:underline"
+              className="inline-flex items-center gap-1 text-sm mb-4 hover:underline cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
               Till profil

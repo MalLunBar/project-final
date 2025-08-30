@@ -1,4 +1,4 @@
-import { Loader2, X } from 'lucide-react'
+import { Loader, X } from 'lucide-react'
 
 const ConfirmDialog = ({
   open,
@@ -22,7 +22,7 @@ const ConfirmDialog = ({
           <h3 className="text-lg font-semibold">{title}</h3>
           <button
             onClick={onCancel}
-            className="p-2 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="p-2 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer"
             aria-label="Stäng"
             title="Stäng"
           >
@@ -38,7 +38,7 @@ const ConfirmDialog = ({
           <button
             type="button"
             onClick={onCancel}
-            className="px-3 py-2 rounded-lg border bg-white hover:bg-gray-50"
+            className="px-3 py-2 rounded-lg border bg-white hover:bg-gray-200 cursor-pointer"
             disabled={loading}
           >
             {cancelText}
@@ -46,10 +46,10 @@ const ConfirmDialog = ({
           <button
             type="button"
             onClick={onConfirm}
-            className="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-60"
+            className="px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-800 disabled:opacity-60 cursor-pointer"
             disabled={loading}
           >
-            {loading ? <Loader2 className="animate-spin" size={18} /> : confirmText}
+            {loading ? <Loader className="animate-spin" size={18} /> : confirmText}
           </button>
         </div>
       </div>

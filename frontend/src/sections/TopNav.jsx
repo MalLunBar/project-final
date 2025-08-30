@@ -93,7 +93,7 @@ const TopNav = () => {
                   <li className='pb-4'>
                     <button
                       type="button"
-                      className='font-medium text-gray-700 p-2 hover:bg-hover rounded-md block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-button'
+                      className='font-medium text-gray-700 p-2 hover:bg-hover rounded-md block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-button cursor-pointer'
                       onClick={(e) => {
                         e.stopPropagation()   // så klicket inte bubblar till panelens onClick
                         handleAuthItem()      // din befintliga login/logout-hanterare

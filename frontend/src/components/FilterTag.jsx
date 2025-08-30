@@ -6,7 +6,7 @@ const FilterTag = ({ text, onClick }) => {
       type="button"
       onClick={onClick}
       aria-label={`Remove filter: ${text}`}
-      className='flex gap-1 items-center px-2 py-1 rounded-full border text-nav text-sm cursor-pointer bg-light border-nav'
+      className='flex gap-1 items-center px-2 py-1 rounded-full border text-nav text-sm cursor-pointer bg-light border-nav hover:bg-text hover:text-white'
     >
 
       {text}

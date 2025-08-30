@@ -90,7 +90,7 @@ const LoppisCard = ({
               e.stopPropagation()
               onClose?.()
             }}
-            className='p-1.5 rounded-md cursor-pointer hover:bg-gray-50'
+            className='p-1.5 rounded-md cursor-pointer hover:bg-gray-100'
           >
             <CircleX size={25} fill={'white'} />
           </button>

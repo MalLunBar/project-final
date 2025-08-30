@@ -8,15 +8,15 @@ import { ImagePlus, Trash2, Star, StarOff } from 'lucide-react'
 const extractPublicId = (url) => {
   try {
     const u = new URL(url)
-     // parse URL into parts
+    // parse URL into parts
     // Ex: /image/upload/c_fill,w_300/v16912345/folder/name_abc.jpg
     const path = u.pathname // get only the path part 
     const i = path.indexOf('/upload/')
     if (i === -1) return null
-    let rest = path.slice(i + '/upload/'.length) 
-    const vMatch = rest.match(/\/v\d+\//)       
-    if (vMatch) rest = rest.slice(vMatch.index + vMatch[0].length) 
-    return rest.replace(/\.[a-z0-9]+$/i, '')    
+    let rest = path.slice(i + '/upload/'.length)
+    const vMatch = rest.match(/\/v\d+\//)
+    if (vMatch) rest = rest.slice(vMatch.index + vMatch[0].length)
+    return rest.replace(/\.[a-z0-9]+$/i, '')
   } catch { return null }
 }
 
@@ -36,7 +36,7 @@ const PhotoDropzone = ({
   const [items, setItems] = useState([]) // [{kind:'existing'|'new', url?, file?}]
   const [removedExistingPublicIds, setRemovedExistingPublicIds] = useState([])
 
-  
+
   // initiera items from initialFiles
   useEffect(() => {
     const init = []
@@ -44,7 +44,7 @@ const PhotoDropzone = ({
       if (typeof f === 'string') {
         init.push({ kind: 'existing', url: f, publicId: extractPublicId(f) })
       } else if (f && typeof f === 'object') {
-       
+
         if ('url' in f || 'publicId' in f) {
           init.push({ kind: 'existing', url: f.url, publicId: f.publicId ?? extractPublicId(f.url) })
         } else if (f instanceof File) {
@@ -98,7 +98,7 @@ const PhotoDropzone = ({
 
   })
 
- // input props
+  // input props
   const inputProps = getInputProps({
     id: inputId,
     ...(ariaLabelledBy
@@ -181,7 +181,7 @@ const PhotoDropzone = ({
                   <button
                     type="button"
                     onClick={() => makeCover(idx)}
-                    className="p-2 rounded-full bg-white shadow"
+                    className="p-2 rounded-full bg-white shadow cursor-pointer hover:bg-gray-200"
                     title="Gör till omslag"
                   >
                     {isCover ? <Star className="w-4 h-4" /> : <StarOff className="w-4 h-4" />}
@@ -189,7 +189,7 @@ const PhotoDropzone = ({
                   <button
                     type="button"
                     onClick={() => removeAt(idx)}
-                    className="p-2 rounded-full bg-white shadow"
+                    className="p-2 rounded-full bg-white shadow cursor-pointer hover:bg-gray-200"
                     title="Ta bort"
                   >
                     <Trash2 className="w-4 h-4" />

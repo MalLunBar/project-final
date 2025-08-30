@@ -27,7 +27,7 @@ const EditModal = ({ open, loppis, onClose, onSaved }) => {
           <h3 className='text-lg font-semibold'>Redigera loppis</h3>
           <button
             onClick={onClose}
-            className='p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300'
+            className='p-2 rounded-md bg-transparent hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 cursor-pointer'
             aria-label='Stäng'
             title='Stäng'
           >

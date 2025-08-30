@@ -113,7 +113,11 @@ const MyLoppis = () => {
 
       {!error && loppisList?.length === 0 && <p>{emptyMsg || "Du har inga loppisar än."}</p>}
 
-      {loading && <LoaderCircle className="animate-spin" size={30} />}
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <LoaderCircle className="animate-spin" size={30} />
+        </div>
+      )}
 
       {/* Edit-popup */}
       <EditModal

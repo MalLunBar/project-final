@@ -6,7 +6,7 @@ const CardLink = ({ to, icon: Icon, iconColor, label, className = "" }) => {
       to={to}
       className={[
         "flex flex-col items-center gap-2 flex-1 min-w-[45%] rounded-2xl p-5 text-center",
-        "border border-zinc-200 shadow-sm bg-white hover:bg-black/30 transition",
+        "border border-zinc-200 shadow-sm bg-white  transition",
         className,
       ].join(" ")}
     >

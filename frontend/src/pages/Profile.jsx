@@ -101,8 +101,16 @@ const Profile = () => {
         aria-label="Profilval">
         <h2 className='sr-only'>Profilval</h2>
         <div className="mt-6 flex flex-wrap gap-4 md:gap-8 lg:gap-12 xl:gap-16">
-          <CardLink to="/profile/loppisar" icon={Gem} label="Mina loppisar" />
-          <CardLink to="/profile/favoriter" icon={Heart} label="Mina favoriter" />
+          <CardLink
+            to="/profile/loppisar"
+            icon={Gem}
+            label="Mina loppisar"
+            className='hover:bg-teal-50' />
+          <CardLink
+            to="/profile/favoriter"
+            icon={Heart}
+            label="Mina favoriter"
+            className='hover:bg-teal-50' />
         </div>
 
         <div className="flex flex-1 justify-end">

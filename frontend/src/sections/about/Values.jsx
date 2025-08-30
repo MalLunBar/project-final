@@ -1,5 +1,5 @@
 import { Leaf, HeartHandshake, Recycle } from 'lucide-react'
-import ValueCard from '../components/ValueCard'
+import ValueCard from '../../components/ValueCard'
 
 
 const Values = () => {

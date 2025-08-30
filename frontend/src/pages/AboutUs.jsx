@@ -1,11 +1,11 @@
-import HeroSection from '../sections/HeroAbout'
-import StorySection from '../sections/Story'
-import ValuesSection from '../sections/Values'
-import WhyUsSection from '../sections/WhyUs'
-import HowItWorksSection from '../sections/HowItWorks'
-import TeamSection from '../sections/Team'
-import FaqSection from '../sections/Faq'
-import CtaSection from '../sections/Cta'
+import HeroAbout from '../sections/about/HeroAbout'
+import Story from '../sections/about/Story'
+import Values from '../sections/about/Values'
+import WhyUs from '../sections/about/WhyUs'
+import HowItWorks from '../sections/about/HowItWorks'
+import Team from '../sections/about/Team'
+import Faq from '../sections/about/Faq'
+import Cta from '../sections/about/Cta'
 import HeroImage from '../assets/monstera-1.jpg'
 import Divider from '../components/Divider'
 import Footer from '../sections/Footer'
@@ -22,21 +22,21 @@ const AboutUs = () => {
       tabIndex={-1}
       className="min-h-[calc(100dvh-var(--nav-height))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-gradient-to-b bg-[#f5efe5]"
     >
-      <HeroSection heroImage={HeroImage} />
+      <HeroAbout heroImage={HeroImage} />
       <Divider />
-      <StorySection />
+      <Story />
       <Divider />
-      <ValuesSection />
+      <Values />
       <Divider />
-      <WhyUsSection />
+      <WhyUs />
       <Divider />
-      <HowItWorksSection />
+      <HowItWorks />
       <Divider />
-      <TeamSection team={team} />
+      <Team team={team} />
       <Divider />
-      <FaqSection />
+      <Faq />
       <Divider />
-      <CtaSection />
+      <Cta />
       <Footer footerText={`© ${new Date().getFullYear()} Runt hörnet`} />
     </main>
   )

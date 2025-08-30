@@ -8,6 +8,7 @@ import SignUp from './pages/SignUp'
 import AddLoppis from './pages/AddLoppis'
 import NotFound from './pages/NotFound'
 import AboutUs from './pages/AboutUs'
+import ContactUs from './pages/ContactUs'
 import ProtectedPage from './pages/ProtectedPage'
 
 export const App = () => {
@@ -42,6 +43,7 @@ export const App = () => {
               </ProtectedPage>
             } />
           <Route path='/about' element={<AboutUs />} />
+          <Route path='/contact' element={<ContactUs />} />
           <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>

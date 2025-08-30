@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react'
-import { TeamCard } from '../components/TeamCard'
+import { TeamCard } from '../../components/TeamCard'
 
 
 const Team = ({ team = [] }) => {

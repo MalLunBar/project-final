@@ -45,9 +45,12 @@ const AddLoppis = () => {
   }
 
   return (
-    <main id="main-content" tabIndex={-1}
-      className="min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-72px)] bg-center bg-no-repeat bg-cover"
-      style={{ backgroundImage: `url(${bgImage})` }}>
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="min-h-[calc(100dvh-var(--nav-height))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-center bg-no-repeat bg-cover"
+      style={{ backgroundImage: `url(${bgImage})` }}
+    >
       <LoppisForm
         initialValues={blank}
         submitLabel='Lägg till loppis'

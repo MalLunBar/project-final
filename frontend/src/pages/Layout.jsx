@@ -9,7 +9,7 @@ const Layout = () => {
   const { loginModalOpen, closeLoginModal } = useModalStore()
 
   return (
-    <div className='flex flex-col min-h-screen'>
+    <div className='flex flex-col'>
       <ScrollToTopAndFocus />
       <AriaLiveRegion />
       <TopNav />

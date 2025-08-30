@@ -1,4 +1,3 @@
-// components/ProfileLayout.jsx
 import { ChevronLeft } from "lucide-react"
 
 const ProfileLayout = ({
@@ -10,9 +9,12 @@ const ProfileLayout = ({
 }) => {
 
   return (
-    <main id="main-content" tabIndex={-1}
-      className="min-h-[calc(100dvh-var(--nav-height))] md:min-h-[calc(100dvh-var(--nav-height-md))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-center bg-no-repeat bg-cover"
-      style={{ backgroundImage: `url(${bgUrl})` }}>
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="min-h-[calc(100dvh-var(--nav-height))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-center bg-no-repeat bg-cover"
+      style={{ backgroundImage: `url(${bgUrl})` }}
+    >
 
       <section
         className='mx-auto max-w-9xl px-6 py-8 md:py-12 md:px-8 md:mx-12'

@@ -7,7 +7,7 @@ import MyFavorites from "../sections/MyFavorites"
 import MyLoppis from "../sections/MyLoppis"
 import CardLink from "../components/CardLink"
 import Button from '../components/Button'
-import ProfileLayout from '../components/ProfileLayout'
+import ProfileLayout from './ProfileLayout'
 import bgDefault from "../assets/botanical-3.jpg"
 import bgFav from "../assets/drawing.jpg"
 import bgLoppis from "../assets/circle.jpg"

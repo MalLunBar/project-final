@@ -207,7 +207,7 @@ const Search = () => {
     <main
       id="main-content"
       tabIndex={-1}
-      className='h-[calc(100dvh-var(--nav-height))] pb-[env(safe-area-inset-bottom)]'
+      className='h-[calc(100dvh-var(--nav-height))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]'
     >
       <div className='h-full relative lg:grid grid-cols-[2fr_6fr_4fr]'>
         <h1 className="sr-only">Sök loppisar</h1>

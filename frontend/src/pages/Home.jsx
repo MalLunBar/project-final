@@ -8,7 +8,10 @@ import Footer from '../sections/Footer'
 
 const Home = () => {
   return (
-    <main id="main-content" tabIndex={-1} className='min-h-screen bg-gradient-to-b bg-[#f5efe5]'>
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className='min-h-[calc(100dvh-var(--nav-height))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-gradient-to-b bg-[#f5efe5]'>
       {/* Hero section with search bar → quick entry point to search*/}
       <HeroSearch />
       {/* Carousel section with popular loppis*/}

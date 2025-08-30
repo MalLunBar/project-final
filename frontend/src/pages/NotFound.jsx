@@ -16,7 +16,7 @@ const NotFound = () => {
     <main
       id="main-content"
       tabIndex={-1}
-      className="min-h-[calc(100dvh-var(--nav-height))] md:min-h-[calc(100dvh-var(--nav-height-md))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-zinc-50"
+      className="min-h-[calc(100dvh-var(--nav-height))] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-zinc-50"
     >
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-10 text-center">
         <div className="mx-auto inline-block rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-600">

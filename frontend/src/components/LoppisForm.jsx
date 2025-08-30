@@ -5,6 +5,7 @@ import Input from './Input'
 import Button from './Button'
 import SmallMap from './SmallMap'
 import PhotoDropzone from './PhotoDropzone'
+import FilterTag from './FilterTag'
 import { IMG } from '../utils/imageVariants'
 import { geocodeCity } from '../services/geocodingApi'
 import { getLoppisCategories } from '../services/loppisApi'
@@ -106,6 +107,11 @@ const LoppisForm = ({
       setSelectedCategories(prev => prev.filter(cat => cat !== value))
       setFormData(prev => ({ ...prev, categories: prev.categories.filter(cat => cat !== value) }))
     }
+  }
+
+  const removeCategory = (category) => {
+    setSelectedCategories(prev => prev.filter(cat => cat !== category))
+    setFormData(prev => ({ ...prev, categories: prev.categories.filter(cat => cat !== category) }))
   }
 
   const toggleDropdown = () => setIsDropdownOpen(v => !v)
@@ -280,6 +286,7 @@ const LoppisForm = ({
                 />
               </div>
               {/* Kategorier */}
+              {/* Dropdown select */}
               <div className='bg-white border border-border rounded-3xl py-2 px-4 max-w-60'>
                 <div className='flex justify-between items-center cursor-pointer' onClick={toggleDropdown}>
                   Välj kategori(er)
@@ -311,6 +318,19 @@ const LoppisForm = ({
                   </div>
                 )}
               </div>
+              {/* Display selected categories */}
+              {selectedCategories.length !== 0 &&
+                <div className='flex flex-wrap gap-1'>
+                  {selectedCategories.map(category =>
+                    <FilterTag
+                      key={category}
+                      text={category}
+                      onClick={() => removeCategory(category)}
+                    />
+                  )
+                  }
+                </div>
+              }
             </fieldset>
           </div>
           {/* HÖGER KOLUMN på large */}

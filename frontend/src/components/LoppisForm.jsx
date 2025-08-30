@@ -354,7 +354,7 @@ const LoppisForm = ({
                   key={index}
                   className='flex gap-2 items-center'
                 >
-                  <div className='flex-grow min-w-0 flex gap-2'>
+                  <div className='w-full min-w-0 flex-1 flex gap-2'>
                     <Input
                       label='Datum'
                       type='date'

@@ -4,7 +4,7 @@ const Input = ({ type, id, label, placeholder, value, onChange, required, showLa
     (type === "date" || type === "time") && !value
 
   return (
-    <div className="flex-grow min-w-0 flex flex-col gap-2 relative w-full">
+    <div className="flex-1 min-w-0 flex flex-col gap-2 relative w-full">
       <label
         htmlFor={id} className={`font-medium ${!showLabel ? 'sr-only' : ''}`}>
         {label}
@@ -23,7 +23,7 @@ const Input = ({ type, id, label, placeholder, value, onChange, required, showLa
 
       {/* Fake placeholder for mobile and tablet */}
       {showFakePlaceholder && (
-        <span className="absolute left-4 top-[72%] -translate-y-1/2 text-gray-400 pointer-events-none text-base md:hidden max-w-[calc(100%-2rem)] truncate whitespace-nowrap">
+        <span className="absolute left-4 top-[73%] -translate-y-1/2 text-gray-400 pointer-events-none text-base md:hidden max-w-[calc(100%-2rem)] truncate whitespace-nowrap">
           {placeholder}
         </span>
       )}

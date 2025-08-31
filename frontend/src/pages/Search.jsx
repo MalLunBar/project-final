@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useMediaQuery } from 'react-responsive'
 import { useSearchParams } from "react-router-dom"
-import { Map, LocateFixed, List, Funnel, X, LoaderCircle } from "lucide-react"
+import { Map, LocateFixed, List, Funnel, X } from "lucide-react"
 import FocusLock from "react-focus-lock"
 import useGeoStore from '../stores/useGeoStore'
 import SearchFilters from "../sections/SearchFilters"
@@ -399,21 +399,19 @@ const Search = () => {
               zoom={zoom}
               onRequestLocation={handleRequestLocation}
               hasUserLocation={!!location}
+              loading={loading}
             />
           </>
         }
 
         {/* List */}
         {
-          ((view === 'list' || view === 'desktop') && !error) && <ListView
+          ((view === 'list' || view === 'desktop') && !error) &&
+          <ListView
             loppisList={loppisList}
+            loading={loading}
           />
         }
-
-        {/* Loading */}
-        {((view === 'list' || view === 'desktop') && loading) && (
-          <LoaderCircle className="animate-spin" size={30} />
-        )}
 
         {/* Error message - if empty list */}
         {((view === 'list' || view === 'desktop') && error) && (

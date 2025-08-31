@@ -1,6 +1,7 @@
+import { LoaderCircle } from 'lucide-react'
 import LoppisCard from "../components/LoppisCard";
 
-const ListView = ({ loppisList }) => {
+const ListView = ({ loppisList, loading }) => {
   return (
     <section className='h-full w-full px-2 sm:px-5 md:p-2 bg-white border-r border-border shadow-sm overflow-y-auto'>
       <h2 className="sr-only">Sökresultat listvy</h2>
@@ -23,6 +24,13 @@ const ListView = ({ loppisList }) => {
             <LoppisCard key={loppis._id} loppis={loppis} />
           ))}
         </div>
+
+        {loading && (
+          <div className="flex flex-col items-center justify-center gap-2 py-10 pointer-events-none text-gray-600">
+            <LoaderCircle className="animate-spin" size={30} />
+            <p>Laddar loppisar...</p>
+          </div>
+        )}
 
         {/* Page selector */}
         <p className='text-center'>Page: 1 </p>

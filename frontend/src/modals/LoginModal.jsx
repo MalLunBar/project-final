@@ -5,7 +5,7 @@ import { X } from 'lucide-react'
 import LoginForm from "../components/LoginForm"
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
-import ErrorBanner from "../components/ErrorBanner"
+
 
 const LoginModal = ({ onClose }) => {
   // Modal-meddelande
@@ -20,19 +20,16 @@ const LoginModal = ({ onClose }) => {
   const authError = useAuthStore(s => s.error)
   const clearAuthError = useAuthStore(s => s.clearError)
 
-  const [localError, setLocalError] = useState(null)
+  const [formError, setFormError] = useState("")
+  const [fieldErrors, setFieldErrors] = useState({})
 
   // clear error and move focus when component mounts
   useEffect(() => {
-    setLocalError(null)
+    setFormError("")
+    setFieldErrors({})
     clearAuthError?.()
     // save the previously focused element before opening modal
     openerRef.current = document.activeElement
-    // move focus to form
-    const focus = document.getElementById("login-form")
-    if (focus) {
-      focus.focus()
-    }
   }, [])
 
   const handleClose = () => {
@@ -42,25 +39,30 @@ const LoginModal = ({ onClose }) => {
 
 
   const handleLogin = async (email, password) => {
+    setFormError("")
+    setFieldErrors({})
 
-    setLocalError(null)
+    const nextFieldErrors = {}
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!email) return setLocalError('Ange din e-postadress.')
-    if (!emailRe.test(email)) return setLocalError('Ogiltig e-postadress.')
-    if (!password) return setLocalError('Ange ditt lösenord.')
-    // if (password.length < 6) return setLocalError('Lösenordet måste vara minst 6 tecken.')
+    if (!email) nextFieldErrors.email = "Ange din e-postadress."
+    else if (!emailRe.test(email)) nextFieldErrors.email = "Ogiltig e-postadress."
+    if (!password) nextFieldErrors.password = "Ange ditt lösenord."
+
+    if (Object.keys(nextFieldErrors).length) {
+      setFieldErrors(nextFieldErrors)
+      return
+    }
 
     try {
-      // call login function from auth store
       await login({ email, password })
-      // close modal
       handleClose()
     } catch (e) {
-      setLocalError('Fel e-post eller lösenord.')
+      // Prefer a general form error for bad credentials
+      setFormError("Fel e-post eller lösenord.")
     }
   }
 
-  const displayErrorText = localError || authError || null
+  const displayFormError = formError || authError || ''
 
   return (
     <div
@@ -71,7 +73,7 @@ const LoginModal = ({ onClose }) => {
       {/* Backdrop overlay (page behind is dimmed) */}
       <div
         className="absolute inset-0 bg-black opacity-50"
-        onClick={onClose}
+        onClick={handleClose}
       />
       {/* Modal box */}
       <FocusLock>
@@ -86,17 +88,15 @@ const LoginModal = ({ onClose }) => {
             </div>
           )}
 
-          {displayErrorText && (
-            <ErrorBanner onClose={() => {
-              setLocalError(null)
-              clearAuthError?.()
-            }}>
-              {displayErrorText}
-            </ErrorBanner>
-          )}
-
           {/* Login form */}
-          <LoginForm id="login-form" onSubmit={handleLogin} isLoading={isLoading} />
+          <LoginForm 
+            id="login-form" 
+            onSubmit={handleLogin} 
+            isLoading={isLoading}
+            error={displayFormError}
+            fieldErrors={fieldErrors}
+            autoFocus 
+          />
 
           {/* Link to signup page */}
           <span className='flex self-center gap-2 text-sm text-gray-600'>
@@ -114,6 +114,7 @@ const LoginModal = ({ onClose }) => {
           <button
             onClick={handleClose}
             className="absolute top-4 right-5 cursor-pointer text-gray-500 hover:text-black"
+            aria-label="Stäng inloggningsruta"
           >
             <X />
           </button>

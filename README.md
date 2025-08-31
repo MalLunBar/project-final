@@ -10,7 +10,7 @@ We wanted to make it easier for people to find and share local flea markets in a
 
 - **Frontend:** Built with React, Tailwind CSS, React Router, Zustand, and Leaflet for interactive maps. We also used libraries for e.g. keen-slider, react focus lock and then lucide for icons.     
 
-- **Backend:** Node.js with Express, MongoDB (Atlas) for data storage, Nominatim API for Open Source Street Map and Cloudinary for image handling. Also other libraries like multer to be able to handle formdata submittion with different file formats.  
+- **Backend:** Node.js with Express, MongoDB (Atlas) for data storage, Nominatim API for Open Source Street Map and Cloudinary for image handling. Swagger/OpenAPI for API documentation. Also other libraries like multer to be able to handle formdata submittion with different file formats.  
 
 - **Techniques:** We focused on reusable components, clean state management with hooks, and a mobile-first design.  
 

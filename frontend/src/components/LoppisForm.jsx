@@ -6,6 +6,9 @@ import Button from './Button'
 import SmallMap from './SmallMap'
 import PhotoDropzone from './PhotoDropzone'
 import FilterTag from './FilterTag'
+import ErrorMessage from './ErrorMessage'
+import FieldError from './FieldError'
+import { errorMessage } from '../utils/errorMessage'
 import { IMG } from '../utils/imageVariants'
 import { geocodeCity } from '../services/geocodingApi'
 import { getLoppisCategories } from '../services/loppisApi'
@@ -67,7 +70,10 @@ const LoppisForm = ({
   const [categories, setCategories] = useState([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-
+  const [serverError, setServerError] = useState('')        // ← global form error (API, etc)
+  const [categoriesError, setCategoriesError] = useState('')// ← fetch categories errors
+  const [geoLoading, setGeoLoading] = useState(false)
+  const [geoError, setGeoError] = useState('')
 
   // Stabil "init-nyckel" baserad på innehållet (inte referensen)
   const initKey = useMemo(() => JSON.stringify(initialValues ?? {}), [initialValues])
@@ -79,11 +85,18 @@ const LoppisForm = ({
   const [selectedCategories, setSelectedCategories] = useState(init.selectedCategories)
   const [dates, setDates] = useState(init.dates)
   const [coordinates, setCoordinates] = useState(init.coordinates)
-  const [photos, setPhotos] = useState([])
-
 
   // 🔁 Media från PhotoDropzone (en ENDA lista + removed)
   const [media, setMedia] = useState({ items: [], removedExistingPublicIds: [] })
+
+  // --- validation state ---
+  const [touched, setTouched] = useState({
+    title: false, street: false, postalCode: false, city: false,
+  })
+  // datesTouched speglar dates.length
+  const [datesTouched, setDatesTouched] = useState(dates.map(() => ({
+    date: false, startTime: false, endTime: false,
+  })))
 
   // re-init om initialValues ändras
   useEffect(() => {
@@ -92,11 +105,80 @@ const LoppisForm = ({
     setSelectedCategories(next.selectedCategories)
     setDates(next.dates)
     setCoordinates(next.coordinates)
+    setTouched({ title: false, street: false, postalCode: false, city: false })
+    setDatesTouched(next.dates.map(() => ({ date: false, startTime: false, endTime: false })))
+    setServerError('')
+    setGeoError('')
   }, [initKey])
 
-  const handleChange = (key) => (e) => {
-    setFormData(prev => ({ ...prev, [key]: e.target.value }))
+
+  const validateField = (key, val) => {
+    const v = String(val || '').trim()
+    switch (key) {
+      case 'title':
+        if (!v) return 'Rubrik är obligatorisk.'
+        if (v.length < 3) return 'Rubriken måste vara minst 3 tecken.'
+        return ''
+      case 'street':
+        if (!v) return 'Gatuadress är obligatorisk.'
+        return ''
+      case 'postalCode': {
+        if (!v) return 'Postnummer är obligatoriskt.'
+        const ok = /^[0-9]{3}\s?[0-9]{2}$/.test(v) // 12345 eller 123 45
+        return ok ? '' : 'Ange ett giltigt postnummer (t.ex. 123 45).'
+      }
+      case 'city':
+        if (!v) return 'Stad är obligatorisk.'
+        return ''
+      default:
+        return ''
+    }
   }
+
+  const validateDateRow = (row) => {
+    const errs = { date: '', startTime: '', endTime: '', range: '' }
+    if (!row.date) errs.date = 'Datum är obligatoriskt.'
+    if (!row.startTime) errs.startTime = 'Starttid är obligatorisk.'
+    if (!row.endTime) errs.endTime = 'Sluttid är obligatorisk.'
+    // Om alla finns, kontrollera att sluttid > starttid
+    if (row.startTime && row.endTime) {
+      const a = row.startTime
+      const b = row.endTime
+      if (a >= b) errs.range = 'Sluttid måste vara efter starttid.'
+    }
+    return errs
+  }
+
+
+  const fieldErrors = {
+    title: validateField('title', formData.title),
+    street: validateField('street', formData.street),
+    postalCode: validateField('postalCode', formData.postalCode),
+    city: validateField('city', formData.city),
+  }
+  const dateErrors = dates.map(validateDateRow)
+
+  const hasAnyErrors = () => {
+    if (Object.values(fieldErrors).some(Boolean)) return true
+    for (const r of dateErrors) {
+      if (r.date || r.startTime || r.endTime || r.range) return true
+    }
+    return false
+  }
+
+  // --- handlers ---
+  const handleChange = (key) => (e) => {
+    const val = e.target.value
+    setFormData(prev => ({ ...prev, [key]: val }))
+    if (key in touched && touched[key]) {
+      // live-uppdatera fel
+      // (fieldErrors beräknas om via render; ingen extra setState behövs här)
+    }
+  }
+
+  const handleBlur = (key) => () => setTouched(prev => ({ ...prev, [key]: true }))
+
+
 
   const handleCategoryChange = (e) => {
     const { value, checked } = e.target
@@ -119,12 +201,12 @@ const LoppisForm = ({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categories = await getLoppisCategories()
-        setCategories(categories)
+        setCategoriesError('')
+        const cats = await getLoppisCategories()
+        setCategories(cats || [])
       } catch (err) {
-        // --------------------TODO: handle error appropriately
-        console.error('Error fetching categories:', err)
         setCategories([])
+        setCategoriesError(errorMessage(err) || 'Kunde inte hämta kategorier just nu.')
       }
     }
     fetchCategories()
@@ -132,32 +214,35 @@ const LoppisForm = ({
 
   const fetchCoordinates = async () => {
     setCoordinates(null)
-    if (!formData.street || !formData.city) return
+    setGeoError('')
+    if (!formData.street || !formData.city) {
+      setGeoError('Fyll i gatuadress och stad först.')
+      return
+    }
     const address = `${formData.street}, ${formData.postalCode} ${formData.city}, Sweden`
     try {
+      setGeoLoading(true)
       const { lat, lon } = await geocodeCity(address)
-      if (!lat || !lon) {
-        throw new Error('Kunde inte hitta koordinater för adressen')
-      }
+      if (!lat || !lon) throw new Error('Kunde inte hitta koordinater för adressen.')
       setCoordinates([lat, lon])
     } catch (err) {
-      // --------------------TODO: handle error appropriately
-      console.error('Error fetching coordinates:', err)
       setCoordinates(null)
+      setGeoError(errorMessage(err) || 'Kunde inte hämta koordinater.')
     } finally {
-      // -------------------TODO: handle loading state
+      setGeoLoading(false)
     }
   }
 
 
-  // 🧠 Omslag först, med publicIds
+
+
+  // Cover + initialbilder till dropzone
   const orderedPublicIds = useMemo(() => {
     const ids = Array.isArray(initialValues?.images) ? initialValues.images : []
     const cover = initialValues?.coverImage
     return cover && ids.includes(cover) ? [cover, ...ids.filter(id => id !== cover)] : ids
   }, [initKey])
 
-  // 🚀 Gör riktiga Cloudinary-URL:er + behåll publicId för varje bild
   const initialFilesForDropzone = useMemo(
     () => orderedPublicIds.map(pid => ({ url: IMG.thumb(pid), publicId: pid })),
     [orderedPublicIds]
@@ -167,6 +252,13 @@ const LoppisForm = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setServerError('')
+
+    setTouched({ title: true, street: true, postalCode: true, city: true })
+    setDatesTouched(dates.map(() => ({ date: true, startTime: true, endTime: true })))
+
+    if (hasAnyErrors()) return
+
     try {
       setSubmitting(true)
 
@@ -200,45 +292,40 @@ const LoppisForm = ({
       const fd = new FormData()
       fd.append('data', JSON.stringify({
         ...payload,
-        order,                                // exakt ordning (existing via publicId, new via index)
+        order,
         removedExistingPublicIds: media.removedExistingPublicIds,
-        coverIndex: 0                         // index 0 i 'order' är omslag
+        coverIndex: 0,
       }))
-
-      // Lägg till nya filer i exakt den ordning användaren har
       for (const f of newFiles) fd.append('images', f)
 
       await onSubmit?.(fd)
+    } catch (err) {
+      setServerError(errorMessage(err) || 'Något gick fel när annonsen skulle sparas.')
     } finally {
       setSubmitting(false)
     }
   }
 
-
-  // Visa redan uppladdade bilder i dropzonen – memoiserat på initKey
-  const initialPublicIds = useMemo(
-    () => (Array.isArray(initialValues?.images) ? initialValues.images : []),
-    [initKey]
-  )
-  const cover = initialValues?.coverImage
-  const orderedIds = useMemo(
-    () => (cover ? [cover, ...initialPublicIds.filter(pid => pid !== cover)] : initialPublicIds),
-    [cover, initialPublicIds]
-  )
-
-  // generera små Cloudinary-URLs för preview
-  const initialPreviewUrls = useMemo(
-    () => orderedIds.map(pid => IMG.thumb(pid)),
-    [orderedIds]
-  )
+  const touchDate = (i, key) => {
+    setDatesTouched(prev => {
+      const next = [...prev]
+      next[i] = { ...next[i], [key]: true }
+      return next
+    })
+  }
 
   return (
     <section className='bg-white/90 backdrop-blur my-4 md:my-8 rounded-2xl xl:rounded-3xl mx-auto md:max-w-xl lg:max-w-4xl xl:max-w-6xl xl:mt-20 px-4 sm:px-6 py-10 md:px-18 lg:px-8 lg:py-6 lg:my-4 xl:px-20 xl:py-10 shadow-lg'>
       <h2 className='text-xl font-semibold mb-6'>{title}</h2>
 
-      <form className='flex flex-col gap-4 divide-y divide-border' onSubmit={handleSubmit}>
+      {/* Global/server error */}
+      {serverError ? <ErrorMessage className="mb-4">{serverError}</ErrorMessage> : null}
+
+      <form className='flex flex-col gap-4 divide-y divide-border' onSubmit={handleSubmit} noValidate>
 
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+
+
           {/* VÄNSTER KOLUMN på large */}
           <div className="flex-1 min-w-0 flex flex-col gap-4">
 
@@ -272,15 +359,26 @@ const LoppisForm = ({
             {/* Beskrivning */}
             <fieldset className='flex p-2 flex-col gap-4 pb-6'>
               <legend className='font-semibold text-lg pb-2'>Beskrivning</legend>
-              <Input
-                label='Rubrik*'
-                type='text'
-                value={formData.title}
-                onChange={handleChange('title')}
-                showLabel={false}
-                required
-              />
-              <div className="">
+
+              <div>
+                <Input
+                  label='Rubrik*'
+                  type='text'
+                  value={formData.title}
+                  onChange={handleChange('title')}
+                  onBlur={handleBlur('title')}
+                  showLabel={false}
+                  required
+                  aria-invalid={touched.title && Boolean(fieldErrors.title)}
+                  aria-describedby={touched.title && fieldErrors.title ? 'err-title' : undefined}
+                />
+                <FieldError id="err-title" show={touched.title && !!fieldErrors.title}>
+                  {fieldErrors.title}
+                </FieldError>
+              </div>
+
+
+              <div>
                 <label
                   htmlFor='loppis-description'
                   className='sr-only'>
@@ -295,7 +393,9 @@ const LoppisForm = ({
                   placeholder='Beskrivning'
                 />
               </div>
+
               {/* Kategorier */}
+
               {/* Dropdown select */}
               <div className='bg-white border border-border rounded-3xl py-2 px-4 max-w-60'>
                 <div className='flex justify-between items-center cursor-pointer' onClick={toggleDropdown}>
@@ -328,6 +428,11 @@ const LoppisForm = ({
                   </div>
                 )}
               </div>
+
+              {categoriesError ? (
+                <FieldError id="err-cats" show>{categoriesError}</FieldError>
+              ) : null}
+
               {/* Display selected categories */}
               {selectedCategories.length !== 0 &&
                 <div className='flex flex-wrap gap-1'>
@@ -343,78 +448,171 @@ const LoppisForm = ({
               }
             </fieldset>
           </div>
+
+
+
           {/* HÖGER KOLUMN på large */}
           <div className="flex-1 min-w-0 flex flex-col gap-4">
             {/* Plats */}
             <fieldset className='flex p-2 flex-col gap-4 pb-6'>
               <legend className='font-semibold text-lg pb-2'>Plats</legend>
-              <Input label='Gatuadress*' type='text' value={formData.street} onChange={handleChange('street')} showLabel={false} required />
-              <Input label='Postnummer*' type='text' value={formData.postalCode} onChange={handleChange('postalCode')} showLabel={false} required />
-              <Input label='Stad*' type='text' value={formData.city} onChange={handleChange('city')} showLabel={false} required />
-              <Button text='Visa på karta' type='button' onClick={fetchCoordinates} />
+
+
+              <div>
+                <Input
+                  label='Gatuadress*'
+                  type='text'
+                  value={formData.street}
+                  onChange={handleChange('street')}
+                  onBlur={handleBlur('street')}
+                  showLabel={false}
+                  required
+                  aria-invalid={touched.street && Boolean(fieldErrors.street)}
+                  aria-describedby={touched.street && fieldErrors.street ? 'err-street' : undefined}
+                />
+                <FieldError id="err-street" show={touched.street && !!fieldErrors.street}>
+                  {fieldErrors.street}
+                </FieldError>
+              </div>
+
+
+              <div>
+                <Input
+                  label='Postnummer*'
+                  type='text'
+                  value={formData.postalCode}
+                  onChange={handleChange('postalCode')}
+                  onBlur={handleBlur('postalCode')}
+                  showLabel={false}
+                  required
+                  aria-invalid={touched.postalCode && Boolean(fieldErrors.postalCode)}
+                  aria-describedby={touched.postalCode && fieldErrors.postalCode ? 'err-postal' : undefined}
+                />
+                <FieldError id="err-postal" show={touched.postalCode && !!fieldErrors.postalCode}>
+                  {fieldErrors.postalCode}
+                </FieldError>
+              </div>
+
+
+              <div>
+                <Input
+                  label='Stad*'
+                  type='text'
+                  value={formData.city}
+                  onChange={handleChange('city')}
+                  onBlur={handleBlur('city')}
+                  showLabel={false}
+                  required
+                  aria-invalid={touched.city && Boolean(fieldErrors.city)}
+                  aria-describedby={touched.city && fieldErrors.city ? 'err-city' : undefined}
+                />
+                <FieldError id="err-city" show={touched.city && !!fieldErrors.city}>
+                  {fieldErrors.city}
+                </FieldError>
+              </div>
+
+
+
+              <div className="flex items-center gap-2">
+                <Button text={geoLoading ? 'Hämtar…' : 'Visa på karta'} type='button' onClick={fetchCoordinates} disabled={geoLoading} />
+                {geoLoading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+              </div>
+              {geoError ? <FieldError id="err-geo" show>{geoError}</FieldError> : null}
               {coordinates && <SmallMap coordinates={coordinates} />}
+
             </fieldset>
 
             {/* Datum & tider */}
             <fieldset className='flex-grow min-w-0 flex p-2 flex-col gap-4 pb-6'>
               <legend className='font-semibold text-lg pb-2'>Datum & Tider</legend>
 
-              {dates.map((date, index) => (
-                <div
-                  key={index}
-                  className='flex gap-2 items-center'
-                >
-                  <div className='w-full min-w-0 flex-1 flex gap-2'>
-                    <Input
-                      label='Datum'
-                      type='date'
-                      value={date.date}
-                      onChange={(e) => {
-                        const nd = [...dates]; nd[index].date = e.target.value; setDates(nd)
-                      }}
-                      showLabel={true}
-                      placeholder='Välj datum'
-                      required
-                    />
-                    <Input
-                      label='Starttid'
-                      type='time'
-                      value={date.startTime}
-                      onChange={(e) => {
-                        const nd = [...dates]; nd[index].startTime = e.target.value; setDates(nd)
-                      }}
-                      showLabel={true}
-                      placeholder='Välj tid'
-                      required
-                    />
-                    <Input
-                      label='Sluttid'
-                      type='time'
-                      value={date.endTime}
-                      onChange={(e) => {
-                        const nd = [...dates]; nd[index].endTime = e.target.value; setDates(nd)
-                      }}
-                      showLabel={true}
-                      placeholder='Välj tid'
-                      required
-                    />
+              {dates.map((row, i) => {
+                const errs = dateErrors[i]
+                const t = datesTouched[i] || { date: false, startTime: false, endTime: false }
+                return (
+                  <div key={i} className='flex gap-2 items-start'>
+                    <div className='w-full min-w-0 flex-1 flex gap-2'>
+                      <div className="flex-1">
+                        <Input
+                          label='Datum'
+                          type='date'
+                          value={row.date}
+                          onChange={(e) => {
+                            const nd = [...dates]; nd[i].date = e.target.value; setDates(nd)
+                          }}
+                          onBlur={() => touchDate(i, 'date')}
+                          showLabel={true}
+                          required
+                          aria-invalid={t.date && Boolean(errs.date)}
+                          aria-describedby={t.date && errs.date ? `err-date-${i}` : undefined}
+                        />
+                        <FieldError id={`err-date-${i}`} show={t.date && !!errs.date}>
+                          {errs.date}
+                        </FieldError>
+                      </div>
+
+                      <div className="flex-1">
+                        <Input
+                          label='Starttid'
+                          type='time'
+                          value={row.startTime}
+                          onChange={(e) => {
+                            const nd = [...dates]; nd[i].startTime = e.target.value; setDates(nd)
+                          }}
+                          onBlur={() => touchDate(i, 'startTime')}
+                          showLabel={true}
+                          required
+                          aria-invalid={t.startTime && Boolean(errs.startTime)}
+                          aria-describedby={t.startTime && errs.startTime ? `err-start-${i}` : undefined}
+                        />
+                        <FieldError id={`err-start-${i}`} show={t.startTime && !!errs.startTime}>
+                          {errs.startTime}
+                        </FieldError>
+                      </div>
+
+                      <div className="flex-1">
+                        <Input
+                          label='Sluttid'
+                          type='time'
+                          value={row.endTime}
+                          onChange={(e) => {
+                            const nd = [...dates]; nd[i].endTime = e.target.value; setDates(nd)
+                          }}
+                          onBlur={() => touchDate(i, 'endTime')}
+                          showLabel={true}
+                          required
+                          aria-invalid={t.endTime && Boolean(errs.endTime || errs.range)}
+                          aria-describedby={t.endTime && (errs.endTime || errs.range) ? `err-end-${i}` : undefined}
+                        />
+                        <FieldError id={`err-end-${i}`} show={t.endTime && !!(errs.endTime || errs.range)}>
+                          {errs.endTime || errs.range}
+                        </FieldError>
+                      </div>
+                    </div>
+
+                    {dates.length > 1 && (
+                      <Button
+                        icon={Trash2}
+                        type='button'
+                        onClick={() => {
+                          setDates(dates.filter((_, idx) => idx !== i))
+                          setDatesTouched(datesTouched.filter((_, idx) => idx !== i))
+                        }}
+                        ariaLabel='Ta bort datum'
+                        classNames='shrink-0 self-end mb-1'
+                      />
+                    )}
                   </div>
-                  {dates.length > 1 && (
-                    <Button
-                      icon={Trash2}
-                      type='button'
-                      onClick={() => setDates(dates.filter((_, i) => i !== index))}
-                      ariaLabel='Ta bort datum'
-                      classNames='shrink-0 self-end mb-1'
-                    />
-                  )}
-                </div>
-              ))}
+                )
+              })}
 
               <Button
                 text='+ Nytt datum'
                 type='button'
-                onClick={() => setDates([...dates, { date: '', startTime: '', endTime: '' }])}
+                onClick={() => {
+                  setDates([...dates, { date: '', startTime: '', endTime: '' }])
+                  setDatesTouched([...datesTouched, { date: false, startTime: false, endTime: false }])
+                }}
               />
             </fieldset>
           </div>

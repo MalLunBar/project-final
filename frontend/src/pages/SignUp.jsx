@@ -144,8 +144,8 @@ const SignUp = () => {
                 value={formData.name}
                 showLabel={true}
                 required={true}
-                aria-invalid={Boolean(errors.name)}
-                aria-describedby={errors.name ? "error-name" : undefined}
+                aria-invalid={touched.name && Boolean(errors.name)}
+                aria-describedby={touched.name && errors.name ? "error-name" : undefined}
               />
               <FieldError id="error-name" show={touched.name && !!errors.name}>
                 {errors.name}
@@ -163,8 +163,8 @@ const SignUp = () => {
                 value={formData.lastName}
                 showLabel={true}
                 required={true}
-                aria-invalid={Boolean(errors.lastName)}
-                aria-describedby={errors.lastName ? "error-lastName" : undefined}
+                aria-invalid={touched.lastName && Boolean(errors.lastName)}
+                aria-describedby={touched.lastName && errors.lastName ? "error-lastName" : undefined}
               />
               <FieldError id="error-lastName" show={touched.lastName && !!errors.lastName}>
                 {errors.lastName}
@@ -182,8 +182,8 @@ const SignUp = () => {
                 value={formData.email}
                 showLabel={true}
                 required={true}
-                aria-invalid={Boolean(errors.email)}
-                aria-describedby={errors.email ? "error-email" : undefined}
+                aria-invalid={touched.email && Boolean(errors.email)}
+                aria-describedby={touched.email && errors.email ? "error-email" : undefined}
               />
               <FieldError id="error-email" show={touched.email && !!errors.email}>
                 {errors.email}
@@ -201,8 +201,8 @@ const SignUp = () => {
                 value={formData.password}
                 showLabel={true}
                 required={true}
-                aria-invalid={Boolean(errors.password)}
-                aria-describedby={errors.password ? "error-password" : undefined}
+                aria-invalid={touched.password && Boolean(errors.password)}
+                aria-describedby={touched.password && errors.password ? "error-password" : undefined}
               />
               <FieldError id="error-password" show={touched.password && !!errors.password}>
                 {errors.password}

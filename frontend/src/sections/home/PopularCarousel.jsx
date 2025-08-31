@@ -94,7 +94,7 @@ const PopularCarousel = () => {
         </div>
 
         {/* Don't display slide arrows during loading or if loppislist is empty*/}
-        {(!loading || loppisList.length === 0) && (
+        {(!loading && loppisList.length !== 0) && (
           <>
             {/* left arrow */}
             <button

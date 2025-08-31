@@ -19,8 +19,19 @@ router.post('/register', async (req, res) => {
         message: "Name, email and password are required",
       })
     }
+
+
+    const MIN_PASSWORD = 8
+    if (String(password).length < MIN_PASSWORD) {
+      return res.status(400).json({
+        success: false,
+        message: `Password must be at least ${MIN_PASSWORD} characters long.`
+      })
+    }
+
     // validate if email already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() })
+    const normalizedEmail = String(email).toLowerCase().trim()
+    const existingUser = await User.findOne({ email: normalizedEmail })
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -43,7 +54,7 @@ router.post('/register', async (req, res) => {
     })
 
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
       response: error,
       message: "Failed to create user."

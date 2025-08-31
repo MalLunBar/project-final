@@ -11,6 +11,7 @@ import SearchBar from '../components/SearchBar'
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'
 import NoResults from '../components/NoResults'
+import ErrorMessage from "../components/ErrorMessage"
 import { getLoppisList } from '../services/loppisApi'
 import { geocodeCity } from '../services/geocodingApi'
 
@@ -24,6 +25,10 @@ const Search = () => {
     categories: searchParams.getAll("category"),
   }
   const [cityInput, setCityInput] = useState(query.city)
+  // överst i Search-komponenten:
+  const [cityStatus, setCityStatus] = useState('idle') // 'idle' | 'valid' | 'not_found'
+  const [cityError, setCityError] = useState("")       //  “city not found”
+
   const [loppisList, setLoppisList] = useState([])
 
   // map states
@@ -142,12 +147,23 @@ const Search = () => {
   const updateMapCenter = async (city) => {
     try {
       setIsSearching(true)
+      setCityError("")
+      setCityStatus('idle')
+
       const { lat, lon } = await geocodeCity(city)
       setMapCenter([parseFloat(lat), parseFloat(lon)])        // triggers MapView.flyTo via props
       setCenterBy('city')
       SetZoom(12)
+      setCityStatus('valid')
+
     } catch (err) {
-      setError(err.message || "Kunde inte hitta platsen")
+      setCityStatus('not_found')
+      setCityError(`Hittade ingen plats som "${city}".`)
+      // återställ kartan
+      setMapCenter(centerDefault)
+      SetZoom(zoomDefault)
+
+
     } finally {
       setIsSearching(false)
     }
@@ -342,6 +358,36 @@ const Search = () => {
             )}
           </div>
         </div>
+
+        {/** 👇 INSERT THIS BLOCK RIGHT HERE (after the toolbar, before Map/List) */}
+        {cityStatus === 'not_found' && cityError && (
+          <div
+            className={`
+              z-1050 px-1
+              ${!isMobile
+                ? "absolute left-[320px] top-16 max-w-[430px] xl:max-w-xl 2xl:max-w-3xl"
+                : "absolute left-2 right-2 top-20"}  /* mobile placement */
+            `}
+          >
+            <ErrorMessage id="city-error" className="mt-2">
+              {cityError}
+              <button
+                type="button"
+                className="ml-2 underline"
+                onClick={() => {
+                  setCityInput('')
+                  updateCity('')
+                  setCityStatus('idle')
+                  setCityError('')
+                }}
+              >
+                Visa alla loppisar
+              </button>
+            </ErrorMessage>
+          </div>
+        )}
+        {/** ☝️ END INSERT */}
+
 
         {/* Map */}
         {

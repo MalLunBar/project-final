@@ -568,12 +568,12 @@ router.post('/', authenticateUser, upload.array('images', 6), async (req, res) =
     const uploads = (req.files || []).map(file => new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: 'loppis',        // spara original i en mapp
+          folder: 'loppis',        // save original in a folder
           resource_type: 'image',
         },
         (err, result) => {
           if (err) return reject(err)
-          // Spara *public_id* så vi kan generera alla varianter vid delivery
+          // save *public_id* to generate all variants at delivery
           resolve(result.public_id)
         }
       )
@@ -589,7 +589,6 @@ router.post('/', authenticateUser, upload.array('images', 6), async (req, res) =
     return res.status(201).json({ success: true, response: doc })
 
   } catch (err) {
-    console.error('POST /loppis error:', err)
     res.status(500).json({ success: false, message: err.message || 'Server error' })
   }
 })
@@ -833,7 +832,6 @@ router.patch('/:id', authenticateUser, upload.array('images', 6), async (req, re
 
     return res.status(200).json({ success: true, response: updated, message: 'Loppis updated successfully!' })
   } catch (err) {
-    console.error('Error in PATCH /loppis/:id:', err)
     return res.status(500).json({ success: false, response: null, message: 'Failed to update loppis ad.' })
   }
 })
@@ -892,7 +890,6 @@ router.delete("/:id", authenticateUser, async (req, res) => {
       message: "Loppis deleted successfully!"
     })
   } catch (error) {
-    console.error("Error in DELETE /loppis/:id:", error)
     res.status(500).json({
       success: false,
       response: error,

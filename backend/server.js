@@ -3,34 +3,15 @@ import express from "express"
 import cors from "cors"
 import mongoose from "mongoose"
 import listEndpoints from "express-list-endpoints"
-
-
 import loppisRoutes from "./routes/loppisRoutes.js"
 import userRoutes from './routes/userRoutes.js'
 import geocodeRoutes from './routes/geocodeRoutes.js'
-
-import { Loppis } from "./models/Loppis.js"
-import loppisData from "./updated_loppis_data.json"
-
-
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project"
 mongoose.connect(mongoUrl)
 
 const port = process.env.PORT || 8080
 const app = express()
-
-// seeding data to database
-// if (process.env.RESET_DATABASE) {
-//   const seedDatabase = async () => {
-//     await Loppis.deleteMany({})
-//     loppisData.forEach(loppis => {
-//       new Loppis(loppis).save()
-//     })
-//   }
-//   seedDatabase()
-// }
-
 
 app.use(cors())
 app.use(express.json())

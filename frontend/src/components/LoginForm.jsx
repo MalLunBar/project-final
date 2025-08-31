@@ -10,8 +10,11 @@ const LoginForm = ({ onSubmit, isLoading, error, fieldErrors = {} }) => {
     password: "",
   })
 
+  const [touched, setTouched] = useState({ email: false, password: false })
+
   const handleSubmit = (event) => {
     event.preventDefault()
+    setTouched({ email: true, password: true })
     onSubmit(formData.email, formData.password)
   }
 
@@ -31,26 +34,30 @@ const LoginForm = ({ onSubmit, isLoading, error, fieldErrors = {} }) => {
           value={formData.email}
           showLabel={true}
           required={true}
-          aria-invalid={!!fieldErrors.email}
-          aria-describedby={fieldErrors.email ? "login-email-error" : undefined}
+          onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+          aria-invalid={touched.email && !!fieldErrors.email}
+          aria-describedby={touched.email && fieldErrors.email ? "login-email-error" : undefined}
         />
-        <FieldError id="login-email-error">{fieldErrors.email}</FieldError>
+        <FieldError id="login-email-error" show={touched.email && !!fieldErrors.email}>{fieldErrors.email}</FieldError>
       </div>
 
       <div>
         <Input
-          id='login-password'
-          type='password'
-          label='Lösenord'
-          placeholder='*****'
+          id="login-password"
+          type="password"
+          label="Lösenord"
+          placeholder="*****"
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          onBlur={() => setTouched((t) => ({ ...t, password: true }))}      
           value={formData.password}
           showLabel={true}
-          required={true}
-          aria-invalid={!!fieldErrors.password}
-          aria-describedby={fieldErrors.password ? "login-password-error" : undefined}
+          required
+          aria-invalid={touched.password && !!fieldErrors.password}          
+          aria-describedby={touched.password && fieldErrors.password ? "login-password-error" : undefined}
         />
-        <FieldError id="login-password-error">{fieldErrors.password}</FieldError>
+        <FieldError id="login-password-error" show={touched.password && !!fieldErrors.password}>
+          {fieldErrors.password}
+        </FieldError>
       </div>
 
 

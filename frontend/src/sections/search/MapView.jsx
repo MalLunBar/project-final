@@ -1,7 +1,9 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl, Circle, CircleMarker, Tooltip } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
-import { useEffect } from 'react'
+
 import LoppisCard from '../../components/LoppisCard'
+import { useEffect, useState } from 'react'
+
 import L from "leaflet"
 import { MapPin, LoaderCircle } from "lucide-react"
 import ReactDOMServer from "react-dom/server"
@@ -88,6 +90,14 @@ const MapView = ({
   loading
 }) => {
 
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 600)
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
   // Create a Leaflet divIcon with Lucide SVG
   const markerIcon = L.divIcon({
     html: ReactDOMServer.renderToString(
@@ -145,7 +155,14 @@ const MapView = ({
             >
               <Popup
                 className="my-popup"
-                closeButton={false}>
+                closeButton={false}
+                autoPan
+                keepInView
+                autoPanPaddingTopLeft={
+                  isMobile ? [40, 120] : [60, 170]
+                }
+                autoPanPaddingBottomRight={[16, 16]}
+              >
                 <PopupCard loppis={loppis} />
               </Popup>
             </Marker>

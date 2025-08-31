@@ -1,4 +1,4 @@
-const Input = ({ type, id, label, placeholder, value, onChange, required, showLabel }) => {
+const Input = ({ type, id, label, placeholder, value, onChange, required, showLabel, ...rest }) => {
   // Show fake placeholder only for date/time inputs and when value is empty
   const showFakePlaceholder =
     (type === "date" || type === "time") && !value
@@ -19,6 +19,7 @@ const Input = ({ type, id, label, placeholder, value, onChange, required, showLa
         onChange={onChange}
         placeholder={placeholder ? placeholder : label}
         required={required}
+        {...rest}
       />
 
       {/* Fake placeholder for mobile and tablet */}

@@ -27,6 +27,8 @@ const LoppisInfo = () => {
   const [loppisCoords, setLoppisCoords] = useState({}) // {lat: , lng: }
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [heroLoaded, setHeroLoaded] = useState(false)
+  const [galleryLoaded, setGalleryLoaded] = useState([])
   const isLiked = likedLoppisIds.includes(loppisId)
   const navigate = useNavigate()
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${loppisCoords.lat},${loppisCoords.lng}`
@@ -123,23 +125,31 @@ const LoppisInfo = () => {
 
           {/* Bilder */}
           <div className='flex flex-col md:flex-row gap-2'>
-            {/* HERO-BILD (NYTT) */}
-            {coverId ? (
-              <img
-                src={IMG.heroSm(coverId)}
-                srcSet={`${IMG.hero(coverId)} 1200w, ${IMG.heroLg(coverId)} 1600w`}
-                sizes="(max-width: 768px) 92vw, (max-width: 1024px) 85vw, 1200px"
-                alt={loppis.title}
-                className="w-full h-52 md:h-96 object-cover rounded-2xl"
-                loading="eager"
-              />
-            ) : (
-              <div className="w-full h-64 md:h-96 rounded-2xl flex items-center justify-center bg-gray-100 text-gray-400" >
-                Ingen bild
-              </div>
-            )}
-
-            {/* GALLERI (NYTT) */}
+            {/* Hero image with loader */}
+            <div className="relative w-full">
+              {!heroLoaded && (
+                <div className='w-full h-64 md:h-96 flex flex-col items-center justify-center gap-2 rounded-2xl bg-gray-100 text-gray-700'>
+                  <LoaderCircle size={30} className="animate-spin" />
+                  <p>Laddar bild...</p>
+                </div>
+              )}
+              {coverId ? (
+                <img
+                  src={IMG.heroSm(coverId)}
+                  srcSet={`${IMG.hero(coverId)} 1200w, ${IMG.heroLg(coverId)} 1600w`}
+                  sizes="(max-width: 768px) 92vw, (max-width: 1024px) 85vw, 1200px"
+                  alt={loppis.title}
+                  className="w-full h-52 md:h-96 object-cover rounded-2xl"
+                  loading="eager"
+                  onLoad={() => setHeroLoaded(true)}
+                />
+              ) : (
+                <div className="w-full h-64 md:h-96 rounded-2xl flex items-center justify-center bg-gray-100 text-gray-400" >
+                  Ingen bild
+                </div>
+              )}
+            </div>
+            {/* gallery with loaders */}
             {gallery.length > 0 && (
               <div className="flex md:flex-col md:w-1/3 flex-wrap gap-2">
                 {gallery.map((image, index) => (
@@ -253,7 +263,7 @@ const LoppisInfo = () => {
 
       </section>
 
-    </main>
+    </main >
   )
 }
 

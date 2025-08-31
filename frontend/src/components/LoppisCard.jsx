@@ -17,7 +17,7 @@ const S = {
     // mindre på mobil (<sm), original från sm↑
     map: 'w-[240px] sm:w-[280px] rounded-xl bg-white shadow-md p-2',
     profile: 'w-full rounded-3xl bg-white shadow-sm p-4 flex flex-col h-[380px] sm:h-[420px]',
-    search: 'w-full rounded-xl bg-accent-light p-2',
+    search: 'w-full rounded-3xl border-2 border-gray-200 p-2',
   },
   layout: { map: 'flex flex-col', profile: 'flex', search: 'flex' },
   image: {
@@ -80,12 +80,13 @@ const LoppisCard = ({
             src={IMG.card(id)}
             srcSet={`${IMG.card(id)} 1x, ${IMG.card2x(id)} 2x`}
             alt={`${loppis.title} cover image`}
-            className={`w-full h-full object-cover object-center rounded-2xl relative z-0`}
+            className={`block w-full h-full object-cover object-center rounded-2xl relative z-0`}
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            Ingen bild
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-full h-full bg-gray-100" />
+            <span className="absolute text-gray-400 text-sm">Ingen bild</span>
           </div>
         )}
 

@@ -47,7 +47,7 @@ const Search = () => {
   const [view, setView] = useState("map") //"map" or "list" for mobile, or "desktop"
   const [showFilters, setShowFilters] = useState(false) // hide search filters by default
   const isSmallMobile = useMediaQuery({ query: '(max-width: 480px)' })
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' })
+  const isMobile = useMediaQuery({ query: '(max-width: 1023px)' })
 
   // ux states
   const [isSearching, setIsSearching] = useState(false)

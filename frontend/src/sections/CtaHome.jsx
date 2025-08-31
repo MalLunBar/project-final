@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/useAuthStore'
 import useModalStore from '../stores/useModalStore'
 import Button from '../components/Button'
@@ -5,6 +6,7 @@ import Button from '../components/Button'
 const CtaHome = () => {
   const { user } = useAuthStore()
   const { openLoginModal } = useModalStore()
+  const navigate = useNavigate()
 
   const handleAdd = () => {
     if (!user) {

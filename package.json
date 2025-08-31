@@ -4,7 +4,5 @@
   "scripts": {
     "postinstall": "npm install --prefix backend"
   },
-  "dependencies": {
-    "react-responsive": "^10.0.1"
-  }
+  "dependencies": {}
 }

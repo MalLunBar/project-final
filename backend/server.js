@@ -6,6 +6,7 @@ import listEndpoints from "express-list-endpoints"
 import loppisRoutes from "./routes/loppisRoutes.js"
 import userRoutes from './routes/userRoutes.js'
 import geocodeRoutes from './routes/geocodeRoutes.js'
+import { swaggerDocs } from "./swagger.js"
 
 const mongoUrl = process.env.MONGO_URL || "mongodb://localhost/final-project"
 mongoose.connect(mongoUrl)
@@ -30,8 +31,8 @@ app.use("/users", userRoutes)
 app.use("/loppis", loppisRoutes)
 app.use("/api/geocode", geocodeRoutes)
 
-
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
+  swaggerDocs(app, port) // enable Swagger
 })

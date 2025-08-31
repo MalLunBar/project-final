@@ -9,6 +9,44 @@ import { authenticateUser } from "../middleware/authMiddleware.js"
 const router = express.Router()
 
 // register a new user
+/**
+ * @openapi
+ * /users/register:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Register a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - firstName
+ *               - email
+ *               - password
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 example: Alice
+ *               lastName:
+ *                 type: string
+ *                 example: Johnson
+ *               email:
+ *                 type: string
+ *                 example: alice@example.com
+ *               password:
+ *                 type: string
+ *                 example: secret123
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ *       400:
+ *         description: Missing required fields or validation failed
+ *       409:
+ *         description: User already exists
+ */
 router.post('/register', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body
@@ -52,6 +90,39 @@ router.post('/register', async (req, res) => {
 })
 
 // login existing user
+/**
+ * @openapi
+ * /users/login:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Login a user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: alice@example.com
+ *               password:
+ *                 type: string
+ *                 example: secret123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Missing credentials
+ *       401:
+ *         description: Invalid credentials
+ *       404:
+ *         description: User not found
+ */
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body
@@ -97,6 +168,32 @@ router.post('/login', async (req, res) => {
 })
 
 // list loppis created by (authenticated) user
+/**
+ * @openapi
+ * /users/{id}/loppis:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get all loppis ads created by the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: List of loppis ads created by the user
+ *       400:
+ *         description: Invalid userId
+ *       401:
+ *         description: Unauthorized (missing/invalid token)
+ *       500:
+ *         description: Server error
+ */
 router.get("/:id/loppis", authenticateUser, async (req, res) => {
   const userId = req.user._id.toString()
 
@@ -127,6 +224,46 @@ router.get("/:id/loppis", authenticateUser, async (req, res) => {
 })
 
 // list loppis liked by (authenticated) user
+/**
+ * @openapi
+ * /users/{id}/likes:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get all loppis ads liked by the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the user
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of results per page
+ *     responses:
+ *       200:
+ *         description: Successfully fetched liked loppis ads
+ *       400:
+ *         description: Invalid user ID
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: No liked loppis found
+ *       500:
+ *         description: Server error
+ */
 router.get("/:id/likes", authenticateUser, async (req, res) => {
   const user = req.user
   const page = req.query.page || 1

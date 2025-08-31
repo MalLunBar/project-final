@@ -2,6 +2,14 @@ import express from "express"
 
 const router = express.Router()
 
+// Swagger
+/**
+ * @openapi
+ * tags:
+ *   name: Geocoding
+ *   description: Endpoints for converting between addresses and geographic coordinates using OpenStreetMap Nominatim.
+ */
+
 // Forward geocoding route
 /**
  * @openapi

@@ -1,4 +1,4 @@
-import 'dotenv/config' // safety net om filen laddas separat i andra skript
+import 'dotenv/config'
 import express from "express"
 import mongoose from "mongoose"
 import multer from 'multer'
@@ -10,7 +10,7 @@ import { authenticateUser } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
-// Multer: lagra i minnet (inte disk)
+// Multer: store in memory
 const upload = multer({ storage: multer.memoryStorage() })
 
 // Cloudinary config
@@ -20,9 +20,120 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-
+// swagger comments
+/**
+ * @openapi
+ * tags:
+ *   name: Loppis
+ *   description: API endpoints for managing loppis ads
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     Loppis:
+ *       type: object
+ *       required:
+ *         - title
+ *         - categories
+ *         - dates
+ *       properties:
+ *         _id:
+ *           type: string
+ *         title:
+ *           type: string
+ *           minLength: 5
+ *           maxLength: 50
+ *         description:
+ *           type: string
+ *           maxLength: 500
+ *         categories:
+ *           type: array
+ *           items:
+ *             type: string
+ *             enum: ["Vintage","Barn","Trädgård","Kläder","Möbler","Böcker","Husdjur","Elektronik","Kök","Blandat"]
+ *         likes:
+ *           type: integer
+ *           minimum: 0
+ *         dates:
+ *           type: array
+ *           items:
+ *             type: object
+ *             required:
+ *               - date
+ *               - startTime
+ *               - endTime
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               startTime:
+ *                 type: string
+ *                 pattern: "^([01]\\d|2[0-3]):([0-5]\\d)$"
+ *               endTime:
+ *                 type: string
+ *                 pattern: "^([01]\\d|2[0-3]):([0-5]\\d)$"
+ *         images:
+ *           type: array
+ *           items:
+ *             type: string
+ *             description: Cloudinary public_id
+ *         coverImage:
+ *           type: string
+ *           description: Cloudinary public_id of cover image
+ *         location:
+ *           type: object
+ *           properties:
+ *             address:
+ *               type: object
+ *               properties:
+ *                 street:
+ *                   type: string
+ *                 city:
+ *                   type: string
+ *                 postalCode:
+ *                   type: string
+ *                 country:
+ *                   type: string
+ *                   default: Sweden
+ *             coordinates:
+ *               type: object
+ *               properties:
+ *                 type:
+ *                   type: string
+ *                   enum: ["Point"]
+ *                 coordinates:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *                   description: [longitude, latitude]
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         createdBy:
+ *           type: string
+ *           description: MongoDB ObjectId referencing the User
+ */
 
 // get all loppis ads
+/**
+ * @openapi
+ * /loppis:
+ *   get:
+ *     summary: Get all loppis ads
+ *     tags: [Loppis]
+ *     responses:
+ *       200:
+ *         description: List of loppis ads
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Loppis'
+ */
 router.get("/", async (req, res) => {
   const page = req.query.page || 1
   const limit = req.query.limit || 20
@@ -109,9 +220,25 @@ router.get("/", async (req, res) => {
 })
 
 // get popular loppis (most likes)
+/**
+ * @openapi
+ * /loppis/popular:
+ *   get:
+ *     tags:
+ *       - Loppis
+ *     summary: Get popular loppis (most likes)
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of loppis to return (default 10)
+ *     responses:
+ *       200:
+ *         description: Popular loppis
+ */
 router.get("/popular", async (req, res) => {
-  // returns the 10 most liked loppis
-  const limit = 10
+  const limit = req.query.limit || 10 // returns the 10 most liked loppis by default
 
   try {
     const popularLoppis = await Loppis.find().sort("-likes").limit(limit)
@@ -136,10 +263,26 @@ router.get("/popular", async (req, res) => {
   }
 })
 
-// get upcoming loppis (most likes)
+// get upcoming loppis
+/**
+ * @openapi
+ * /loppis/upcoming:
+ *   get:
+ *     tags:
+ *       - Loppis
+ *     summary: Get upcoming loppis (sorted by next date)
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of loppis to return (default 5)
+ *     responses:
+ *       200:
+ *         description: Upcoming loppis
+ */
 router.get("/upcoming", async (req, res) => {
-  // returns the next 5 upcoming loppis
-  const limit = 5
+  const limit = req.query.limit || 5 // returns the next 5 upcoming loppis by defualt
   try {
     const today = new Date()
     const upcomingLoppis = await Loppis.aggregate([
@@ -182,12 +325,33 @@ router.get("/upcoming", async (req, res) => {
   }
 })
 
-//get all the category from enums in Loppis model
+// get the available categories from enums in Loppis model
+/**
+ * @openapi
+ * /loppis/categories:
+ *   get:
+ *     tags:
+ *       - Loppis
+ *     summary: Get available categories
+ *     responses:
+ *       200:
+ *         description: List of categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 response:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
 router.get("/categories", async (req, res) => {
 
   try {
     const categories = Loppis.schema.path("categories").caster.enumValues
-
 
     if (!categories || categories.length === 0) {
       return res.status(404).json({
@@ -211,6 +375,31 @@ router.get("/categories", async (req, res) => {
 })
 
 // get one loppis by id
+/**
+ * @openapi
+ * /loppis/{id}:
+ *   get:
+ *     summary: Get a single loppis ad by ID
+ *     tags: [Loppis]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the loppis ad
+ *     responses:
+ *       200:
+ *         description: Loppis ad found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Loppis'
+ *       400:
+ *         description: Invalid ID format
+ *       404:
+ *         description: Loppis not found
+ */
 router.get("/:id", async (req, res) => {
   const { id } = req.params
 
@@ -245,6 +434,31 @@ router.get("/:id", async (req, res) => {
 })
 
 // Like a loppis - only autheticated users
+/**
+ * @openapi
+ * /loppis/{id}/like:
+ *   patch:
+ *     summary: Like or unlike a loppis ad (authenticated users only)
+ *     tags: [Loppis]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the loppis ad
+ *     responses:
+ *       200:
+ *         description: Loppis liked/unliked successfully
+ *       400:
+ *         description: Invalid ID format
+ *       404:
+ *         description: Loppis not found
+ *       500:
+ *         description: Server error
+ */
 router.patch("/:id/like", authenticateUser, async (req, res) => {
   const { id } = req.params
   let action = ''
@@ -301,9 +515,88 @@ router.patch("/:id/like", authenticateUser, async (req, res) => {
   }
 })
 
-//Edit loppis ad
-// === GEOKODNINGSHJÄLPARE (behåll precis som innan) ===
-async function geocodeAddress({ street, postalCode, city }) {
+// add a loppis ad
+/**
+ * @openapi
+ * /loppis:
+ *   post:
+ *     summary: Create a new loppis ad (authenticated users only)
+ *     tags: [Loppis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - data
+ *             properties:
+ *               data:
+ *                 type: string
+ *                 description: JSON string with loppis ad fields (title, description, categories, dates, location)
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of image files (max 6)
+ *     responses:
+ *       201:
+ *         description: Loppis ad created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Loppis'
+ *       400:
+ *         description: Missing data or invalid input
+ *       500:
+ *         description: Server error
+ */
+router.post('/', authenticateUser, upload.array('images', 6), async (req, res) => {
+  const user = req.user
+
+  try {
+
+    if (!req.body?.data) {
+      return res.status(400).json({ success: false, message: 'Missing "data" field in form-data' })
+    }
+
+    const payload = JSON.parse(req.body.data)
+
+    const uploads = (req.files || []).map(file => new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'loppis',        // spara original i en mapp
+          resource_type: 'image',
+        },
+        (err, result) => {
+          if (err) return reject(err)
+          // Spara *public_id* så vi kan generera alla varianter vid delivery
+          resolve(result.public_id)
+        }
+      )
+      stream.end(file.buffer)
+    }))
+
+    const publicIds = await Promise.all(uploads)         // [ "loppis/abc123", ... ]
+    payload.images = publicIds
+    payload.coverImage = publicIds[0] || null
+
+    // spara i DB med mongoose
+    const doc = await Loppis.create(payload)
+    return res.status(201).json({ success: true, response: doc })
+
+  } catch (err) {
+    console.error('POST /loppis error:', err)
+    res.status(500).json({ success: false, message: err.message || 'Server error' })
+  }
+})
+
+// Edit loppis ad
+// Geocode helper
+const geocodeAddress = async ({ street, postalCode, city }) => {
   const q = `${street}, ${postalCode} ${city}, Sweden`
   const res = await fetch(`http://localhost:8080/api/geocode?q=${encodeURIComponent(q)}`)
   if (!res.ok) throw new Error(`Geocode failed: ${res.status}`)
@@ -312,8 +605,54 @@ async function geocodeAddress({ street, postalCode, city }) {
   const { lat, lon } = arr[0]
   return { lat: parseFloat(lat), lon: parseFloat(lon) }
 }
-
-// === PATCH: uppdatera loppis, inkl. bilder via multipart/form-data ===
+// update loppis ad incl. images via multipart/form-data ===
+/**
+ * @openapi
+ * /loppis/{id}:
+ *   patch:
+ *     summary: Update a loppis ad (authenticated users only)
+ *     tags: [Loppis]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the loppis ad
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               data:
+ *                 type: string
+ *                 description: JSON string with fields to update
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Array of new images to upload (max 6)
+ *     responses:
+ *       200:
+ *         description: Loppis ad updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Loppis'
+ *       400:
+ *         description: Invalid ID format or no changes provided
+ *       404:
+ *         description: Loppis not found
+ *       422:
+ *         description: Could not geocode updated address
+ *       500:
+ *         description: Server error
+ */
 router.patch('/:id', authenticateUser, upload.array('images', 6), async (req, res) => {
   const { id } = req.params
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -499,8 +838,32 @@ router.patch('/:id', authenticateUser, upload.array('images', 6), async (req, re
   }
 })
 
-
 // Delete loppis ad
+/**
+ * @openapi
+ * /loppis/{id}:
+ *   delete:
+ *     summary: Delete a loppis ad (authenticated users only)
+ *     tags: [Loppis]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the loppis ad
+ *     responses:
+ *       200:
+ *         description: Loppis deleted successfully
+ *       400:
+ *         description: Invalid ID format
+ *       404:
+ *         description: Loppis not found
+ *       500:
+ *         description: Server error
+ */
 router.delete("/:id", authenticateUser, async (req, res) => {
   const { id } = req.params
 
@@ -537,51 +900,5 @@ router.delete("/:id", authenticateUser, async (req, res) => {
     })
   }
 })
-
-// add a loppis ad
-router.post('/', authenticateUser, upload.array('images', 6), async (req, res) => {
-  const user = req.user
-
-  try {
-
-    if (!req.body?.data) {
-      return res.status(400).json({ success: false, message: 'Missing "data" field in form-data' })
-    }
-
-    const payload = JSON.parse(req.body.data)
-
-    const uploads = (req.files || []).map(file => new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          folder: 'loppis',        // spara original i en mapp
-          resource_type: 'image',
-        },
-        (err, result) => {
-          if (err) return reject(err)
-          // Spara *public_id* så vi kan generera alla varianter vid delivery
-          resolve(result.public_id)
-        }
-      )
-      stream.end(file.buffer)
-    }))
-
-    const publicIds = await Promise.all(uploads)         // [ "loppis/abc123", ... ]
-    payload.images = publicIds
-    payload.coverImage = publicIds[0] || null
-
-    // spara i DB med mongoose
-    const doc = await Loppis.create(payload)
-    return res.status(201).json({ success: true, response: doc })
-
-  } catch (err) {
-    console.error('POST /loppis error:', err)
-    res.status(500).json({ success: false, message: err.message || 'Server error' })
-  }
-})
-
-
-
-
-
 
 export default router

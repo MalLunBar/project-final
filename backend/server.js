@@ -21,7 +21,8 @@ app.use(express.json())
 app.get("/", (req, res) => {
   const endpoints = listEndpoints(app)
   res.json({
-    message: "Welcome to the LoppisApp API",
+    message: "Welcome to the LoppisApp API.",
+    documentation: "API documentation available at '/api-docs'.",
     endpoints: endpoints
   })
 })
@@ -34,5 +35,5 @@ app.use("/api/geocode", geocodeRoutes)
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
-  swaggerDocs(app, port) // enable Swagger
+  swaggerDocs(app) // enable Swagger
 })

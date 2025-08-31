@@ -8,14 +8,21 @@ import { authenticateUser } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
+// Swagger
+/**
+ * @openapi
+ * tags:
+ *   name: Users
+ *   description: User management & authentication
+ */
+
 // register a new user
 /**
  * @openapi
  * /users/register:
  *   post:
- *     tags:
- *       - Users
  *     summary: Register a new user
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
@@ -32,18 +39,36 @@ const router = express.Router()
  *                 example: Alice
  *               lastName:
  *                 type: string
- *                 example: Johnson
+ *                 example: Andersson
  *               email:
  *                 type: string
+ *                 format: email
  *                 example: alice@example.com
  *               password:
  *                 type: string
- *                 example: secret123
+ *                 format: password
+ *                 example: mySecret123
  *     responses:
  *       200:
  *         description: User created successfully
- *       400:
- *         description: Missing required fields or validation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 response:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     firstName:
+ *                       type: string
+ *                     accessToken:
+ *                       type: string
  *       409:
  *         description: User already exists
  */
@@ -94,9 +119,8 @@ router.post('/register', async (req, res) => {
  * @openapi
  * /users/login:
  *   post:
- *     tags:
- *       - Users
- *     summary: Login a user
+ *     summary: Login user and return access token
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
@@ -109,15 +133,33 @@ router.post('/register', async (req, res) => {
  *             properties:
  *               email:
  *                 type: string
+ *                 format: email
  *                 example: alice@example.com
  *               password:
  *                 type: string
- *                 example: secret123
+ *                 format: password
+ *                 example: mySecret123
  *     responses:
  *       200:
  *         description: Login successful
- *       400:
- *         description: Missing credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 response:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     firstName:
+ *                       type: string
+ *                     accessToken:
+ *                       type: string
  *       401:
  *         description: Invalid credentials
  *       404:
@@ -172,25 +214,33 @@ router.post('/login', async (req, res) => {
  * @openapi
  * /users/{id}/loppis:
  *   get:
- *     tags:
- *       - Users
- *     summary: Get all loppis ads created by the authenticated user
+ *     summary: Get all loppis ads created by a user
+ *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The ID of the user
+ *         description: User ID
  *     responses:
  *       200:
  *         description: List of loppis ads created by the user
- *       400:
- *         description: Invalid userId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 response:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Loppis'
  *       401:
- *         description: Unauthorized (missing/invalid token)
+ *         description: Unauthorized
  *       500:
  *         description: Server error
  */
@@ -198,7 +248,6 @@ router.get("/:id/loppis", authenticateUser, async (req, res) => {
   const userId = req.user._id.toString()
 
   try {
-    // (Valfritt) strikt validering av id:
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
         success: false,
@@ -209,7 +258,6 @@ router.get("/:id/loppis", authenticateUser, async (req, res) => {
 
     const loppises = await Loppis.find({ createdBy: userId })
 
-    // ⬇️ Viktig ändring: returnera 200 även om listan är tom
     return res.status(200).json({
       success: true,
       response: loppises
@@ -228,35 +276,52 @@ router.get("/:id/loppis", authenticateUser, async (req, res) => {
  * @openapi
  * /users/{id}/likes:
  *   get:
- *     tags:
- *       - Users
- *     summary: Get all loppis ads liked by the authenticated user
+ *     summary: Get all loppis ads liked by a user
+ *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: The ID of the user
- *       - in: query
- *         name: page
+ *         description: User ID
+ *       - name: page
+ *         in: query
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Page number for pagination
- *       - in: query
- *         name: limit
+ *       - name: limit
+ *         in: query
  *         schema:
  *           type: integer
  *           default: 10
- *         description: Number of results per page
  *     responses:
  *       200:
- *         description: Successfully fetched liked loppis ads
- *       400:
- *         description: Invalid user ID
+ *         description: List of liked loppis ads
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 response:
+ *                   type: object
+ *                   properties:
+ *                     totalCount:
+ *                       type: integer
+ *                     currentPage:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     data:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Loppis'
+ *                 message:
+ *                   type: string
  *       401:
  *         description: Unauthorized
  *       404:

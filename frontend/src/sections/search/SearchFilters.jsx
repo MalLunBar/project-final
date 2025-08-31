@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
-import SearchBar from "../components/SearchBar"
-import Button from "../components/Button"
-import FilterOption from "../components/FilterOption"
-import { getLoppisCategories } from '../services/loppisApi'
+import SearchBar from "../../components/SearchBar"
+import Button from "../../components/Button"
+import FilterOption from "../../components/FilterOption"
+import { getLoppisCategories } from '../../services/loppisApi'
 
 const SearchFilters = ({ cityInput, setCityInput, onSearch }) => {
   const [params, setParams] = useSearchParams()

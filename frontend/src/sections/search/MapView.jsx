@@ -1,12 +1,12 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl, Circle, CircleMarker, Tooltip } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { useEffect } from 'react'
-import LoppisCard from '../components/LoppisCard'
+import LoppisCard from '../../components/LoppisCard'
 import L from "leaflet"
-import { MapPin } from "lucide-react"
+import { MapPin, LoaderCircle } from "lucide-react"
 import ReactDOMServer from "react-dom/server"
 import 'leaflet/dist/leaflet.css'
-import useGeoStore from '../stores/useGeoStore'
+import useGeoStore from '../../stores/useGeoStore'
 
 const createCustomClusterIcon = (cluster) => {
   const count = cluster.getChildCount()
@@ -84,7 +84,8 @@ const PopupCard = ({ loppis }) => {
 const MapView = ({
   loppisList,
   center,
-  zoom
+  zoom,
+  loading
 }) => {
 
   // Create a Leaflet divIcon with Lucide SVG
@@ -151,6 +152,12 @@ const MapView = ({
           ))}
         </MarkerClusterGroup>
       </MapContainer>
+      {loading && (
+        <div className="absolute inset-0 z-1200 flex flex-col items-center justify-center gap-2 py-10 bg-white/70 backdrop-blur-[1px] pointer-events-none text-gray-600">
+          <LoaderCircle className="animate-spin" size={30} />
+          <p>Laddar loppisar...</p>
+        </div>
+      )}
     </section>
   )
 }

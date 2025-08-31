@@ -4,9 +4,9 @@ import { useSearchParams } from "react-router-dom"
 import { Map, LocateFixed, List, Funnel, X } from "lucide-react"
 import FocusLock from "react-focus-lock"
 import useGeoStore from '../stores/useGeoStore'
-import SearchFilters from "../sections/SearchFilters"
-import ListView from "../sections/ListView"
-import MapView from "../sections/MapView"
+import SearchFilters from "../sections/search/SearchFilters"
+import ListView from "../sections/search/ListView"
+import MapView from "../sections/search/MapView"
 import SearchBar from '../components/SearchBar'
 import Button from "../components/Button"
 import FilterTag from '../components/FilterTag'

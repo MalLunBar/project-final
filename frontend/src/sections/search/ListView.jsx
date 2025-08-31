@@ -1,5 +1,5 @@
 import { LoaderCircle } from 'lucide-react'
-import LoppisCard from "../components/LoppisCard";
+import LoppisCard from "../../components/LoppisCard";
 
 const ListView = ({ loppisList, loading }) => {
   return (

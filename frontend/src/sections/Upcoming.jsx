@@ -9,14 +9,19 @@ const Upcoming = () => {
   const [loppisList, setLoppisList] = useState([])
   const [loading, setLoading] = useState()
   const [error, setError] = useState()
+  const [emptyMsg, setEmptyMsg] = useState('')
 
   // fetch upcoming loppis list
   useEffect(() => {
     const fetchloppisList = async () => {
       setLoading(true)
       setError(null)
+      setEmptyMsg('')
       try {
         const data = await getUpcomingLoppis()
+        if (!data || data.length === 0) {
+          setEmptyMsg('Inga kommande loppisar just nu.')
+        }
         setLoppisList(data)
       } catch (err) {
         // --------------------TODO: handle error appropriately
@@ -65,9 +70,15 @@ const Upcoming = () => {
             </Link>
           </div>
         ))}
+
+        {(loppisList.length === 0) &&
+          <p className='text-zinc-700'>{emptyMsg || 'Inga kommande loppisar just nu.'}</p>
+        }
+
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="col-span-full flex flex-col items-center justify-center gap-2 py-4 pointer-events-none">
             <LoaderCircle className="animate-spin" size={30} />
+            <p className='text-zinc-700'>Laddar loppisar...</p>
           </div>
         )}
       </div>

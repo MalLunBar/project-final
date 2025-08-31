@@ -44,14 +44,18 @@ export const getLoppisList = async (params) => {
 export const getPopularLoppis = async () => {
   const response = await fetch(`${url}/popular`)
   if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData?.message || 'Failed to fetch loppis data')
+    if (response.status === 404) {
+      throw new Error('Inga kommande loppisar just nu.')
+    } else {
+      const errorData = await response.json()
+      throw new Error(errorData?.message || 'Failed to fetch loppis data')
+    }
   }
   const data = await response.json()
   return data.response || [] // returns array of loppis
 }
 
-// fetch a list with upcoming loppis (next 3 coming loppis)
+// fetch a list with upcoming loppis (next 5 coming loppis)
 export const getUpcomingLoppis = async () => {
   const response = await fetch(`${url}/upcoming`)
   if (!response.ok) {

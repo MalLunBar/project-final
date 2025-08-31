@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import SearchBar from '../components/SearchBar'
-import heroImage from '../assets/monstera.jpg'
+import SearchBar from '../../components/SearchBar'
+import heroImage from '../../assets/monstera.jpg'
 
 const HeroSearch = () => {
   const [city, setCity] = useState('')

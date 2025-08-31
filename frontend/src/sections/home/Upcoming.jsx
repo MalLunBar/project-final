@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { format } from 'date-fns'
 import { sv } from 'date-fns/locale'
 import { ArrowRight, LoaderCircle } from 'lucide-react'
-import { getUpcomingLoppis } from '../services/loppisApi'
+import { getUpcomingLoppis } from '../../services/loppisApi'
 
 const Upcoming = () => {
   const [loppisList, setLoppisList] = useState([])
@@ -71,7 +71,7 @@ const Upcoming = () => {
           </div>
         ))}
 
-        {(loppisList.length === 0) &&
+        {(loppisList.length === 0 && !loading) &&
           <p className='text-zinc-700'>{emptyMsg || 'Inga kommande loppisar just nu.'}</p>
         }
 

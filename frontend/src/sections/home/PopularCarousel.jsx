@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { ChevronLeft, ChevronRight, LoaderCircle } from "lucide-react"
-import CarouselCard from '../components/CarouselCard'
-import { getPopularLoppis } from '../services/loppisApi'
+import CarouselCard from '../../components/CarouselCard'
+import { getPopularLoppis } from '../../services/loppisApi'
 
 const PopularCarousel = () => {
   const [loppisList, setLoppisList] = useState([])
@@ -92,24 +92,31 @@ const PopularCarousel = () => {
             />
           )}
         </div>
-        {/* left arrow */}
-        <button
-          onClick={() => slider.current?.prev()}
-          ria-label="Previous slide"
-          title="Previous slide"
-          className='group absolute left-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-3 rounded-full shadow-md cursor-pointer hover:bg-white transition duration-200'
-        >
-          <ChevronLeft size={28} strokeWidth={2.5} className="text-button transition-transform duration-200 group-hover:-translate-x-1" />
-        </button>
-        {/* right arrow */}
-        <button
-          onClick={() => slider.current?.next()}
-          aria-label="Next slide"
-          title="Next slide"
-          className="group absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-3 rounded-full shadow-md cursor-pointer hover:bg-white transition duration-200"
-        >
-          <ChevronRight size={28} strokeWidth={2.5} className="text-button transition-transform duration-200 group-hover:translate-x-1" />
-        </button>
+
+        {/* Don't display slide arrows during loading or if loppislist is empty*/}
+        {(!loading || loppisList.length === 0) && (
+          <>
+            {/* left arrow */}
+            <button
+              onClick={() => slider.current?.prev()}
+              ria-label="Previous slide"
+              title="Previous slide"
+              className='group absolute left-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-3 rounded-full shadow-md cursor-pointer hover:bg-white transition duration-200'
+            >
+              <ChevronLeft size={28} strokeWidth={2.5} className="text-button transition-transform duration-200 group-hover:-translate-x-1" />
+            </button>
+            {/* right arrow */}
+            <button
+              onClick={() => slider.current?.next()}
+              aria-label="Next slide"
+              title="Next slide"
+              className="group absolute right-3 top-1/2 -translate-y-1/2 bg-white/70 backdrop-blur-sm p-3 rounded-full shadow-md cursor-pointer hover:bg-white transition duration-200"
+            >
+              <ChevronRight size={28} strokeWidth={2.5} className="text-button transition-transform duration-200 group-hover:translate-x-1" />
+            </button>
+          </>
+        )}
+
         {/* pagination dots */}
         <div
           role="tablist"
@@ -126,12 +133,20 @@ const PopularCarousel = () => {
             />
           ))}
         </div>
+
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 py-4 pointer-events-none">
             <LoaderCircle className="animate-spin" size={30} />
+            <p className='text-zinc-700'>Laddar loppisar...</p>
           </div>
         )}
+
       </div>
+
+      {(loppisList.length === 0 && !loading) &&
+        <p className='mt-4 text-zinc-700'>Finns tyvärr inga loppisar att visa just nu.</p>
+      }
+
     </section>
   )
 }

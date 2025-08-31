@@ -1,5 +1,5 @@
 import { Baby, Lamp, Flower2, Shirt, Sofa, Book, Cat, Tv, CookingPot, Shapes } from 'lucide-react'
-import CardLink from '../components/CardLink'
+import CardLink from '../../components/CardLink'
 
 const CategoryGrid = () => {
 

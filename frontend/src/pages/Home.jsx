@@ -1,9 +1,9 @@
-import HeroSearch from '../sections/HeroSearch'
+import HeroSearch from '../sections/home/HeroSearch'
 import Divider from '../components/Divider'
-import PopularCarousel from '../sections/PopularCarousel'
-import CategoryGrid from '../sections/CategoryGrid'
-import Upcoming from '../sections/Upcoming'
-import CtaHome from '../sections/CtaHome'
+import PopularCarousel from '../sections/home/PopularCarousel'
+import CategoryGrid from '../sections/home/CategoryGrid'
+import Upcoming from '../sections/home/Upcoming'
+import CtaHome from '../sections/home/CtaHome'
 import Footer from '../sections/Footer'
 
 const Home = () => {

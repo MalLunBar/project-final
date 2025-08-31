@@ -28,7 +28,7 @@ const LoppisInfo = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [heroLoaded, setHeroLoaded] = useState(false)
-  const [galleryLoaded, setGalleryLoaded] = useState([])
+  const [galleryLoaded, setGalleryLoaded] = useState([0])
   const isLiked = likedLoppisIds.includes(loppisId)
   const navigate = useNavigate()
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${loppisCoords.lat},${loppisCoords.lng}`
@@ -139,7 +139,7 @@ const LoppisInfo = () => {
                   srcSet={`${IMG.hero(coverId)} 1200w, ${IMG.heroLg(coverId)} 1600w`}
                   sizes="(max-width: 768px) 92vw, (max-width: 1024px) 85vw, 1200px"
                   alt={loppis.title}
-                  className="w-full h-52 md:h-96 object-cover rounded-2xl"
+                  className="w-full h-52 md:min-h-96 md:h-full  object-cover rounded-2xl"
                   loading="eager"
                   onLoad={() => setHeroLoaded(true)}
                 />
@@ -153,15 +153,25 @@ const LoppisInfo = () => {
             {gallery.length > 0 && (
               <div className="flex md:flex-col md:w-1/3 flex-wrap gap-2">
                 {gallery.map((image, index) => (
-                  <img
-                    key={index}
-                    src={IMG.thumb(image)}
-                    srcSet={`${IMG.thumb2x(image)} 480w`}
-                    sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 240px"
-                    alt={`Galleri bild ${index + 1}`}
-                    className="md:w-full h-24 md:h-1/3 object-cover rounded-lg"
-                    loading="lazy"
-                  />
+                  <div key={index} className="relative">
+                    {!galleryLoaded.includes(index) && (
+                      <div className='md:w-full h-24 flex flex-col items-center justify-center gap-2 rounded-lg bg-gray-100 text-gray-700'>
+                        <LoaderCircle size={24} className="animate-spin" />
+                        <p>Laddar bild...</p>
+                      </div>
+                    )}
+                    <img
+                      src={IMG.thumb(image)}
+                      srcSet={`${IMG.thumb2x(image)} 480w`}
+                      sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 240px"
+                      alt={`Galleri bild ${index + 1}`}
+                      className="md:w-full h-24 md:h-full object-cover rounded-lg"
+                      loading="lazy"
+                      onLoad={() =>
+                        setGalleryLoaded((prev) => [...prev, index])
+                      }
+                    />
+                  </div>
                 ))}
               </div>
             )}

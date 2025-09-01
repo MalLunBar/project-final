@@ -12,7 +12,7 @@ import Footer from '../sections/Footer'
 
 const AboutUs = () => {
   const team = [
-    { name: 'Malin', role: 'Uttvecklare & Grundare', bio: 'Brinner för enkel UX och återbruk.', img: '' },
+    { name: 'Malin', role: 'Utvecklare & Grundare', bio: 'Brinner för enkel UX och återbruk.', img: '' },
     { name: 'Mimmi', role: 'Utvecklare & Grundare', bio: 'Har en PhD i kemi och ett öga för detaljer.', img: '' },
   ]
 

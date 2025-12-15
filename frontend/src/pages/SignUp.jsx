@@ -146,6 +146,7 @@ const SignUp = () => {
                 required={true}
                 aria-invalid={touched.name && Boolean(errors.name)}
                 aria-describedby={touched.name && errors.name ? "error-name" : undefined}
+                autoComplete="given-name"
               />
               <FieldError id="error-name" show={touched.name && !!errors.name}>
                 {errors.name}
@@ -165,6 +166,7 @@ const SignUp = () => {
                 required={true}
                 aria-invalid={touched.lastName && Boolean(errors.lastName)}
                 aria-describedby={touched.lastName && errors.lastName ? "error-lastName" : undefined}
+                autoComplete="family-name"
               />
               <FieldError id="error-lastName" show={touched.lastName && !!errors.lastName}>
                 {errors.lastName}
@@ -184,6 +186,7 @@ const SignUp = () => {
                 required={true}
                 aria-invalid={touched.email && Boolean(errors.email)}
                 aria-describedby={touched.email && errors.email ? "error-email" : undefined}
+                autoComplete="email"
               />
               <FieldError id="error-email" show={touched.email && !!errors.email}>
                 {errors.email}

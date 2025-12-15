@@ -531,7 +531,7 @@ const LoppisForm = ({
                 const t = datesTouched[i] || { date: false, startTime: false, endTime: false }
                 return (
                   <div key={i} className='flex gap-2 items-start'>
-                    <div className='w-full min-w-0 flex-1 flex gap-2'>
+                    <div className='w-full min-w-0 flex-1 flex flex-col sm:flex-row gap-2'>
                       <div className="flex-1">
                         <Input
                           label='Datum'

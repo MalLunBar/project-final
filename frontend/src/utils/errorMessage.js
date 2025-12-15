@@ -1,6 +1,6 @@
 // src/utils/errorMessage.js
 export const errorMessage = (err, fallback = "Något gick fel. Försök igen.") => {
-  if (!err) return fallback
+  if (!err) return "" // no error present
   const msg =
     err?.response?.data?.message ||
     err?.data?.message ||
